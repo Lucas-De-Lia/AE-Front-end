@@ -14,7 +14,7 @@ const NewsCard = React.memo(({ anews }) => {
   const navigate = useNavigate();
   const [load, setLoad] = useState(false);
 
-  const { id, image, title, abstract } = anews;
+  const { id, url, title, abstract } = anews;
 
   const handleReadMoreClick = () => {
     navigate(`/document/${id}`);
@@ -34,7 +34,7 @@ const NewsCard = React.memo(({ anews }) => {
         {!load && <Skeleton variant="rectangular" width={400} height={50} />}
 
         <LazyLoadImage
-          src={`${process.env.REACT_APP_BACK_URL}${image}`}
+          src={`${process.env.REACT_APP_BACK_URL}/${url}`}
           alt={title}
           title={title}
           beforeLoad={endLoading}

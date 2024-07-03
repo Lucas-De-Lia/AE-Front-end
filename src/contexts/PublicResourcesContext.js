@@ -71,6 +71,7 @@ export const PublicResourcesProvider = ({ children }) => {
       return [];
     }
   };
+
   /**
    * Asynchronously fetches city names based on province and city names.
    * @async
@@ -153,12 +154,13 @@ export const PublicResourcesProvider = ({ children }) => {
    * @async
    * @return {Promise<Array>} the response data from the backend API
    */
-  const fetch_news_list = async () => {
+  const fetch_news_list = async (current_page, page_size) => {
     try {
       const response = await axios.post(
         `${URL_BACKEND}/api/resources/get-news-list`,
-        {},
+        { page_size: page_size},
         {
+          params: { page: current_page},
           headers: { "X-API-Key": APP_KEY },
         }
       );

@@ -43,36 +43,18 @@ const NewsTable = () => {
   const [totalPages, setTotalPages] = useState(1);
   const labels_news = useNewsInfoAlert();
 
-  const startIndex = useMemo(
-    () => (currentPage - 1) * itemsPerPage,
-    [currentPage, itemsPerPage]
-  );
-
-  const endIndex = useMemo(
-    () => startIndex + itemsPerPage,
-    [startIndex, itemsPerPage]
-  );
-
   const visibleNewss = useMemo(
-    () => fetchNews.slice(startIndex, endIndex),
-    [fetchNews, startIndex, endIndex]
+    () => fetchNews,
+    [fetchNews ]
   );
   const fetchDataCallback = useCallback(async () => {
     try {
-      const fetch_news = await fetch_news_list();
-
-      if (fetch_news) {
-        localStorage.setItem(
-          "fetch_news",
-          JSON.stringify({
-            news: fetch_news,
-            timestamp: Date.now(),
-          })
-        );
-        const totalItems = fetch_news.length;
-        setTotalPages(Math.ceil(totalItems / itemsPerPage));
-        setFetchNews(fetch_news);
-      }
+      const fetch_news = await fetch_news_list(currentPage,itemsPerPage);
+      console.log(fetch_news);
+      const totalItems = fetch_news.total;
+      //console.log(totalItems)
+      setTotalPages(Math.ceil(totalItems / itemsPerPage));
+      setFetchNews(fetch_news.data);
     } catch (error) {
       console.error(error);
       setFetchNews([]);
@@ -85,16 +67,18 @@ const NewsTable = () => {
   );
 
   useEffect(() => {
-    let newsBack = JSON.parse(localStorage.getItem("fetch_news") || "null");
-    if (newsBack && newsBack.timestamp >= Date.now() - 3600000) {
-      setTotalPages(Math.ceil(newsBack.news.length / itemsPerPage));
-      setFetchNews(newsBack.news);
-    } else {
+    if(fetchNews.length === 0){
       fetchData();
     }
-  }, [itemsPerPage, fetchData]);
+  },[]);
 
-  const handlePageChange = (_event, page) => setCurrentPage(page);
+  const handlePageChange = async (_event, page) => {
+    console.log(page);
+    const fetch_news = await fetch_news_list(page,itemsPerPage);
+    console.log(fetch_news);
+    setFetchNews(fetch_news.data);
+    setCurrentPage(page);
+  }
   //
   return (
     <>
