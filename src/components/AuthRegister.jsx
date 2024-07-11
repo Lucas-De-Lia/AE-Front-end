@@ -69,7 +69,8 @@ const AuthRegister = () => {
     false,
   ]);
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
+  const [lock, setLock] = useState(false);
   const stepperRef = useRef(null);
 
   const dataRef = useRef(null);
@@ -233,10 +234,12 @@ const AuthRegister = () => {
       if (activeStep <= 4) {
         updateStepData(dataRef.current.getData());
         if (activeStep === 4) {
+          setLock(true)
           await handleRegister();
         }
       }
       setActiveStep((prevstep) => prevstep + 1);
+      setLock(false)
     }
   };
 
@@ -247,7 +250,7 @@ const AuthRegister = () => {
   const itLastState = (n = 0) =>
     activeStep === authregisterlabels.step_title.length - n;
 
-  const itsFirstState = () => activeStep === 0;
+  const itsFirstState = (i) => activeStep === i;
 
   return (
     <Card sx={cardRegisterStyle}>
@@ -287,7 +290,7 @@ const AuthRegister = () => {
           key="back-button"
           size="small"
           color="inherit"
-          disabled={itsFirstState()}
+          disabled={itsFirstState(0)}
           onClick={handleBack}
           sx={{ mr: 1 }}
         >
@@ -297,19 +300,19 @@ const AuthRegister = () => {
           key="next-button"
           size="small"
           onClick={
-            itLastState()
+            itLastState(0)
               ? errors[5]
                 ? handleRegister
                 : handleLogin
               : handleNext
           }
-          disabled={itLastState() ? itsFirstState() : false}
+          disabled={lock}
         >
           {itLastState()
             ? errors[5]
               ? commonButtons.restart
               : commonButtons.login
-            : itLastState(1)
+            : itLastState(4)
             ? commonButtons.ok
             : commonButtons.next}
         </Button>

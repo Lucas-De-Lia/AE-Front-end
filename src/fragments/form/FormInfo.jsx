@@ -18,10 +18,10 @@ import { centeringStyles } from "../../theme.jsx";
 import { datecontrol, doformatCUIL, testpassword } from "../../utiles.js";
 
 const genders = [
-  { label: "Femenino", id: "F" },
-  { label: "Masculino", id: "M" },
-  { label: "X", id: "X" },
   { label: "Ninguno", id: "-1" },
+  { label: "Masculino", id: "M" },
+  { label: "Femenino", id: "F" },
+  { label: "X", id: "X" }
 ];
 
 const FormInfo = React.forwardRef((props, ref) => {

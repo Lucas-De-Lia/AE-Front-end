@@ -22,6 +22,7 @@ const FormExtra = React.forwardRef(
       phone,
       email,
     });
+    const [emailCopy, setEmailCopy] = useState([]);
 
     const [errors, setErrors] = useState({
       phone: false,
@@ -55,12 +56,24 @@ const FormExtra = React.forwardRef(
         { label: "No contesta", id: "NC" },
       ],
     };
+    const handlePaste = (event) => {
+      event.preventDefault(); // Evita la acción de pegado
+      // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
+    };
 
+    const handleCopyCut = (event) => {
+      event.preventDefault(); // Evita la acción de copiado o cortado
+      // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
+    };
     const handleErrors = () => {
       const { phone, email } = userData;
       const errors = {
-        phone: !phone.trim() || !/^\+54 (\d{4}|\d{5}) \d{2} \d{4}$/.test(phone),
-        email: !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !emailConocido(email),
+        phone: false,
+        email:
+          !email.trim() ||
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+          !emailConocido(email) ||
+          emailCopy !== email,
       };
 
       setErrors(errors);
@@ -132,25 +145,46 @@ const FormExtra = React.forwardRef(
           </Grid>
 
           {registerState && (
-            <Grid item xs={12} sm={5}>
-              <TextField
-                id={"email"}
-                label={formextralabels["email"]}
-                disabled={false}
-                required
-                error={errors["email"]}
-                size="small"
-                value={userData["email"]}
-                onChange={(event) =>
-                  handleChange(
-                    event.target.value,
-                    "email",
-                    FieldFormatter["email"]
-                  )
-                }
-                variant="standard"
-              />
-            </Grid>
+            <>
+              <Grid item xs={12} sm={5}>
+                <TextField
+                  id={"email"}
+                  label={formextralabels["email"]}
+                  disabled={false}
+                  required
+                  error={errors["email"]}
+                  size="small"
+                  onPaste={handlePaste}
+                  onCopy={handleCopyCut}
+                  onCut={handleCopyCut}
+                  value={userData["email"]}
+                  onChange={(event) =>
+                    handleChange(
+                      event.target.value,
+                      "email",
+                      FieldFormatter["email"]
+                    )
+                  }
+                  variant="standard"
+                />
+              </Grid>
+              <Grid item xs={12} sm={5}>
+                <TextField
+                  id={"emailCopy"}
+                  label={formextralabels["email"] + " Repetir"}
+                  disabled={false}
+                  required
+                  onPaste={handlePaste}
+                  onCopy={handleCopyCut}
+                  onCut={handleCopyCut}
+                  error={errors["email"]}
+                  size="small"
+                  value={emailCopy}
+                  onChange={(event) => setEmailCopy(event.target.value)}
+                  variant="standard"
+                />
+              </Grid>
+            </>
           )}
         </Grid>
       </CardContent>
