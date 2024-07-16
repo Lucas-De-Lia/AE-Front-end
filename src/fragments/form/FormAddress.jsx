@@ -218,7 +218,7 @@ const FormAddress = React.forwardRef((props, ref) => {
 
   return (
     <CardContent>
-      <Grid container sx={centeringStyles} spacing={3} padding={3}>
+      <Grid container sx={centeringStyles} spacing={3}>
         {["state", "substate", "city", "address"].map((field) => (
           <Grid key={`grid.${field}`} item xs={12} sm={4}>
             <Autocomplete
@@ -240,6 +240,7 @@ const FormAddress = React.forwardRef((props, ref) => {
                   variant="standard"
                   required
                   error={errors[field]}
+                  helperText={"Obligatorio"}
                   {...params}
                   label={formaddresslables[field]}
                   InputProps={{
@@ -259,6 +260,7 @@ const FormAddress = React.forwardRef((props, ref) => {
               label={formaddresslables[field]}
               size="small"
               required={["postalCode", "number"].includes(field)}
+              helperText={["postalCode", "number"].includes(field) ? "Obligatorio": ""}
               error={errors[field]}
               onChange={(event) =>
                 handleChange(

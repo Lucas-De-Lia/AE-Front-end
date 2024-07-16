@@ -3,6 +3,7 @@ import {
   AlertTitle,
   CardContent,
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   NativeSelect,
@@ -11,17 +12,19 @@ import {
 import { red } from "@mui/material/colors";
 import React, { useImperativeHandle, useState } from "react";
 import {
+  useCommonsTextString,
   useComponentPasswordAlertString,
   useFormInfoString,
 } from "../../contexts/TextProvider.jsx";
 import { centeringStyles } from "../../theme.jsx";
 import { datecontrol, doformatCUIL, testpassword } from "../../utiles.js";
+import { ErrorSharp } from "@mui/icons-material";
 
 const genders = [
   { label: "Ninguno", id: "-1" },
   { label: "Masculino", id: "M" },
   { label: "Femenino", id: "F" },
-  { label: "X", id: "X" }
+  { label: "X", id: "X" },
 ];
 
 const FormInfo = React.forwardRef((props, ref) => {
@@ -119,18 +122,12 @@ const FormInfo = React.forwardRef((props, ref) => {
     <CardContent key={"Form-info"}>
       <Grid
         container
-        padding={3}
         sx={centeringStyles}
         spacing={{ xs: 1, sm: 2 }}
         direction={"column"}
       >
         <Grid item>
-          <Grid
-            container
-            padding={3}
-            sx={centeringStyles}
-            spacing={{ xs: 1, sm: 2 }}
-          >
+          <Grid container sx={centeringStyles} spacing={{ xs: 1, sm: 2 }}>
             {["name", "lastname", "cuil"].map((field) => (
               <Grid item key={field + "grid-item"}>
                 <TextField
@@ -160,7 +157,7 @@ const FormInfo = React.forwardRef((props, ref) => {
                 error={errors["birthdate"]}
                 type="date" // el formato esta dado por el idioma del browser
                 size="small"
-                helperText={"Debes ser mayor de 18 años"}
+                helperText={forminfolabels.helper_text["birthdate"]}
                 fullWidth
                 InputLabelProps={{
                   shrink: true,
@@ -201,6 +198,9 @@ const FormInfo = React.forwardRef((props, ref) => {
                     </option>
                   ))}
                 </NativeSelect>
+                <FormHelperText>
+                  {forminfolabels.helper_text["gender"]}
+                </FormHelperText>
               </FormControl>
             </Grid>
           </Grid>
@@ -220,6 +220,7 @@ const FormInfo = React.forwardRef((props, ref) => {
                   label={forminfolabels[field]}
                   value={userData[field]}
                   error={errors[field]}
+                  helperText={forminfolabels.helper_text["password"]}
                   onChange={(event) => handleChange(field, event.target.value)}
                   InputLabelProps={{
                     shrink: userData[field] !== "",
@@ -229,7 +230,7 @@ const FormInfo = React.forwardRef((props, ref) => {
             ))}
           </Grid>
           <Alert
-            severity="warning"
+            severity={errors.password || errors.passrep ? "error" : (userData.password.length>0 && userData.passrep.length>0 ) ?"success":"warning"}
             style={{ textAlign: "left", marginTop: "16px" }}
           >
             <AlertTitle>{passwordalertlabels.title}</AlertTitle>

@@ -8,8 +8,11 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  CircularProgress,
   Divider,
+  Grid,
   Skeleton,
+  Stack,
   Step,
   StepLabel,
   Stepper,
@@ -31,7 +34,6 @@ import {
   FormAddress,
   FormDatePlan,
   FormExtra,
-  FormFileAttach,
   FormInfo,
   FormMessageError,
   FormMessageSuccess,
@@ -48,12 +50,6 @@ import {
 } from "../theme.jsx";
 import { formatDate } from "../utiles.js";
 
-/**
- * The RegisterCard component is a multi-step form that allows users to register by providing various information.
- * The component uses state hooks to manage the current step, errors, skipped steps, and step data. It also uses refs to access data and handle errors in child components.
- * @function
- * @returns {JSX.Element} The RegisterCard component.
- */
 const AuthRegister = () => {
   const commonButtons = useCommonsButtonString();
   const authregisterlabels = useComponentAuthRegisterString();
@@ -69,7 +65,7 @@ const AuthRegister = () => {
     false,
   ]);
 
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(0);
   const [lock, setLock] = useState(false);
   const stepperRef = useRef(null);
 
@@ -95,8 +91,7 @@ const AuthRegister = () => {
       apartment: "",
       postalCode: "",
     },
-    { occupation: "NC", study: "NC", phone: "", email: "" },
-    { files: [] },
+    { phone: "", email: "", files: [] },
     {
       startDay: "",
       fthMonth: "",
@@ -105,7 +100,10 @@ const AuthRegister = () => {
     },
   ]);
 
+  const [loading, setLoading] = useState(false);
+
   const handleRegister = async () => {
+    setLoading(true);
     try {
       let register_user = {
         cuil: stepData[0].cuil,
@@ -124,22 +122,16 @@ const AuthRegister = () => {
         address: stepData[1].address.nombre,
         phone: stepData[2].phone,
         startdate: formatDate(new Date()),
-        occupation: stepData[2].occupation,
-        study: stepData[2].study,
-        dni1: stepData[3].files[0],
-        dni2: stepData[3].files[1],
+        dni1: stepData[2].files[0],
+        dni2: stepData[2].files[1],
       };
       let result = await registerRequest(register_user);
-      updateErrorAtIndex(5, !result);
+      updateErrorAtIndex(4, !result);
     } catch (e) {
       console.error(e);
     }
+    setLoading(false);
   };
-
-  /**
-   * The getStepperStage function is a helper function that determines which component to render based
-   * on the current step of the stepper.
-   */
 
   const StepperStage = (i) => {
     switch (i) {
@@ -176,24 +168,24 @@ const AuthRegister = () => {
       case 2:
         return (
           <FormExtra
-            occupation={stepData[2].occupation}
-            study={stepData[2].study}
             phone={stepData[2].phone}
             email={stepData[2].email}
+            files={stepData[2].files}
             registerState={true}
             ref={dataRef}
           />
         );
       case 3:
-        return <FormFileAttach ref={dataRef} files={stepData[3].files} />;
-
-      case 4:
-        return (
+        return loading ? (
+          <Grid padding={12}>
+            <CircularProgress />
+          </Grid>
+        ) : (
           <FormDatePlan first={true} ref={dataRef} email={stepData[2].email} />
         );
 
-      case 5:
-        return !errors[5] ? (
+      case 4:
+        return !errors[4] ? (
           <FormMessageSuccess first={true} />
         ) : (
           <FormMessageError padding={8} />
@@ -228,18 +220,19 @@ const AuthRegister = () => {
     if (dataRef.current && typeof dataRef.current.handleErrors === "function") {
       error = dataRef.current.handleErrors();
     }
+    console.log(error);
     updateErrorAtIndex(activeStep, error);
     if (!error) {
       /* This code block is handling the data received from the current step of the form. */
-      if (activeStep <= 4) {
+      if (activeStep <= 3) {
         updateStepData(dataRef.current.getData());
-        if (activeStep === 4) {
-          setLock(true)
+        if (activeStep === 3) {
+          setLock(true);
           await handleRegister();
         }
       }
       setActiveStep((prevstep) => prevstep + 1);
-      setLock(false)
+      setLock(false);
     }
   };
 
@@ -260,30 +253,35 @@ const AuthRegister = () => {
         title={authregisterlabels.title}
       />
       <Divider />
-      <Suspense fallback={<Skeleton width={300} height={200} />}>
-        <Box sx={{padding:2}}>
-        {StepperStage(activeStep)}
-        </Box>
-      </Suspense>
-
       <CardContent>
-        <Stepper
-          ref={stepperRef}
-          activeStep={activeStep}
-          alternativeLabel
-          sx={centeringStyles}
-        >
-          {!errors[5] &&
-            authregisterlabels.step_title.map((label, index) => {
-              let labelProps = {};
-              labelProps.error = errors[index];
-              return (
-                <Step id={label} key={label} sx={stepStyle}>
-                  <StepLabel {...labelProps}>{label}</StepLabel>
-                </Step>
-              );
-            })}
-        </Stepper>
+        <Stack>
+          <Suspense
+            fallback={
+              <Box sx={{padding:2, height: 400}}>
+                <Skeleton height={400} />
+              </Box>
+            }
+          >
+            <Box padding={2}>{StepperStage(activeStep)}</Box>
+          </Suspense>
+          <Stepper
+            ref={stepperRef}
+            activeStep={activeStep}
+            alternativeLabel
+            sx={centeringStyles}
+          >
+            {!errors[4] &&
+              authregisterlabels.step_title.map((label, index) => {
+                let labelProps = {};
+                labelProps.error = errors[index];
+                return (
+                  <Step id={label} key={label} sx={stepStyle}>
+                    <StepLabel {...labelProps}>{label}</StepLabel>
+                  </Step>
+                );
+              })}
+          </Stepper>
+        </Stack>
       </CardContent>
       <CardActions sx={centerButtonsStyle}>
         <Button
@@ -301,7 +299,7 @@ const AuthRegister = () => {
           size="small"
           onClick={
             itLastState(0)
-              ? errors[5]
+              ? errors[4]
                 ? handleRegister
                 : handleLogin
               : handleNext
@@ -309,10 +307,10 @@ const AuthRegister = () => {
           disabled={lock}
         >
           {itLastState()
-            ? errors[5]
+            ? errors[4]
               ? commonButtons.restart
               : commonButtons.login
-            : itLastState(4)
+            : itLastState(3)
             ? commonButtons.ok
             : commonButtons.next}
         </Button>

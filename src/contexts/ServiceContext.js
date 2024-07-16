@@ -11,6 +11,7 @@ import { dates_to_json_calendar, sleep } from "../utiles";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
+const SITE_SECRET = process.env.REACT_APP_SECRET_KEY;
 
 /**
  * Enum representing the status of AE
@@ -50,7 +51,6 @@ export const ServiceProvider = ({ children }) => {
       localStorage.setItem("authorization", JSON.stringify(newval)); // Store the newval in sessionStorage as a JSON string
     }
   };
-
 
   const saveAuth = (authorization) => {
     setAuthorization({
@@ -320,6 +320,7 @@ export const ServiceProvider = ({ children }) => {
       }
     );
   };
+
   /**
    * Refreshes the user's token and retrieves fresh user data
    * @async
@@ -345,6 +346,7 @@ export const ServiceProvider = ({ children }) => {
       refesh();
     }
   }, [refesh]);
+
   return (
     <ServiceContext.Provider
       value={{
@@ -377,3 +379,4 @@ export const ServiceProvider = ({ children }) => {
 export const useService = () => {
   return useContext(ServiceContext);
 };
+

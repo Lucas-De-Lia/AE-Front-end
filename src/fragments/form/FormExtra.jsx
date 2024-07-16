@@ -1,32 +1,38 @@
-import {
-  CardContent,
-  FormControl,
-  Grid,
-  InputLabel,
-  NativeSelect,
-  TextField,
-} from "@mui/material";
+import { Box, Button, CardContent, Grid, TextField } from "@mui/material";
 import { MuiTelInput } from "mui-tel-input";
-import React, { useImperativeHandle, useState } from "react";
-import { useFormExtraString } from "../../contexts/TextProvider.jsx";
+import React, { useImperativeHandle, useRef, useState } from "react";
+import {
+  useCommonsButtonString,
+  useFormExtraString,
+  useFormFileAttachString,
+} from "../../contexts/TextProvider.jsx";
 import { centeringStyles } from "../../theme.jsx";
-import { doEmail, emailConocido } from "../../utiles.js";
+import { doEmail, emailConocido, shortFileName } from "../../utiles.js";
+import AlertFragment from "../AlertFragmet.jsx";
+import ReCAPTCHA from "react-google-recaptcha";
+
+const SITE_KEY = process.env.REACT_APP_SITE_KEY;
 
 const FormExtra = React.forwardRef(
-  ({ occupation, study, phone, email, registerState }, ref) => {
+  ({ phone, email, registerState, files }, ref) => {
     const formextralabels = useFormExtraString();
 
     const [userData, setUserData] = useState({
-      occupation,
-      study,
       phone,
       email,
+      files,
     });
     const [emailCopy, setEmailCopy] = useState([]);
+    const formfileattachlabels = useFormFileAttachString();
+    const commonbuttonlabels = useCommonsButtonString();
+    const [isButtonDisabled, setButtonDisabled] = useState(false);
 
     const [errors, setErrors] = useState({
       phone: false,
       email: false,
+      files_size: false,
+      files_type: false,
+      captcha: true,
     });
 
     const handleChange = (value, field, formatter) => {
@@ -36,26 +42,6 @@ const FormExtra = React.forwardRef(
       }));
     };
 
-    const Fields = {
-      occupation: [
-        { label: "Empleado", id: "E" },
-        { label: "Profesional Independiente", id: "PI" },
-        { label: "Autonomo", id: "A" },
-        { label: "Estudiante", id: "ES" },
-        { label: "Jubilado", id: "J" },
-        { label: "Desocupado", id: "D" },
-        { label: "Otro", id: "O" },
-        { label: "No Contesta", id: "NC" },
-      ],
-      study: [
-        { label: "Primaria", id: "P" },
-        { label: "Secundaria", id: "S" },
-        { label: "Tercearia", id: "T" },
-        { label: "Universitaria", id: "U" },
-        { label: "Otra", id: "O" },
-        { label: "No contesta", id: "NC" },
-      ],
-    };
     const handlePaste = (event) => {
       event.preventDefault(); // Evita la acción de pegado
       // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
@@ -65,25 +51,63 @@ const FormExtra = React.forwardRef(
       event.preventDefault(); // Evita la acción de copiado o cortado
       // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
     };
+
+    const handleFileChange = (event) => {
+      let files = event.target.files;
+      let selectedFilesArray = [];
+      if (userData.files) {
+        selectedFilesArray = userData.files;
+      }
+
+      // Limitar la cantidad de archivos a 2
+      for (let i = 0; i < Math.min(files.length, 2); i++) {
+        let file = files[i];
+        if (file.type && file.type.startsWith("image/")) {
+          selectedFilesArray.push(file);
+          setErrors({
+            ...errors,
+            files_type: false,
+          });
+        } else {
+          setErrors({
+            ...errors,
+            files_type: true,
+          });
+        }
+      }
+
+      setUserData({ ...userData, files: selectedFilesArray });
+      setButtonDisabled(selectedFilesArray.length >= 2);
+    };
+
+    const handleRemoveFile = (index) => {
+      const updatedFiles = userData.files;
+      updatedFiles.splice(index, 1);
+      setUserData({ userData, files: updatedFiles });
+      setButtonDisabled(false);
+    };
+
     const handleErrors = () => {
-      const { phone, email } = userData;
-      const errors = {
-        phone: false,
+      const { phone, email, files } = userData;
+      const errors_r = {
+        ...errors,
+        phone: !phone.trim(),
         email:
           !email.trim() ||
           !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
           !emailConocido(email) ||
           emailCopy !== email,
+        files_size: files.length < 2,
+        files_type: false,
       };
-
-      setErrors(errors);
-
-      return Object.values(errors).some(Boolean);
-    };
-
-    const handleChangeNotFormatter = (event, field) => {
-      const value = event.target.value;
-      setUserData((prevData) => ({ ...prevData, [field]: value }));
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) {
+          errors_r.files_type = true;
+          break;
+        }
+      }
+      setErrors(errors_r);
+      return Object.values(errors_r).some(Boolean);
     };
 
     const getData = () => {
@@ -100,50 +124,17 @@ const FormExtra = React.forwardRef(
       email: (value) => doEmail(value),
     };
 
+    const successCaptcha = () => {
+      setErrors({ ...errors, captcha: false });
+      console.log("hola!");
+    };
+
+    const errorCaptcha = () => {
+      setErrors({ ...errors, captcha: true });
+    };
     return (
       <CardContent>
-        <Grid container sx={centeringStyles} padding={3} spacing={3}>
-          {["occupation", "study"].map((field) => (
-            <Grid item xs={12} sm={5}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor={field}>
-                  {formextralabels[field]}
-                </InputLabel>
-                <NativeSelect
-                  value={userData[field]}
-                  size="small"
-                  onChange={(event) => handleChangeNotFormatter(event, field)}
-                  inputProps={{
-                    name: field,
-                    id: field,
-                  }}
-                >
-                  {Fields[field].map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.label}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </FormControl>
-            </Grid>
-          ))}
-          <Grid item xs={12} sm={5}>
-            <MuiTelInput
-              sx={{ pt: 3 }}
-              id="area-code"
-              size="small"
-              variant="standard"
-              defaultCountry={"AR"}
-              value={userData["phone"]}
-              onChange={(event) =>
-                handleChange(event, "phone", FieldFormatter["phone"])
-              }
-              label={formextralabels["phone"]}
-              error={errors["phone"]}
-              helperText={"Sin el 15"}
-            />
-          </Grid>
-
+        <Grid container sx={centeringStyles} spacing={3}>
           {registerState && (
             <>
               <Grid item xs={12} sm={5}>
@@ -155,7 +146,7 @@ const FormExtra = React.forwardRef(
                   error={errors["email"]}
                   size="small"
                   onPaste={handlePaste}
-                  onCopy={handleCopyCut}
+                  //onCopy={handleCopyCut}
                   onCut={handleCopyCut}
                   value={userData["email"]}
                   onChange={(event) =>
@@ -175,7 +166,7 @@ const FormExtra = React.forwardRef(
                   disabled={false}
                   required
                   onPaste={handlePaste}
-                  onCopy={handleCopyCut}
+                  //onCopy={handleCopyCut}
                   onCut={handleCopyCut}
                   error={errors["email"]}
                   size="small"
@@ -186,6 +177,88 @@ const FormExtra = React.forwardRef(
               </Grid>
             </>
           )}
+          <Grid item xs={12} sm={5}>
+            <MuiTelInput
+              sx={{ pt: 3 }}
+              id="area-code"
+              size="small"
+              variant="standard"
+              required
+              onlyCountries={["AR"]}
+              defaultCountry={"AR"}
+              disableDropdown
+              value={userData["phone"]}
+              onChange={(event) =>
+                handleChange(event, "phone", FieldFormatter["phone"])
+              }
+              label={formextralabels["phone"]}
+              error={errors["phone"]}
+              helperText={"Obligatorio y sin el 15"}
+            />
+          </Grid>
+        </Grid>
+        <Grid
+          container
+          sx={centeringStyles}
+          spacing={2}
+          direction={{ xs: "column", sm: "column" }}
+        >
+          <Grid item xs={12} md={6}>
+            <Box>
+              <AlertFragment
+                type={
+                  errors.files_size || errors.files_type
+                    ? "error"
+                    : userData.files.length == 2
+                    ? "success"
+                    : "info"
+                }
+                title={formfileattachlabels.title}
+                body={formfileattachlabels.body}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box>
+              <TextField
+                fullWidth
+                id="fileInput"
+                label={formfileattachlabels.files_selected.title}
+                type="file"
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+                accept="image/*"
+                multiple
+                size="small"
+                error={errors.files_size || errors.files_type}
+                disabled={isButtonDisabled}
+                onChange={handleFileChange}
+              />
+              {userData.files.length > 0 && (
+                <div>
+                  <p>{formfileattachlabels.files_selected.list}</p>
+                  <ul>
+                    {userData.files.map((file, index) => (
+                      <li key={index}>
+                        {shortFileName(file.name)}
+                        <Button onClick={() => handleRemoveFile(index)}>
+                          {commonbuttonlabels.delete}
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <ReCAPTCHA
+              onChange={successCaptcha}
+              onErrored={errorCaptcha}
+              onEmptied={errorCaptcha}
+              sitekey={SITE_KEY}
+            />
+          </Grid>
         </Grid>
       </CardContent>
     );
