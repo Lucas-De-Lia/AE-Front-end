@@ -1,6 +1,6 @@
 import { Box, Button, CardContent, Grid, TextField } from "@mui/material";
 import { MuiTelInput } from "mui-tel-input";
-import React, { useImperativeHandle, useRef, useState } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import {
   useCommonsButtonString,
   useFormExtraString,
@@ -9,10 +9,6 @@ import {
 import { centeringStyles } from "../../theme.jsx";
 import { doEmail, emailConocido, shortFileName } from "../../utiles.js";
 import AlertFragment from "../AlertFragmet.jsx";
-import ReCAPTCHA from "react-google-recaptcha";
-import { useService } from "../../contexts/ServiceContext.js";
-
-const SITE_KEY = process.env.REACT_APP_SITE_KEY;
 
 const FormExtra = React.forwardRef(
   ({ phone, email, registerState, files }, ref) => {
@@ -33,7 +29,6 @@ const FormExtra = React.forwardRef(
       email: false,
       files_size: false,
       files_type: false,
-      captcha: true,
     });
 
     const handleChange = (value, field, formatter) => {
@@ -125,19 +120,6 @@ const FormExtra = React.forwardRef(
       email: (value) => doEmail(value),
     };
 
-    const { verifyCaptcha } = useService();
-    const refCaptcha = useRef();
-
-    const successCaptcha = async () => {
-      let response = await verifyCaptcha(refCaptcha.current.getValue());
-      if(response.data.success){
-        setErrors({ ...errors, captcha: !response.data.success });
-      }
-    };
-
-    const errorCaptcha = () => {
-      setErrors({ ...errors, captcha: true });
-    };
     return (
       <CardContent>
         <Grid container sx={centeringStyles} spacing={3}>
@@ -256,15 +238,6 @@ const FormExtra = React.forwardRef(
                 </div>
               )}
             </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <ReCAPTCHA
-              ref={refCaptcha}
-              onChange={successCaptcha}
-              onErrored={errorCaptcha}
-              onEmptied={errorCaptcha}
-              sitekey={SITE_KEY}
-            />
           </Grid>
         </Grid>
       </CardContent>

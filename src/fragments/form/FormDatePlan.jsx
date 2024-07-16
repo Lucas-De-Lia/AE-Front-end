@@ -1,12 +1,18 @@
 import { Box, Typography } from "@mui/material";
-import React, { useImperativeHandle } from "react";
+import React, { useImperativeHandle, useRef, useState } from "react";
 import { useFormDatePlanString } from "../../contexts/TextProvider.jsx";
 import { getDates } from "../../utiles.js";
-/* The code defines a React functional component called `DatePlanAE`. It is a form component that
-displays information about dates and allows the user to enter a code. */
+import ReCAPTCHA from "react-google-recaptcha";
+import { useService } from "../../contexts/ServiceContext.js";
+
+
+const SITE_KEY = process.env.REACT_APP_SITE_KEY;
+
 const FormDatePlan = React.forwardRef((props, ref) => {
   const { startDay, fthMonth, sixMonth, lastMonth } = getDates();
   const formdateplanlabels = useFormDatePlanString();
+
+  const [errors, setErrors] = useState(true);
 
   const getData = () => {
     return {
@@ -17,9 +23,28 @@ const FormDatePlan = React.forwardRef((props, ref) => {
     };
   };
 
+  const handleErrors = () => {
+    return errors;
+  };
+
   useImperativeHandle(ref, () => ({
+    handleErrors,
     getData,
   }));
+
+  const { verifyCaptcha } = useService();
+  const refCaptcha = useRef();
+
+  const successCaptcha = async () => {
+    let response = await verifyCaptcha(refCaptcha.current.getValue());
+    if(response.data.success){
+      setErrors(!response.data.success);
+    }
+  };
+
+  const errorCaptcha = () => {
+    setErrors(true);
+  };
 
   return (
     <Box
@@ -54,6 +79,13 @@ const FormDatePlan = React.forwardRef((props, ref) => {
       <Typography paddingBottom={3} variant="h6">
         {formdateplanlabels.body[5]}
       </Typography>
+      <ReCAPTCHA
+              ref={refCaptcha}
+              onChange={successCaptcha}
+              onErrored={errorCaptcha}
+              onEmptied={errorCaptcha}
+              sitekey={SITE_KEY}
+            />
     </Box>
   );
 });

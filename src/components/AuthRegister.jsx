@@ -220,7 +220,6 @@ const AuthRegister = () => {
     if (dataRef.current && typeof dataRef.current.handleErrors === "function") {
       error = dataRef.current.handleErrors();
     }
-    console.log(error);
     updateErrorAtIndex(activeStep, error);
     if (!error) {
       /* This code block is handling the data received from the current step of the form. */
