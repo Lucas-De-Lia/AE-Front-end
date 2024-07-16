@@ -10,6 +10,7 @@ import { centeringStyles } from "../../theme.jsx";
 import { doEmail, emailConocido, shortFileName } from "../../utiles.js";
 import AlertFragment from "../AlertFragmet.jsx";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useService } from "../../contexts/ServiceContext.js";
 
 const SITE_KEY = process.env.REACT_APP_SITE_KEY;
 
@@ -124,9 +125,14 @@ const FormExtra = React.forwardRef(
       email: (value) => doEmail(value),
     };
 
-    const successCaptcha = () => {
-      setErrors({ ...errors, captcha: false });
-      console.log("hola!");
+    const { verifyCaptcha } = useService();
+    const refCaptcha = useRef();
+
+    const successCaptcha = async () => {
+      let response = await verifyCaptcha(refCaptcha.current.getValue());
+      if(response.data.success){
+        setErrors({ ...errors, captcha: !response.data.success });
+      }
     };
 
     const errorCaptcha = () => {
@@ -253,6 +259,7 @@ const FormExtra = React.forwardRef(
           </Grid>
           <Grid item xs={12} md={6}>
             <ReCAPTCHA
+              ref={refCaptcha}
               onChange={successCaptcha}
               onErrored={errorCaptcha}
               onEmptied={errorCaptcha}

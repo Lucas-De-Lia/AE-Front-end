@@ -330,6 +330,18 @@ export const ServiceProvider = ({ children }) => {
     return await refesh_fn();
   }, []);
 
+  const verifyCaptcha = async (tokenvalue) => {
+    const response = await axios.post(
+      `${URL_BACKEND}/api/captcha`,
+      {
+        token: tokenvalue,
+      },
+      {
+        headers: { "X-API-Key": APP_KEY },
+        withCredentials: true,
+      });
+    return response;
+  }
   useEffect(() => {
     const parsedAuthorization = JSON.parse(
       localStorage.getItem("authorization") || "null"
@@ -369,6 +381,7 @@ export const ServiceProvider = ({ children }) => {
         fetch_user_data,
         fetch_start_pdf,
         finalize_ae,
+        verifyCaptcha,
       }}
     >
       {children}
