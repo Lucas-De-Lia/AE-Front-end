@@ -11,7 +11,6 @@ import { dates_to_json_calendar, sleep } from "../utiles";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
-const SITE_SECRET = process.env.REACT_APP_SECRET_KEY;
 
 /**
  * Enum representing the status of AE
@@ -29,19 +28,21 @@ const AE = {
 const ServiceContext = createContext();
 
 export const ServiceProvider = ({ children }) => {
+  //Variables de estasod
   const [User, setUser] = useState(null);
   const [Authorization, setAuthorizationState] = useState(null);
   const [serverDates, setServerDates] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(User !== null);
 
+  /**
+   * @brief Email verificar .
+   */
   const setEmailUndefined = () => {
     setUser({ ...User, email_verified_at: null });
   };
-  
+
   /**
-   * Function to set the authorization state and update the session storage accordingly
-   * @param  {Object} newval - The new authorization state
-   * @returns {void}
+   * @brief Almazena los datos de aothorization para axios
    * */
   const setAuthorization = (newval) => {
     setAuthorizationState(newval); // Set the authorization state
@@ -52,6 +53,9 @@ export const ServiceProvider = ({ children }) => {
     }
   };
 
+  /**
+   * @brief Guarda los datos de Authorization y las setea en axios.
+   */
   const saveAuth = (authorization) => {
     setAuthorization({
       ...authorization,
@@ -66,14 +70,10 @@ export const ServiceProvider = ({ children }) => {
       "X-API-Key": APP_KEY,
       Authorization: authorization.type + authorization.token,
     };
+  };
 
-  }
   /**
-   * Authenticates the user with the provided username and password
-   * @async
-   * @param {string} username - The username of the user
-   * @param {string} password - The password of the user
-   * @returns {Promise<boolean>} - True if the authentication is successful, false otherwise
+   * @brief Realiza la peticion de authentication al backend, setea los valores y retorna un booleano con el exito de la operacion.
    */
   const authenticate = async (username, password) => {
     try {
@@ -93,7 +93,7 @@ export const ServiceProvider = ({ children }) => {
       if (user && authorization) {
         // Save the authorization token for future requests
         saveAuth(authorization);
-        
+
         try {
           // Get additional user data from the backend API
           const aeResponse = await axios.get(`${URL_BACKEND}/api/ae/dates`);
@@ -120,9 +120,7 @@ export const ServiceProvider = ({ children }) => {
   };
 
   /**
-   * Function to log out the user , and clear user data and authentication status
-   * @async
-   * @returns {Promise<boolean>} - Indicates if the logout was successful
+   * @brief Envia una peticion para hacer un logout en el backend y limpia llas variables internas.
    */
   const unauthenticate = async () => {
     try {
@@ -143,10 +141,7 @@ export const ServiceProvider = ({ children }) => {
   };
 
   /**
-   * Function to send a registration request to the backend
-   * @async
-   * @param {Object} register_user - The user object to be registered
-   * @returns {Promise<boolean>} - True if the user is created successfully, false otherwise
+   * @brief Envia los datos para el registro, devuelve un booleano con el exito de la operacion.
    */
   const registerRequest = async (register_user) => {
     try {
@@ -172,9 +167,7 @@ export const ServiceProvider = ({ children }) => {
   };
 
   /**
-   * Function to fetch user data asynchronously.
-   *
-   * @return {Promise<Object>} the response from the fetch
+   * @brief Envia una petición al backend para obtener la informacion del usuario.
    */
   const fetch_user_data = async () => {
     try {
@@ -192,10 +185,7 @@ export const ServiceProvider = ({ children }) => {
   };
 
   /**
-   * Function to start the AE process asynchronously
-   * @async
-   * @param {Object} register_user - The user data to be registered
-   * @returns {Promise<boolean>} - True if the process is successfully started, false otherwise
+   * @brief Envia la peticioón para la renovacion o crear una nueva exclusion para un usuario ya registrado.
    */
   const start_ae_n = async (register_user) => {
     try {
@@ -220,10 +210,7 @@ export const ServiceProvider = ({ children }) => {
   };
 
   /**
-   * This function finalizes the current Ae, using the given password for authentication.
-   *
-   * @param {string} password - the password to use for finalization
-   * @return {boolean} true if the Ae is finalized successfully, false otherwise
+   * @brief Envia una peticion para "dar de baja" una exclusion.
    */
   const finalize_ae = async (password) => {
     try {
@@ -243,9 +230,7 @@ export const ServiceProvider = ({ children }) => {
   };
 
   /**
-   * Fetches a certificate of the end of the AE in format PDF.
-   * @async
-   * @returns {Promise<string>} The content of the end PDF on base64.
+   * @brief Obtiene el ceritificado de fin de autoexclusion. en formato base64
    */
   const fetch_end_pdf = async () => {
     try {
@@ -263,9 +248,7 @@ export const ServiceProvider = ({ children }) => {
   };
 
   /**
-   * Fetches  a certificate of the start of the AE in format PDF.
-   * @async
-   * @return {Promise<string>} The content of the PDF on base64.
+   * @brief Obtiene el certificado de autoexcluido.
    */
   const fetch_start_pdf = async () => {
     try {
@@ -282,6 +265,9 @@ export const ServiceProvider = ({ children }) => {
     }
   };
 
+  /**
+   * @brief Gestiona mantener la cuenta cuando recarga la pagina
+   */
   const refesh_fn = async () => {
     const responseRefresh = axios
       .post(
@@ -320,16 +306,13 @@ export const ServiceProvider = ({ children }) => {
       }
     );
   };
-
-  /**
-   * Refreshes the user's token and retrieves fresh user data
-   * @async
-   * @return {Promise<boolean>} true if the token refresh was successful, false otherwise
-   */
   const refesh = useCallback(async () => {
     return await refesh_fn();
   }, []);
 
+  /**
+   * @brief Envia el token del Captcha para verificar su validez.
+   */
   const verifyCaptcha = async (tokenvalue) => {
     const response = await axios.post(
       `${URL_BACKEND}/api/captcha`,
@@ -339,9 +322,11 @@ export const ServiceProvider = ({ children }) => {
       {
         headers: { "X-API-Key": APP_KEY },
         withCredentials: true,
-      });
+      }
+    );
     return response;
-  }
+  };
+
   useEffect(() => {
     const parsedAuthorization = JSON.parse(
       localStorage.getItem("authorization") || "null"
@@ -392,4 +377,3 @@ export const ServiceProvider = ({ children }) => {
 export const useService = () => {
   return useContext(ServiceContext);
 };
-

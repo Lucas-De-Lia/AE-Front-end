@@ -39,8 +39,6 @@ import {
 import { ExpandMore, HowToReg } from "@mui/icons-material";
 import { usePublicResources } from "../contexts/PublicResourcesContext.js";
 
-//const  = lazy(() => import("@mui/icons-material"));
-
 const sx = {
   border: `1px solid #999999`,
   "&:not(:last-child)": {
@@ -58,24 +56,33 @@ const sx_de = {
   justifyContent: "justify",
   textAlign: "justify",
 };
-/**fs
- * @brief This component is a form for registering a new user.
- *
- * @param {object} props The properties of the component.
- * @return {JSX.Element} The component.
+/**
+ * @brief El el comoponente encargado de la renovacion o creacion de una AE ,para un usuario ya registrado.
  */
 export const AECreate = () => {
+
+  // Variables que tienen los textos
   const buttonlabels = useCommonsButtonString();
   const aecreatelabels = useComponentAECreateString();
   const onlytitles = useComponentAuthRegisterString().step_title;
 
+  // Variables de estado
+  // expanded controla cual de todos los acordions se muestra
   const [expanded, setExpanded] = useState(1);
-  const [loading, setLoading] = useState(true);
+  // Muestra el formulario de creacion o el mensaje de exito/error
   const [open, setOpen] = useState(false);
+  // Si open es verdadero y loading tambine muestra un icono de carga
+  const [loading, setLoading] = useState(true);
+
+  // Controla el mensaje de exito/error deacuerdo al resultado del envio de los datos.
   const [errorSend, setSendError] = useState(false);
+
   const [stepData, setStepData] = useState(null);
 
+  // Referencia al formulario visible por el expanded 
   const refs = useRef(null);
+
+  // Servicios de comunicacion conel backend (un conjunto de funciones y constantes utiles)
   const { User, fetch_user_data, start_ae_n, refesh_fn } = useService();
   const {
     get_province_names,
@@ -83,8 +90,12 @@ export const AECreate = () => {
     get_substate_names,
     get_address_names,
   } = usePublicResources();
+
   const navigate = useNavigate();
 
+  /**
+   * @brief Hace un fetch a la API de geoloc para obtener la lista de provincias/etc y cargarlas en los selects. 
+  */
   const getLocate = useCallback(
     async (response) => {
       let city_substate = response.city.split(" , ");
@@ -109,6 +120,9 @@ export const AECreate = () => {
     [get_province_names, get_citys_name, get_substate_names, get_address_names]
   );
 
+  /**
+   * @brief Recibe la informacion del usuario y crea una estructura de datos para el formulario
+   * */
   const makeUser = (info, locinfo) => {
     return [
       {
@@ -136,6 +150,10 @@ export const AECreate = () => {
       },
     ];
   };
+
+  /**
+   * @brief Funcion encargada de utilizar las funciones anteriores para cargar la información en el formulario
+   * */
   const updateValues = useCallback(async () => {
     try {
       const response = await fetch_user_data();
@@ -147,6 +165,7 @@ export const AECreate = () => {
     }
   }, [fetch_user_data, getLocate]);
 
+
   useEffect(() => {
     //visualiza una vez cargado todo
     if (stepData) {
@@ -154,6 +173,7 @@ export const AECreate = () => {
     }
   }, [stepData]);
 
+  // si no estas logeado te redirigira al origen
   useEffect(() => {
     if (User === null) {
       navigate("/");
@@ -161,10 +181,9 @@ export const AECreate = () => {
     updateValues();
   }, [User, navigate, setStepData, fetch_user_data, updateValues]);
 
+
   /**
-   * @brief This function is called when the user expands or collapses an accordion panel.
-   *
-   * @param {string} panel The name of the accordion panel that was expanded or collapsed.
+   * @brief Funcion encargada de controlar el acordion
    */
   const handleChange = (panel) => (event, newExpanded) => {
     if (expanded === "") {
@@ -179,6 +198,9 @@ export const AECreate = () => {
     }
   };
 
+  /**
+   * @brief Funcion encargada armar la estructura de informacion para el envio y lo realiza.
+   */
   const handleRegister = async () => {
     try {
       let register_user = {
@@ -207,7 +229,7 @@ export const AECreate = () => {
   };
 
   /**
-   * @brief This function is called when the user clicks the "Submit" button.
+   * @brief Se encarga de verificar los errores en cada acordion y de llamar a la funcion de registro
    */
   const handleSend = async () => {
     setSendError(true);
@@ -217,13 +239,16 @@ export const AECreate = () => {
   };
 
   /**
-   * @brief This function is called when the user clicks the "Cancel" button.
+   * @brief Se encarga de cerrar y volver al perfil
    */
   const handleClose = () => {
     refesh_fn();
     navigate("/ae/profile");
   };
-
+  
+  /**
+   * @brief Se encarga de cerrar y retoceder
+   */
   const handleBack = () => {
     if (open) {
       setOpen(false);

@@ -10,10 +10,7 @@ const DEFAULT = { id: 0, nombre: "Ninguno" };
 
 export const PublicResourcesProvider = ({ children }) => {
   /**
-   * Function to get the names of the provinces
-   * @async
-   * @param {string} province - The name of the province(can be misspelled), it will be searched in the georef api
-   * @returns {Promise<Array>}
+   * @brief Obtiene los nombres de las provincias
    */
   const get_province_names = async (province) => {
     try {
@@ -24,13 +21,11 @@ export const PublicResourcesProvider = ({ children }) => {
         exacto: false,
         max: 5000,
       };
-      // por si busco una en concreto osea digamos osea, provincia != null
       if (province) {
         params.nombre = province;
         params.max = 1;
         params.exacto = true;
       }
-
       const response = await axios.get(`${URL_GEOREF}/provincias`, {
         params,
       });
@@ -43,6 +38,9 @@ export const PublicResourcesProvider = ({ children }) => {
     }
   };
 
+  /**
+   * @brief Obtiene los nombres de las departamentos
+   */
   const get_substate_names = async (province, department) => {
     try {
       let params = {
@@ -53,13 +51,11 @@ export const PublicResourcesProvider = ({ children }) => {
         exacto: false,
         max: 5000,
       };
-
       if (department) {
         params.nombre = department;
         params.max = 1;
         params.exacto = true;
       }
-
       const response = await axios.get(`${URL_GEOREF}/departamentos`, {
         params,
       });
@@ -73,11 +69,7 @@ export const PublicResourcesProvider = ({ children }) => {
   };
 
   /**
-   * Asynchronously fetches city names based on province and city names.
-   * @async
-   * @param {string} province - the name of the province (can't be misspelled)
-   * @param {string} city - the name of the city in the province (can be misspelled)
-   * @return {Array<string>} an array of city names with department names, or an empty array
+   * @brief Obtiene los nombres de las ciudad
    */
   const get_citys_name = async (province, department, city) => {
     try {
@@ -90,17 +82,14 @@ export const PublicResourcesProvider = ({ children }) => {
         exacto: false,
         max: 5000,
       };
-
       if (city) {
         params.nombre = city;
         params.max = 1;
         params.exacto = true;
       }
-
       const response = await axios.get(`${URL_GEOREF}/localidades-censales`, {
         params,
       });
-
       let { cantidad, localidades_censales } = response.data;
       localidades_censales.push(DEFAULT);
       return cantidad > 0 ? localidades_censales : [];
@@ -111,12 +100,7 @@ export const PublicResourcesProvider = ({ children }) => {
   };
 
   /**
-   * Asynchronously retrieves address names based on the given province, city, and address.
-   * @async
-   * @param {string} province - The province where the address is located (can't be misspelled).
-   * @param {string} city - The city where the address is located (can't be misspelled).
-   * @param {string} address - The address to be searched (can be misspelled).
-   * @returns {Array<string>} - An array of formatted address names.
+   * @brief Obtiene los nombres de las direcciónes
    */
   const get_address_names = async (province, department, locality, calle) => {
     try {
@@ -130,7 +114,6 @@ export const PublicResourcesProvider = ({ children }) => {
         exacto: false,
         max: 5000,
       };
-
       if (calle) {
         params.nombre = calle;
         params.max = 1;
@@ -140,7 +123,6 @@ export const PublicResourcesProvider = ({ children }) => {
         params,
       });
       let { cantidad, calles } = response.data;
-      // Process the retrieved address names
       calles.push(DEFAULT);
       return cantidad > 0 ? calles : [];
     } catch (error) {
@@ -150,17 +132,15 @@ export const PublicResourcesProvider = ({ children }) => {
   };
 
   /**
-   * Fetches the news list from the backend API.
-   * @async
-   * @return {Promise<Array>} the response data from the backend API
+   * @brief Obtiene la lista de noticias
    */
   const fetch_news_list = async (current_page, page_size) => {
     try {
       const response = await axios.post(
         `${URL_BACKEND}/api/resources/get-news-list`,
-        { page_size: page_size},
+        { page_size: page_size },
         {
-          params: { page: current_page},
+          params: { page: current_page },
           headers: { "X-API-Key": APP_KEY },
         }
       );
@@ -172,10 +152,7 @@ export const PublicResourcesProvider = ({ children }) => {
   };
 
   /**
-   * Fetches the news PDF for a given ID.
-   *
-   * @param {type} id - The ID of the news PDF to fetch
-   * @return {Promise<string>} The url of the PDF
+   * @brief Obtiene un pdf de una noticia asignado a una id
    */
   const fetch_news_pdf = async (id) => {
     try {
@@ -193,6 +170,9 @@ export const PublicResourcesProvider = ({ children }) => {
     }
   };
 
+  /**
+   * @brief Obtiene la lista de preguntas frecuentes
+   */
   const fetch_faq = async () => {
     try {
       const response = await axios.get(

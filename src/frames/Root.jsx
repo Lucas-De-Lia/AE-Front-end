@@ -6,7 +6,7 @@ import {
   Fab,
   Paper,
   Stack,
-  Typography
+  Typography,
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import React, { Suspense } from "react";

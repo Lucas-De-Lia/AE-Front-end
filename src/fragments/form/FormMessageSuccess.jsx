@@ -3,13 +3,16 @@ import React from "react";
 import { useComponentMessageSuccessString } from "../../contexts/TextProvider.jsx";
 import { superCenter } from "../../theme.jsx";
 import { getDates } from "../../utiles.js";
+/**
+ * @brief Mensaje de exito al enviar un alta de autoexlcusion.
+ */
 const FormMessageSuccess = ({ first }) => {
+  // Fechas para hoy
   const { startDay, fthMonth, sixMonth, lastMonth } = getDates();
+  //Variables de texto
   const menssagesuccesslabels = useComponentMessageSuccessString();
   return (
     <Box container sx={{ ...superCenter, paddingBottom: 5 }}>
-      {/* Your component content */}
-
       <Typography variant="h4" color="success.main" gutterBottom>
         {first
           ? menssagesuccesslabels.create.title.first_ae

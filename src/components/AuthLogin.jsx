@@ -31,40 +31,52 @@ import { useService } from "../contexts/ServiceContext.js";
 import ProcessAlert from "../fragments/ProcessAlert.jsx";
 import { doformatCUIL, sleep } from "../utiles.js";
 
+/**
+ * @brief Componente que muestra el formulario de login.
+ * @returns {JSX.Element}
+ */
 const AuthLogin = () => {
+  // Variables con los textos
   const authloginlabels = useComponentAuthLoginString();
   const commonbuttons = useCommonsButtonString();
   const commonfields = useCommonsFieldString();
 
+  // Servicios de backend
   const { User, authenticate } = useService();
 
+  // Variables de estado
+  //se encargarn de ontrolar los carteles de error
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [loginFail, setLoginFail] = useState(false);
 
   const [cuil, setCuil] = useState("");
   const [password, setPassword] = useState("");
 
+  // controlan el backdrop y el loading
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
+  /**
+   * @brief Se encarga de guardar el cuil y setear el estado de open y los errores .
+   */
   const handleInputChange = (event) => {
     setOpen(false);
     setLoginFail(false);
     setCuil(doformatCUIL(event.target.value));
   };
 
+  /**
+   * @brief Se encarga de guardar la contraseña y setear el estado de open y los errores.
+   */
   const handleOnChangePassword = (event) => {
     setOpen(false);
     setLoginFail(false);
     setPassword(event.target.value);
   };
 
-  /**
-   * @brief This useEffect hook is used to perform side effects in a functional component.
-   * In this case, the effect is triggered when the component mounts (since the dependency array is empty []).
-   */
+  // Si estoy logeado redirijo al profile
   React.useEffect(() => {
     if (User != null) {
       navigate("/ae/profile");
@@ -72,10 +84,7 @@ const AuthLogin = () => {
   }, [User, navigate]);
 
   /**
-   * @brief This function checks if the login data is valid, sets the appropriate state variables,
-   * and redirects the user to their profile page if the login is successful.
-   *
-   * @param {Event} event The event object.
+   * @brief Se encarga de hacer la llamada al backend para autenticar y setea los mensajes de exito/error, luego redirige si todo sale bien.
    */
   const handleLogin = async () => {
     setOpen(true);
@@ -114,9 +123,8 @@ const AuthLogin = () => {
           <Stack spacing={2}>
             <TextField
               sx={{
-                width: "100%", // Ancho completo en pantallas móviles
+                width: "100%",
                 "@media (min-width: 600px)": {
-                  // Ajusta según sea necesario para tamaños mayores
                   width: "25vw",
                 },
               }}
@@ -133,9 +141,8 @@ const AuthLogin = () => {
             />
             <TextField
               sx={{
-                width: "100%", // Ancho completo en pantallas móviles
+                width: "100%",
                 "@media (min-width: 600px)": {
-                  // Ajusta según sea necesario para tamaños mayores
                   width: "25vw",
                 },
               }}
@@ -154,7 +161,7 @@ const AuthLogin = () => {
               size="small"
               component="button"
               disabled={loginSuccess}
-              sx={{...centeringStyles, padding: 1}}
+              sx={{ ...centeringStyles, padding: 1 }}
               underline="hover"
               onClick={() => {
                 navigate("/password/forgot");
@@ -185,26 +192,6 @@ const AuthLogin = () => {
             </CardActions>
           </Stack>
         </CardContent>
-        {/* Notificvacion de exito 
-        
-                <Collapse in={loginSuccess}>
-          <AlertFragment
-            type="success"
-            title={authloginlabels.alert.success.title}
-            body={authloginlabels.alert.success.body}
-            strong={authloginlabels.alert.success.strong}
-          />
-        </Collapse>
-        
-        <Collapse in={loginFail}>
-          <AlertFragment
-            type="error"
-            title={authloginlabels.alert.error.title}
-            body={authloginlabels.alert.error.body}
-            strong={authloginlabels.alert.error.strong}
-          />
-        </Collapse>
-        */}
       </Card>
     </>
   );

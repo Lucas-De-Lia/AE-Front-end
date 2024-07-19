@@ -4,7 +4,9 @@ import React from "react";
 import { centeringStyles } from "../theme.jsx";
 
 import CheckIcon from "@mui/icons-material/Check";
-
+/**
+ * @brief Email backdrop informa el resultado de enviar el email de verificación.
+ */
 const EmailBackdrop = ({ open, loading }) => {
   return (
     <Backdrop

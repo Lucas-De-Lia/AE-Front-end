@@ -1,29 +1,32 @@
 import { List, ListItem, Paper, Typography } from "@mui/material";
 import React, { lazy, useCallback, useEffect, useState } from "react";
-import { useRootFAQString } from "../contexts/TextProvider.jsx";
-//import Question from "../fragments/Question";
 import { usePublicResources } from "../contexts/PublicResourcesContext";
+import { useRootFAQString } from "../contexts/TextProvider.jsx";
 
 const Question = lazy(() => import("../fragments/Question.jsx"));
 
 /**
- * React functional component for the FAQ page.
- *
- * @param {object} props - component properties
- * @returns {JSX.Element} - the FAQ page
+ * @brief Se encarga de renderizar la lista de preguntas frecuentes
  */
 const FAQ = () => {
-  const [questions, setQuestions] = useState([]);
+  // Variables de texto
   const rootfaq = useRootFAQString();
+  // Servicios del backend
   const { fetch_faq } = usePublicResources();
 
+  // Variables de estado
+  const [questions, setQuestions] = useState([]);
+
+  /**
+   * @brief Se encarga de obtener las preguntas frecuentes y cargarlas.
+   */
   const fetchData = useCallback(async () => {
     try {
       const response = await fetch_faq();
       setQuestions(
         response.map((question) => ({
           ...question,
-          isOpen: false,
+          isOpen: false, // boolean para saber cual es la pregunta abierta
         }))
       );
     } catch (error) {
@@ -35,10 +38,13 @@ const FAQ = () => {
     fetchData();
   }, [fetchData]);
 
+  /**
+   * @brief Se encarga de controlar el acordion
+   */
   const handleQuestionToggle = (index) => {
     setQuestions((prevQuestions) => {
       const updatedQuestions = [...prevQuestions];
-      updatedQuestions[index].isOpen = !updatedQuestions[index].isOpen;
+      updatedQuestions[index].isOpen = !updatedQuestions[index].isOpen; // actualiza el booleano
       return updatedQuestions;
     });
   };

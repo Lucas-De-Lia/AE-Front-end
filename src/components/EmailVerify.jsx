@@ -9,34 +9,31 @@ import { useComponentEmailVerifyString } from "../contexts/TextProvider.jsx";
 import AlertFragment from "../fragments/AlertFragmet.jsx";
 
 /**
- * The `VerificationCard` component is a React component that displays a card with a loading spinner
- * and a verification result message.
- *
- * @param {string} id - The unique identifier of the email verification request.
- * @param {string} hash - The cryptographic hash of the email verification request.
- * @returns {JSX.Element} The `VerificationCard` component.
+ * @brief Se visualiza cuando un entras al link de la verificacion de email
  */
 const EmailVerify = () => {
-  const [loading, setLoading] = useState(true);
-  const [success, setSuccess] = useState(false);
-
+  // Variables de texto
   const emailverifylabels = useComponentEmailVerifyString();
 
   const navigate = useNavigate();
 
+  // Servicios del Backend
+  const { isAuthenticated } = useService();
+  const { send_confirmation_verify } = useEmailVerify();
+
+  // Control de estado para mensajes de error y de carga
+  const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState(false);
+
+  // Variables de URL
   const { id, hash } = useParams();
   const expires = new URLSearchParams(window.location.search).get("expires");
   const signature = new URLSearchParams(window.location.search).get(
     "signature"
   );
 
-  const { isAuthenticated } = useService();
-  const { send_confirmation_verify } = useEmailVerify();
   /**
-   * The function `verifyEmail` is an asynchronous function that sends a POST request to verify an email
-   * using the provided `id` and `hash`, and updates the verification result accordingly.
-   *
-   * @async
+   * @abstract Se encarga de hacer la llamada al backend para verificar el email y setear todo para poder visualizar el resultado
    */
   const verifyEmail = useCallback(async () => {
     const result = null;

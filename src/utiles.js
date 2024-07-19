@@ -1,3 +1,8 @@
+/**
+ * @brief Verifica si el string es un numero
+ * @param {Event} e  es el evento del onchange (e.target.value)
+ * @returns {Boolean}
+ */
 export const isNum = (e) => {
   const value = e.target.value;
   if (value === "" || Number.isNaN(Number(value))) {
@@ -5,13 +10,22 @@ export const isNum = (e) => {
   }
   return true;
 };
-
+/**
+ * @brief Acorta el nombre de un archivo , toma los primeros 7 caracteres los concatena con los ultimos 7 , y entre medio agrega tres puntos.
+ * @param {string} file_name Nombre de un archivo
+ * @returns
+ */
 export const shortFileName = (file_name) => {
   if (file_name.length > 10) {
     return file_name.substr(0, 7) + "..." + file_name.substr(-7);
   }
   return file_name;
 };
+/**
+ * @brief Combierte un pdf en base64 a un Blob
+ * @param {string} data Elemento en base64 de pdf con el prefijo "data:application/pdf;base64,..."
+ * @returns
+ */
 export const base64toBlob = (data) => {
   const base64WithoutPrefix = data.substr(
     "data:application/pdf;base64,".length
@@ -27,6 +41,10 @@ export const base64toBlob = (data) => {
 
   return new Blob([out], { type: "application/pdf" });
 };
+/**
+ * @brief Obtiene las fechas de AE para el dia actual.
+ * @returns 
+ */
 export const getDates = () => {
   let startDay = new Date();
   let fthMonth = new Date(startDay);
@@ -44,32 +62,36 @@ export const getDates = () => {
     lastMonth,
   };
 };
+/**
+ * @brief Retorna verdadero si la app esta siendo ejecutada en movile.
+ * @returns {Boolean} 
+ */
 export const isMobileDevice = () => {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
   );
 };
+/**
+ * 
+ * @param {*} dates 
+ * @returns 
+ */
 export const json_to_json_calendar = (dates) => {
   let result = null;
   if (dates.startDay !== null) {
     result = {};
-
     if (dates.hasOwnProperty("startDay")) {
       result.startDay = new Date(dates.startDay);
     }
-
     if (dates.hasOwnProperty("fifthMonth")) {
       result.fifthMonth = new Date(dates.fifthMonth);
     }
-
     if (dates.hasOwnProperty("sixthMonth")) {
       result.sixthMonth = new Date(dates.sixthMonth);
     }
-
     if (dates.hasOwnProperty("lastMonth")) {
       result.lastMonth = new Date(dates.lastMonth);
     }
-
     if (dates.hasOwnProperty("renewalMonth")) {
       result.endMonth = new Date(dates.renewalMonth);
     }
@@ -103,7 +125,11 @@ export const dates_to_json_calendar = (dates) => {
   }
   return result;
 };
-
+/**
+ * @brief Convierte una fecha en un string separado por - con el formato "YYYY-MM-DD"
+ * @param {*} date Fecha
+ * @returns {string}
+ */
 export const formatDate = (date) => {
   const year = date.getFullYear();
   let month = date.getMonth() + 1;
@@ -113,6 +139,12 @@ export const formatDate = (date) => {
 
   return `${year}-${month}-${day}`;
 };
+/**
+ * @brief Toma un email(string) y lo censura obeniendo de 
+ *  ejemplo@dominio.com -> eje****@dom***.com
+ * @param {*} email 
+ * @returns 
+ */
 export const shortEmail = (email) => {
   let splitemail = email.split("@");
   let sizedom = splitemail[1].length;
@@ -125,32 +157,27 @@ export const shortEmail = (email) => {
     splitemail[1].substr(sizedom - 4, sizedom)
   );
 };
-
 function stringToColor(string) {
   let hash = 0;
   let i;
-
-  /* eslint-disable no-bitwise */
   for (i = 0; i < string.length; i += 1) {
     hash = string.charCodeAt(i) + ((hash << 5) - hash);
   }
-
   let color = "#";
-
   for (i = 0; i < 3; i += 1) {
     let value = (hash >> (i * 8)) & 0xff;
-
-    // Ajusta el valor para limitarlo a un rango de colores pastel oscuros
     let darkPastelValue = Math.floor(100 + (value % 56));
 
     color += `00${darkPastelValue.toString(16)}`.slice(-2);
   }
-  /* eslint-enable no-bitwise */
-
   return color;
 }
-
-export const datecontrol = (selectedDate) => {
+/**
+ * @brief Verifica que la fecha de input este en el rango de -18 años y -100años
+ * @param {Date} inputDAte 
+ * @returns 
+ */
+export const datecontrol = (inputDAte) => {
   let today = new Date();
   let yearsAgo_18 = new Date(
     today.getFullYear() - 18,
@@ -162,12 +189,22 @@ export const datecontrol = (selectedDate) => {
     today.getMonth(),
     today.getDate()
   );
-  return yearsAgo_100 <= selectedDate && selectedDate <= yearsAgo_18;
+  return yearsAgo_100 <= inputDAte && inputDAte <= yearsAgo_18;
 };
-export const parseDate = (dateString) => {
-  const [year, month, day] = dateString.split("-").map(Number);
+/**
+ * @brief Parsea los dates de php a los de js restandole al mes 1.
+ * @param {*} inputdate 
+ * @returns 
+ */
+export const parseDate = (inputdate) => {
+  const [year, month, day] = inputdate.split("-").map(Number);
   return new Date(year, month - 1, day);
 };
+/**
+ * @brief Crea unaestructura con el color y las iniciales para mostrar en el Icono del perfil.
+ * @param {string} name 
+ * @returns 
+ */
 export const stringAvatar = (name) => {
   return {
     sx: {
@@ -178,6 +215,7 @@ export const stringAvatar = (name) => {
     children: obtenerIniciales(name),
   };
 };
+
 function obtenerIniciales(nombre) {
   const partes = nombre.split(", ");
   const inicialNombre = partes[0][0];
@@ -185,13 +223,15 @@ function obtenerIniciales(nombre) {
   const inicialApellido = apellido ? apellido.split(" ")[0][0] : "";
   return `${inicialNombre}${inicialApellido}`;
 }
+/**
+ * @brief Agrega un formato al cuil, con - es decir: 1-2345678-9
+ * @param {*} inputValue 
+ * @returns 
+ */
 export const doformatCUIL = (inputValue) => {
   const sanitizedValue = inputValue.replace(/\D/g, "");
   const truncatedValue = sanitizedValue.slice(0, 11);
-
-  // Formatear según tu criterio: XX-XXXXXXXX-X
   let formatted = truncatedValue;
-
   if (truncatedValue.length > 2) {
     formatted = truncatedValue
       .replace(/^(\d{2})/, "$1-")
@@ -199,27 +239,48 @@ export const doformatCUIL = (inputValue) => {
   }
   return formatted;
 };
-
+/**
+ * @brief Elimina cualquier letra del string, lo trunca a 4 caracteres para asegurar que sea un codigo postal
+ * @param {*} inputValue 
+ * @returns 
+ */
 export const doPostalCode = (inputValue) => {
   const sanitizedValue = inputValue.replace(/\D/g, "");
   const truncatedValue = sanitizedValue.slice(0, 4);
   let formatted = truncatedValue;
   return formatted;
 };
+/**
+ * @brief Realiza un parse a int y verifica que el numero sea un numero entre 0 y 50.
+ * @param {string} value 
+ * @returns 
+ */
 export const doFloor = (value) => {
   const floorNumber = parseInt(value, 10) || 0;
   return Math.min(Math.max(floorNumber, 0), 50).toString();
 };
-
+/**
+ * @brief Verifica que el string sean solo numeros.
+ * @param {*} value 
+ * @returns 
+ */
 export const itsNumber = (value) => {
   return /^\d+$/.test(value);
 };
-
+/**
+ * @brief Asegura que el valor del apartamentro sea o una sola letra o un solo numero.
+ * @param {*} value 
+ * @returns 
+ */
 export const doApartment = (value) => {
   const sanitizedValue = value.replace(/[^A-Z0-9]/gi, "").toUpperCase();
   return sanitizedValue.length > 0 ? sanitizedValue.charAt(0) : "";
 };
-
+/**
+ * @brief Verifica que el email tenga un formato de email
+ * @param {*} email Email a testear
+ * @returns 
+ */
 export const doEmail = (email) => {
   const trimmedEmail = email.trim();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -230,7 +291,11 @@ export const doEmail = (email) => {
     return trimmedEmail;
   }
 };
-
+/**
+ * @brief Asegura que el numero, tenga el formato de un telefono
+ * @param {string} phonein 
+ * @returns 
+ */
 export const doPhone = (phonein) => {
   let phone = phonein.replace(/\D/g, "");
   if (phone.length > 10) {
@@ -246,7 +311,12 @@ export const doPhone = (phonein) => {
     )}`;
   }
 };
-
+/**
+ * @brief Verifica que la constraseñas sean iguales y que cumplan con los requerimientos de almenos una letra , un numero y almenos 8 caracteres
+ * @param {*} password1 
+ * @param {*} password2 
+ * @returns 
+ */
 export const testpassword = (password1, password2) => {
   let re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 
@@ -271,6 +341,13 @@ export const isSameMonth = (date1, date2) => {
   return date1.getMonth() === date2.getMonth();
 };
 
+/**
+ * @brief Verifica que una fecha esta dentro de un rango ,( usa mayor/menor igual)
+ * @param {*} start Fecha inicial
+ * @param {*} day Fecha a testear
+ * @param {*} end Fecha final
+ * @returns 
+ */
 export const dateBetween = (start, day, end) => {
   return start.getDate() <= day && day <= end.getDate();
 };
@@ -279,6 +356,12 @@ export const monthGreater = (date1, date2) => {
   return date1.getMonth() < date2.getMonth();
 };
 
+/**
+ * @brief Retorna el verdadero indice de una celda en la lista de dias.
+ * @param {} cellIndex 
+ * @param {*} rowIndex 
+ * @returns 
+ */
 export const realIndex = (cellIndex, rowIndex) => {
   return cellIndex + 7 * rowIndex;
 };
@@ -295,7 +378,13 @@ export const dayLessEqual = (day, date1, cellIndex, rowIndex) => {
     (day === null && realIndex(cellIndex, rowIndex) < dayg)
   );
 };
-
+/**
+ * @brif Verifica que dos string no tengan mas de una cantidad de diferencias.
+ * @param {*} string1 
+ * @param {*} string2 
+ * @param {*} max 
+ * @returns 
+ */
 export const stringDiff = (string1, string2, max) => {
   if (string1.length === string2.length) {
     let diffs = 0;
@@ -314,18 +403,40 @@ export const stringDiff = (string1, string2, max) => {
   stringaux = stringaux + " ".repeat(tam);
   return stringDiff(stringaux, maxstring, max);
 };
-
+/**
+ * @brief Verifica que el email tenga un dominio conocido.
+ */
 export const emailConocido = (email) => {
   //@santafe.gov.ar esta para las pruebas
-  const dominiosPermitidos = ["@gmail.com", "@outlook.com", "@hotmail.com", "@live.com", "@msn.com", "@yahoo.com", "@santafe.gov.ar"];
+  const dominiosPermitidos = [
+    "@gmail.com",
+    "@outlook.com",
+    "@hotmail.com",
+    "@live.com",
+    "@msn.com",
+    "@yahoo.com",
+    "@santafe.gov.ar",
+  ];
   for (let i = 0; i < dominiosPermitidos.length; i++) {
-      if (email.endsWith(dominiosPermitidos[i])) {
-          return true;
-      }
+    if (email.endsWith(dominiosPermitidos[i])) {
+      return true;
+    }
   }
   return false;
-}
+};
+
+export const handlePaste = (event) => {
+  event.preventDefault(); // Evita la acción de pegado
+  // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
+};
+export const handleCopyCut = (event) => {
+  event.preventDefault(); // Evita la acción de copiado o cortado
+  // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
+};
+
 const utiles = {
+  handlePaste,
+  handleCopyCut,
   isStartdate,
   isEnddate,
   isSameMonth,

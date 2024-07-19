@@ -6,7 +6,9 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import { useLoadingAlertString } from "../contexts/TextProvider.jsx";
 import AlertFragment from "./AlertFragmet.jsx";
-
+/**
+ * @brief Muestra un backlog con un CIrcular process , luego muestra una alerta de exito o fracaso
+ */
 const ProcessAlert = ({ open, loading, success }) => {
   const loadingalert = useLoadingAlertString();
   return (

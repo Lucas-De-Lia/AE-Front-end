@@ -1,8 +1,19 @@
 import React, { cloneElement, useState } from "react";
-
+/**
+ * @brief Componente que permite bloquear un elemento por 30 segundos y luego desbloquearlo
+ * Usado para el boton de "reenviar mail de verificación" y "la recuperacion de cuenta"
+ */
 const SixtysecFragment = (props) => {
+  //Variables de estado
+  // si fue clickeado
   const [click, setClick] = useState(false);
+  //tiempo resatante para ser activado nuevamente
   const [timeLeft, setTimeLeft] = useState(31);
+
+  /**
+   * @brief Funcion encargada de gestionar el click del elemento
+   * Si sno se clickeo espera 30 segundos , si no se hizo click realiza la accion
+   */
   const handleClick = async (event) => {
     if (!click) {
       const result = await props.action();

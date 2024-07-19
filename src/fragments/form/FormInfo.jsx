@@ -12,13 +12,11 @@ import {
 import { red } from "@mui/material/colors";
 import React, { useImperativeHandle, useState } from "react";
 import {
-  useCommonsTextString,
   useComponentPasswordAlertString,
   useFormInfoString,
 } from "../../contexts/TextProvider.jsx";
 import { centeringStyles } from "../../theme.jsx";
 import { datecontrol, doformatCUIL, testpassword } from "../../utiles.js";
-import { ErrorSharp } from "@mui/icons-material";
 
 const genders = [
   { label: "Ninguno", id: "-1" },
@@ -26,12 +24,16 @@ const genders = [
   { label: "Femenino", id: "F" },
   { label: "X", id: "X" },
 ];
-
+/**
+ * @brief Step del registro, encargado de obtener la información principal , ocmo nombre , cuild y password
+ */
 const FormInfo = React.forwardRef((props, ref) => {
+  // Variables texto
   const forminfolabels = useFormInfoString();
   const passwordalertlabels =
     useComponentPasswordAlertString().info.requirements;
 
+  // Variables de estado
   const [userData, setUserData] = useState({
     name: props.name,
     lastname: props.lastname,
@@ -41,18 +43,6 @@ const FormInfo = React.forwardRef((props, ref) => {
     password: props.password,
     passrep: props.password,
   });
-
-  const getData = () => {
-    return userData;
-  };
-
-  useImperativeHandle(ref, () => ({
-    handleErrors,
-    getData,
-  }));
-
-  const handleNothing = (value) => value;
-  const handleEmptyness = (value) => value === "";
 
   const [errors, setErrors] = useState({
     name: false,
@@ -64,7 +54,7 @@ const FormInfo = React.forwardRef((props, ref) => {
     passrep: false,
   });
 
-  //Objeto que contine todos los metodos para formatear los campos
+  // Estructura que almacena los formatters , que se encargan de decir que formato tiene cada textfield.
   const FieldsFormatters = {
     name: (value) => handleNothing(value),
     lastname: (value) => handleNothing(value),
@@ -74,12 +64,7 @@ const FormInfo = React.forwardRef((props, ref) => {
     password: (value) => handleNothing(value),
     passrep: (value) => handleNothing(value),
   };
-
-  const handleDateControl = (value) => !datecontrol(new Date(value));
-  const handleNonDefaultGender = (value) => value === -1;
-  const handleRepPassword = (value) => !testpassword(value, userData.password);
-
-  // Objeto que contiene todos los metodos para detectar errores segun el campo
+  // Estructura que almacena un conjunto de funciones que verifican si el campo contiene errores.
   const FieldsDetectedError = {
     name: (value) => handleEmptyness(value),
     lastname: (value) => handleEmptyness(value),
@@ -90,6 +75,15 @@ const FormInfo = React.forwardRef((props, ref) => {
     passrep: (value) => handleRepPassword(value),
   };
 
+  const handleNothing = (value) => value;
+  const handleEmptyness = (value) => value === "";
+  const handleDateControl = (value) => !datecontrol(new Date(value));
+  const handleNonDefaultGender = (value) => value === -1;
+  const handleRepPassword = (value) => !testpassword(value, userData.password);
+
+  /**
+   * @brief Funcion que gestiona los textfields.
+   */
   const handleChange = (field, value) => {
     setUserData((prevData) => ({
       ...prevData,
@@ -117,6 +111,15 @@ const FormInfo = React.forwardRef((props, ref) => {
     setErrors(e);
     return Object.values(e).some(Boolean);
   };
+
+  const getData = () => {
+    return userData;
+  };
+
+  useImperativeHandle(ref, () => ({
+    handleErrors,
+    getData,
+  }));
 
   return (
     <CardContent key={"Form-info"}>
@@ -230,7 +233,13 @@ const FormInfo = React.forwardRef((props, ref) => {
             ))}
           </Grid>
           <Alert
-            severity={errors.password || errors.passrep ? "error" : (userData.password.length>0 && userData.passrep.length>0 ) ?"success":"warning"}
+            severity={
+              errors.password || errors.passrep
+                ? "error"
+                : userData.password.length > 0 && userData.passrep.length > 0
+                ? "success"
+                : "warning"
+            }
             style={{ textAlign: "left", marginTop: "16px" }}
           >
             <AlertTitle>{passwordalertlabels.title}</AlertTitle>

@@ -2,16 +2,24 @@ import { Stack, TextField } from "@mui/material";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { useCommonsFieldString } from "../contexts/TextProvider.jsx";
 import { testpassword } from "../utiles.js";
-
+/**
+ * @brief Fragmento que contiene dos campos de password encargado de gestionar su estado y eerror
+ */
 const PasswordFragment = forwardRef((props, ref) => {
+  //Variables de texto
+  const commonfields = useCommonsFieldString();
+  //Variables de estado
   const [passwordChange, setPasswordChange] = useState({
     password: "",
     newps: "",
     renewps: "",
   });
+  // Gestion de errores
   const [error, setError] = useState(false);
-  const commonfields = useCommonsFieldString();
 
+  /**
+   * @brief Gestiona el cambio de los estados mediante los textfields.
+   */
   const handleChange = (field, value) => {
     setPasswordChange((prev) => ({ ...prev, [field]: value }));
   };

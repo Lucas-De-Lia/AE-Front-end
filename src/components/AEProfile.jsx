@@ -12,22 +12,27 @@ import ProfileInfo from "../fragments/profile/ProfileInfo.jsx";
 import { centeringStyles } from "../theme.jsx";
 import { isSameMonth } from "../utiles.js";
 
-const Divider = lazy(() => import("@mui/material/Divider"));
 const Grid = lazy(() => import("@mui/material/Grid"));
 const Paper = lazy(() => import("@mui/material/Paper"));
 const Stack = lazy(() => import("@mui/material/Stack"));
 
+/**
+ * @brief Componente que muestra el perfil del AE.
+ */
 const AEProfile = () => {
+  // Variables con los textos
+  const labels = useComponentAEProfileString();
+  // Servicios de backend
   const { User, serverDates, AE } = useService();
+
   const navigate = useNavigate();
 
+  // Si no estoy loageado entonces voy a la raiz.
   useEffect(() => {
     if (!User) {
       navigate("/");
     }
   }, [User, navigate, serverDates]);
-
-  const labels = useComponentAEProfileString();
 
   return (
     <div>

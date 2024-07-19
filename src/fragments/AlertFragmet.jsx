@@ -5,10 +5,12 @@ import { centeringStyles } from "../theme.jsx";
 const Alert = lazy(() => import("@mui/material/Alert"));
 const AlertTitle = lazy(() => import("@mui/material/AlertTitle"));
 
+/**
+ * @brief Cartel de Alerta
+ */
 const AlertFragment = ({ type, title, body, strong }) => {
   return (
     <>
-      {" "}
       <Alert severity={type} sx={centeringStyles}>
         <AlertTitle>
           <Typography variant={"h6"}>{title}</Typography>

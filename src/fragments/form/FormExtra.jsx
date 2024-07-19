@@ -7,23 +7,41 @@ import {
   useFormFileAttachString,
 } from "../../contexts/TextProvider.jsx";
 import { centeringStyles } from "../../theme.jsx";
-import { doEmail, emailConocido, shortFileName } from "../../utiles.js";
+import {
+  doEmail,
+  emailConocido,
+  handleCopyCut,
+  handlePaste,
+  shortFileName,
+} from "../../utiles.js";
 import AlertFragment from "../AlertFragmet.jsx";
 
+/**
+ * @brief Step del formulario de registro, encargado de los datos extra y las imagenes del documento.
+ */
 const FormExtra = React.forwardRef(
   ({ phone, email, registerState, files }, ref) => {
+    // Variables de texto
     const formextralabels = useFormExtraString();
-
+    const formfileattachlabels = useFormFileAttachString();
+    const commonbuttonlabels = useCommonsButtonString();
+    // Variables de datos.
     const [userData, setUserData] = useState({
       phone,
       email,
       files,
     });
+    // Estructura que guarda el formato que debe tener un campo
+    const FieldFormatter = {
+      phone: (value) => value,
+      email: (value) => doEmail(value),
+    };
     const [emailCopy, setEmailCopy] = useState([]);
-    const formfileattachlabels = useFormFileAttachString();
-    const commonbuttonlabels = useCommonsButtonString();
+
+    //boton de carga de archivos una ves que se cargan las dos imagenes se desactiva
     const [isButtonDisabled, setButtonDisabled] = useState(false);
 
+    // Estructura que gestiona los errores.
     const [errors, setErrors] = useState({
       phone: false,
       email: false,
@@ -31,6 +49,9 @@ const FormExtra = React.forwardRef(
       files_type: false,
     });
 
+    /**
+     * @brief Función encargada de gestional los fieldtext agregandole un formato.
+     */
     const handleChange = (value, field, formatter) => {
       setUserData((prevUserData) => ({
         ...prevUserData,
@@ -38,16 +59,9 @@ const FormExtra = React.forwardRef(
       }));
     };
 
-    const handlePaste = (event) => {
-      event.preventDefault(); // Evita la acción de pegado
-      // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
-    };
-
-    const handleCopyCut = (event) => {
-      event.preventDefault(); // Evita la acción de copiado o cortado
-      // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
-    };
-
+    /**
+     * @brief Funcion encagada de gestionar la suba de archivos
+     *  */
     const handleFileChange = (event) => {
       let files = event.target.files;
       let selectedFilesArray = [];
@@ -75,7 +89,6 @@ const FormExtra = React.forwardRef(
       setUserData({ ...userData, files: selectedFilesArray });
       setButtonDisabled(selectedFilesArray.length >= 2);
     };
-
     const handleRemoveFile = (index) => {
       const updatedFiles = userData.files;
       updatedFiles.splice(index, 1);
@@ -83,6 +96,9 @@ const FormExtra = React.forwardRef(
       setButtonDisabled(false);
     };
 
+    /**
+     * @brief Funcion de gestion de errores.
+     */
     const handleErrors = () => {
       const { phone, email, files } = userData;
       const errors_r = {
@@ -114,11 +130,6 @@ const FormExtra = React.forwardRef(
       handleErrors,
       getData,
     }));
-
-    const FieldFormatter = {
-      phone: (value) => value,
-      email: (value) => doEmail(value),
-    };
 
     return (
       <CardContent>

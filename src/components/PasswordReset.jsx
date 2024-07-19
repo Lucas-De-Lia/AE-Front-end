@@ -3,50 +3,63 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePasswordService } from "../contexts/PasswordContext";
 import {
   useCommonsButtonString,
   useCommonsFieldString,
   useComponentPasswordAlertString,
 } from "../contexts/TextProvider.jsx";
 import AlertFragment from "../fragments/AlertFragmet.jsx";
-
-import { usePasswordService } from "../contexts/PasswordContext";
 import ProcessAlert from "../fragments/ProcessAlert.jsx";
 import { buttonTopStyle, centerButtonsStyle } from "../theme.jsx";
 import { doformatCUIL } from "../utiles.js";
-
+/**
+ * @brief Componente para cambiar la contraseña un vez entra al link de recuperar contraseña
+ */
 const PasswordReset = () => {
+  // Variables de textos
+  const passwordreq = useComponentPasswordAlertString();
+  const commonbuttons = useCommonsButtonString();
+  const commonfields = useCommonsFieldString();
+
+  const navigate = useNavigate();
+
+  // Servicios con el backend
+  const { send_reset_password } = usePasswordService();
+
+  // Variables de estado de alertas
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [send, setSend] = useState(false);
 
-  const passwordreq = useComponentPasswordAlertString();
-  const commonbuttons = useCommonsButtonString();
-  const commonfields = useCommonsFieldString();
-  const navigate = useNavigate();
-
+  //Variables de estado
   const token = new URLSearchParams(window.location.search).get("token");
-
-  const { send_reset_password } = usePasswordService();
-
   const [cuil, setCuil] = useState();
   const [password, setPassword] = useState();
   const [password_confirmation, setPasswordConfirmation] = useState();
-
+  /**
+   * @brief Maneja el cambio del CUIL
+   */
   const handleCUILChange = (event) => {
     let cuilf = doformatCUIL(event.target.value);
     setCuil(cuilf);
   };
-
+  /**
+   * @brief Maneja el cambio de la contraseña
+   */
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
-
+  /**
+   * @brief Maneja el cambio de la confirmación de la contraseña
+   */
   const handlePasswordConfirmationChange = (event) => {
     setPasswordConfirmation(event.target.value);
   };
-
+  /**
+   * @brief Envia los datos para cambiar la contraseña
+   */
   const sendData = async () => {
     setSend(true);
     let result = null;

@@ -3,7 +3,11 @@ import React from "react";
 import { useComponentMessageErrorString } from "../../contexts/TextProvider.jsx";
 import { boxErrorAESyle } from "../../theme.jsx";
 
+/**
+ * @brief Mensaje de error al enviar un alta de autoexlcusion.
+ */
 const FormMessageError = () => {
+  // variables de texto
   const messageerrorlabels = useComponentMessageErrorString();
   return (
     <Box sx={boxErrorAESyle}>

@@ -1,4 +1,3 @@
-// AuthContext.js
 import axios from "axios";
 import React, { createContext, useContext } from "react";
 
@@ -9,10 +8,7 @@ const PasswordServiceContext = createContext();
 
 export const PasswordServiceProvider = ({ children }) => {
   /**
-   * Send a forgot password email, the email will contain a link to reset the password.
-   *
-   * @param {string} cuil - The CUIL for the password reset
-   * @return {boolean} Whether the password reset link was emailed successfully
+   * @brief Envia la solicitud para enviar los emails de reseteo de contraseña
    */
   const send_forgot_password_email = async (cuil) => {
     try {
@@ -34,14 +30,8 @@ export const PasswordServiceProvider = ({ children }) => {
   };
 
   /**
-   * A function to send a reset password request.
-   *
-   * @param {string} token - the token for password reset (send by email)
-   * @param {string} cuil - the user's CUIL
-   * @param {string} password - the new password
-   * @return {boolean} whether the password change was successful
+   * @brief Envia la solicitud para cambiar la contraseña
    */
-
   const send_reset_password = async (
     token,
     cuil,
@@ -68,10 +58,7 @@ export const PasswordServiceProvider = ({ children }) => {
   };
 
   /**
-   * Asynchronously changes the user's password
-   * @async
-   * @param {Object} data - the data containing the new password ( cuil, password, password_confirmation)
-   * @return {boolean} true if the password was changed successfully, false otherwise
+   * @brief  Cambia la contraseña de un usuario, requiere la contraseña vieja
    */
   const change_user_password = async (data) => {
     try {
@@ -81,7 +68,6 @@ export const PasswordServiceProvider = ({ children }) => {
         { headers: { "X-API-Key": APP_KEY } }
       );
       const { message } = response.data;
-
       return message === "Password changed successfully";
     } catch (error) {
       console.error("Error al cambiar la contraseña:", error);

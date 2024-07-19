@@ -1,16 +1,23 @@
 import { Box, Typography } from "@mui/material";
 import React, { useImperativeHandle, useRef, useState } from "react";
-import { useFormDatePlanString } from "../../contexts/TextProvider.jsx";
-import { getDates } from "../../utiles.js";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useService } from "../../contexts/ServiceContext.js";
-
+import { useFormDatePlanString } from "../../contexts/TextProvider.jsx";
+import { getDates } from "../../utiles.js";
 
 const SITE_KEY = process.env.REACT_APP_SITE_KEY;
-
+/**
+ * @brief Step del formulario de registro, es la parte encargada de informar al usuario de los plazos en caso de registrarse y mostrar el captcha.
+ */
 const FormDatePlan = React.forwardRef((props, ref) => {
-  const { startDay, fthMonth, sixMonth, lastMonth } = getDates();
+  // Variables de texto
   const formdateplanlabels = useFormDatePlanString();
+  // Servicios del backend
+  const { verifyCaptcha } = useService();
+  // Referencia al captcha
+  const refCaptcha = useRef();
+  //Obtiene las fechas para hoy
+  const { startDay, fthMonth, sixMonth, lastMonth } = getDates();
 
   const [errors, setErrors] = useState(true);
 
@@ -22,8 +29,14 @@ const FormDatePlan = React.forwardRef((props, ref) => {
       lastMonth: lastMonth,
     };
   };
-
-  const handleErrors = () => {
+  /**
+   * @brief Verifica si el captcha se realizo correctamente.
+   */
+  const handleErrors = async () => {
+    let response = await verifyCaptcha(refCaptcha.current.getValue());
+    if (response.data.success) {
+      setErrors(!response.data.success);
+    }
     return errors;
   };
 
@@ -32,14 +45,8 @@ const FormDatePlan = React.forwardRef((props, ref) => {
     getData,
   }));
 
-  const { verifyCaptcha } = useService();
-  const refCaptcha = useRef();
-
-  const successCaptcha = async () => {
-    let response = await verifyCaptcha(refCaptcha.current.getValue());
-    if(response.data.success){
-      setErrors(!response.data.success);
-    }
+  const successCaptcha = () => {
+    setErrors(false);
   };
 
   const errorCaptcha = () => {
@@ -80,12 +87,12 @@ const FormDatePlan = React.forwardRef((props, ref) => {
         {formdateplanlabels.body[5]}
       </Typography>
       <ReCAPTCHA
-              ref={refCaptcha}
-              onChange={successCaptcha}
-              onErrored={errorCaptcha}
-              onEmptied={errorCaptcha}
-              sitekey={SITE_KEY}
-            />
+        ref={refCaptcha}
+        onChange={successCaptcha}
+        onErrored={errorCaptcha}
+        onEmptied={errorCaptcha}
+        sitekey={SITE_KEY}
+      />
     </Box>
   );
 });

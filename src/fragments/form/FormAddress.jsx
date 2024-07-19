@@ -10,26 +10,20 @@ import { useFormAddressString } from "../../contexts/TextProvider.jsx";
 import { centeringStyles } from "../../theme.jsx";
 import { doApartment, doFloor, doPostalCode, itsNumber } from "../../utiles.js";
 
-/**
- * The `AddressDataCard` component is a form component that displays fields for entering address data such as street address, floor, apartment, province, city, and postal code.
- * @param {object} props - The component properties.
- * @param {string} props.address - The initial street address.
- * @param {string} props.floor - The initial floor.
- * @param {string} props.apartment - The initial apartment.
- * @param {string} props.province - The initial province.
- * @param {string} props.city - The initial city.
- * @param {string} props.postalCode - The initial postal code.
- * @returns {JSX.Element} - Returns the `AddressDataCard` component.
- */
-
 const handleEqualToValue = (option, value) => option.id === value.id;
 
 const handleOptionLabel = (option) => option.nombre;
 
 const handleNothing = (value) => value;
 
+/**
+ * @brief  Step del formulario de registro que contiene el apartado de la dirección del autoexcluido
+ */
 const FormAddress = React.forwardRef((props, ref) => {
+  //Variables de texto
   const formaddresslables = useFormAddressString();
+
+  //Servicios del backend
   const {
     get_province_names,
     get_citys_name,
@@ -38,6 +32,7 @@ const FormAddress = React.forwardRef((props, ref) => {
     DEFAULT,
   } = usePublicResources();
 
+  // Sugerencias de procincias , ciudades y etc.
   const [suggestions, setSuggestions] = useState({
     state: null,
     substate: null,
@@ -46,6 +41,8 @@ const FormAddress = React.forwardRef((props, ref) => {
   });
 
   const setDefaults = (value) => (value !== "Ninguno" ? value : DEFAULT);
+
+  // Estructura que almacena los stados de cada campo.
   const Fields = {
     state: useState(setDefaults(props.state)),
     substate: useState(setDefaults(props.substate)),
@@ -56,7 +53,18 @@ const FormAddress = React.forwardRef((props, ref) => {
     number: useState(props.number),
     postalCode: useState(props.postalCode),
   };
-
+  // Estructura que almacena los formattters , que se encargan de modificar o agregar formato a los textfield
+  const Formatters = {
+    state: (value) => handleNothing(value),
+    substate: (value) => handleNothing(value),
+    city: (value) => handleNothing(value),
+    address: (value) => handleNothing(value),
+    number: (value) => doPostalCode(value),
+    floor: (value) => doFloor(value),
+    apartment: (value) => doApartment(value),
+    postalCode: (value) => doPostalCode(value),
+  };
+  // Estructura que almacena las acciones, que hacer cuando se selecciona un campo.
   const FieldsActions = {
     state: async (value) => {
       Fields["state"][1](value);
@@ -84,17 +92,7 @@ const FormAddress = React.forwardRef((props, ref) => {
       Fields[field][1](formatedvalue);
     },
   };
-
-  const Formatters = {
-    state: (value) => handleNothing(value),
-    substate: (value) => handleNothing(value),
-    city: (value) => handleNothing(value),
-    address: (value) => handleNothing(value),
-    number: (value) => doPostalCode(value),
-    floor: (value) => doFloor(value),
-    apartment: (value) => doApartment(value),
-    postalCode: (value) => doPostalCode(value),
-  };
+  // Alamacena los errores que pueden suceder en el formulario
   const [errors, setErrors] = useState({
     address: false,
     state: false,
@@ -104,6 +102,9 @@ const FormAddress = React.forwardRef((props, ref) => {
     number: false,
   });
 
+  /**
+   * @brief Gestiona los cambios de los estados en la estructura "Fields" aplicando un formato de ser necesario "Formatters" y ejecutando una acción "FieldsActions".
+   */
   const handleChange = useCallback(async (value, field, formatter) => {
     if (value === null) value = DEFAULT;
     if (FieldsActions.hasOwnProperty(field)) {
@@ -115,6 +116,9 @@ const FormAddress = React.forwardRef((props, ref) => {
     }
   });
 
+  /**
+   * @brief Funcion que se encarga de obtener las sugerencias para los campos .
+   */
   const getSuggestions = useCallback(
     async (field, value = "") => {
       let fields = [];
@@ -154,6 +158,9 @@ const FormAddress = React.forwardRef((props, ref) => {
     ]
   );
 
+  /**
+   * @brief Verifica si existen errores en los campos obligatorios / o que tengan alguna restricción. y devuelve un booleano
+   */
   const handleErrors = useCallback(() => {
     const newErrors = {
       state: !Fields["state"][0].id,
@@ -191,6 +198,10 @@ const FormAddress = React.forwardRef((props, ref) => {
     getData,
   }));
 
+  /**
+   * @brief Gestiona el inicio, esto es para poder cargar una dirección cuando viene por props , por ejemplo cuando nav por el formulario
+   * o carga los datos de un usuario ya autoexcluido para renovar.
+   */
   const startup = useCallback(async (props) => {
     let states = await get_province_names();
     let substates = await get_substate_names(props.state.nombre);
@@ -260,7 +271,9 @@ const FormAddress = React.forwardRef((props, ref) => {
               label={formaddresslables[field]}
               size="small"
               required={["postalCode", "number"].includes(field)}
-              helperText={["postalCode", "number"].includes(field) ? "Obligatorio": ""}
+              helperText={
+                ["postalCode", "number"].includes(field) ? "Obligatorio" : ""
+              }
               error={errors[field]}
               onChange={(event) =>
                 handleChange(

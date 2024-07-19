@@ -1,5 +1,7 @@
 import React from "react";
-
+/**
+ * @brief Chip que se utiliza en el perfil para mostrar que color representa a que fecha.
+ */
 const CustomChip = ({ text, color }) => {
   return (
     <div

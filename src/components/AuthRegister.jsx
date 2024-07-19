@@ -49,12 +49,26 @@ import {
   stepStyle,
 } from "../theme.jsx";
 import { formatDate } from "../utiles.js";
-
+/**
+ * @brief Componente que muestra el formulario de registro.
+ */
 const AuthRegister = () => {
+  // Variables con los textos
   const commonButtons = useCommonsButtonString();
   const authregisterlabels = useComponentAuthRegisterString();
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+  // Servicios de backend
+  const { registerRequest } = useService();
+
+  // Referencia al formulario mostrado
+  const dataRef = useRef(null);
+  // Referencia al stepper
+  const stepperRef = useRef(null);
+  // Formulario actual (0,1,2,3);
+  const [activeStep, setActiveStep] = useState(0);
+
+  // Errores de los steps
   const [errors, setErrors] = useState([
     false,
     false,
@@ -65,13 +79,7 @@ const AuthRegister = () => {
     false,
   ]);
 
-  const [activeStep, setActiveStep] = useState(0);
-  const [lock, setLock] = useState(false);
-  const stepperRef = useRef(null);
-
-  const dataRef = useRef(null);
-  const { registerRequest } = useService();
-
+  // Datos de los steps
   const [stepData, setStepData] = useState([
     {
       name: "",
@@ -100,8 +108,13 @@ const AuthRegister = () => {
     },
   ]);
 
+  // Variables de control al envio , visualizan un login y lockean el boton de envio para evitar enviar muchas requests antes de recivir la respuesta.
   const [loading, setLoading] = useState(false);
+  const [lock, setLock] = useState(false);
 
+  /**
+   * @brief Se encarga de hacer la llamada al backend para registrar y setea los mensajes de exito/error.
+   */
   const handleRegister = async () => {
     setLoading(true);
     try {
@@ -133,6 +146,9 @@ const AuthRegister = () => {
     setLoading(false);
   };
 
+  /**
+   * @brief Funcion que renderiza el formulario correspondiente a la etapa i
+   * */
   const StepperStage = (i) => {
     switch (i) {
       default:
@@ -193,12 +209,14 @@ const AuthRegister = () => {
     }
   };
 
+  // Funciones para controlar el estado de los steps
   const handleBack = () => {
     let active = activeStep;
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
     updateErrorAtIndex(active, false);
   };
 
+  // controla el estado de la estructura errors
   const updateErrorAtIndex = (index, value) => {
     setErrors((prevErrors) => {
       const newErrors = [...prevErrors];
@@ -206,7 +224,9 @@ const AuthRegister = () => {
       return newErrors;
     });
   };
-
+  /**
+   * @brief Se encarga de actualizar el estado de stepData con la informacion del ultimo paso
+   */
   const updateStepData = (receivedData) => {
     setStepData((prevStepData) => {
       const newStepData = [...prevStepData];
@@ -215,26 +235,39 @@ const AuthRegister = () => {
     });
   };
 
+  /**
+   * @brief Se encarga de manejar el paso siguiente y controlear los errores
+   */
   const handleNext = async () => {
     let error = false;
+    // Que exista la referencia al formulario visible y que posea una funcion handleErrors
     if (dataRef.current && typeof dataRef.current.handleErrors === "function") {
-      error = dataRef.current.handleErrors();
+      error = await dataRef.current.handleErrors(); // verifico si tiene errores
+      // error = true => tiene errores o false => no tiene
     }
-    updateErrorAtIndex(activeStep, error);
+    updateErrorAtIndex(activeStep, error); // actualizo errores
     if (!error) {
-      /* This code block is handling the data received from the current step of the form. */
+      // si no tiene errores
       if (activeStep <= 3) {
+        // si es un paso valido actualizo los datos con los datos del formulario
         updateStepData(dataRef.current.getData());
         if (activeStep === 3) {
+          // si es el ultimo paso de registro
+          // bloqueo y envio la informacion al backend
           setLock(true);
           await handleRegister();
         }
       }
+      // actualizo el paso al siguiente
       setActiveStep((prevstep) => prevstep + 1);
+      // desbloqueo el boton .
       setLock(false);
     }
   };
 
+  /**
+   * @brief Se encarga de redirigir al login si y solo si se termino de registrar.
+   */
   const handleLogin = () => {
     navigate("/auth/login");
   };
@@ -256,7 +289,7 @@ const AuthRegister = () => {
         <Stack>
           <Suspense
             fallback={
-              <Box sx={{padding:2, height: 400}}>
+              <Box sx={{ padding: 2, height: 400 }}>
                 <Skeleton height={400} />
               </Box>
             }

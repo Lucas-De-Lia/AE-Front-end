@@ -11,33 +11,36 @@ import {
 import AlertFragment from "../fragments/AlertFragmet.jsx";
 import ProcessAlert from "../fragments/ProcessAlert.jsx";
 import { centerButtonsStyle } from "../theme.jsx";
-import { sleep } from "../utiles.js";
+import { handleCopyCut, handlePaste, sleep } from "../utiles.js";
 
 /**
- * Function for handling email change form submission and user interaction.
- *  - Handles form submission
- *  - Handles user interaction with form fields
- *  - Handles email sending and confirmation
- * @return {JSX.Element} The JSX element for the email change form
+ * @brief Componente que muestra el formulario de cambio de email.
  */
 const EmailChange = () => {
+  // Variables con los textos
   const emailchange = useComponentEmailChangeString();
   const commonbuttons = useCommonsButtonString();
   const commonfields = useCommonsFieldString();
 
+  const navigate = useNavigate();
+
+  // Servicios de backend
+  const { User, setEmailUndefined } = useService();
+  const { send_confirmation_email } = useEmailVerify();
+
+  // Variables de estado
   const [formData, setFormData] = useState({
     email: "",
     reemail: "",
     password: "",
   });
+  // Controlan el backdrop ProcessAlert
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [send, setSend] = useState(false);
-  const [errorEmail, setErrorEmail] = useState(false);
 
-  const navigate = useNavigate();
-  const { User, setEmailUndefined } = useService();
-  const { send_confirmation_email } = useEmailVerify();
+  // controla que ls email sean iguales
+  const [errorEmail, setErrorEmail] = useState(false);
 
   useEffect(() => {
     if (User === null) {
@@ -46,9 +49,7 @@ const EmailChange = () => {
   }, [navigate, User]);
 
   /**
-   * Asynchronous function to send an email.
-   * @async
-   * @return {Promise} - A Promise that resolves when the email is sent successfully, and rejects with an error if the email fails to send.
+   * @brief Envia el email de confirmacion, y setea el estado de send y el loading
    */
   const sendEmail = async () => {
     try {
@@ -70,6 +71,9 @@ const EmailChange = () => {
     }
   };
 
+  /**
+   * @brief Se encarga de guardar los datos del formulario.
+   */
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -83,6 +87,9 @@ const EmailChange = () => {
     }
   };
 
+  /**
+   * @brief Se encarga de verificar los emails y permitir setear las variables para poder permitir enviar el email.
+   */
   const handleConfirm = async () => {
     if (formData.reemail === formData.email && formData.email !== "") {
       setErrorEmail(false);
@@ -93,12 +100,6 @@ const EmailChange = () => {
       setOpen(false);
     }
   };
-
-  /**
-   * Asynchronous function to handle sending confirmation code.
-   * @async
-   * @return {Promise<void>} Promise that resolves once the confirmation code is sent
-   */
 
   return (
     <Stack spacing={2}>
@@ -123,6 +124,8 @@ const EmailChange = () => {
               value={formData.email}
               autoComplete="off"
               disabled={formData.send}
+              onPaste={handlePaste}
+              onCut={handleCopyCut}
               error={errorEmail}
               onChange={handleChange}
               label={commonfields.email}
@@ -131,6 +134,8 @@ const EmailChange = () => {
               name="reemail"
               autoComplete="off"
               variant="standard"
+              onPaste={handlePaste}
+              onCut={handleCopyCut}
               error={errorEmail}
               value={formData.reemail}
               onChange={handleChange}

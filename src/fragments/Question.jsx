@@ -5,10 +5,13 @@ import {
   AccordionSummary,
   Typography,
 } from "@mui/material";
-import React from "react";
 import DOMPurify from "dompurify";
-
+import React from "react";
+/**
+ * @brief Acordion encargado de mostrar una de las pregunas mas freucentes
+ */
 const Question = ({ id, question, answer }) => {
+  // variables de estado
   const [expanded, setExpanded] = React.useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {

@@ -19,18 +19,34 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useService } from "../../contexts/ServiceContext.js";
 
+// Opciones cuando esta logeado
 const settings = [{ label: "Cerrar sesión", icon: <ExitToAppIcon />, id: 5 }];
-
+// Opciones cuando no esta logeado
 const settings_login = [
   { label: "Acceso", icon: <LockOpenIcon />, id: 1 },
   { label: "Excluirse", icon: <HowToRegIcon />, id: 2 },
 ];
-
+/**
+ * @brief Boton interactivo para ingresar y salir de la cuenta.
+ */
 const IconUserMenu = (props) => {
-  const [anchorElUser, setAnchorElUser] = useState(null);
-  const navigate = useNavigate();
+  // Servicios con el backend
   const { User, isAuthenticated, unauthenticate } = useService();
+  // Variables de estado
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [hover, setHover] = useState(false);
+  // constantes
+  const loginPath = "/auth/login";
+  const registerPath = "/auth/register";
+  const avatarname = isAuthenticated
+    ? stringAvatar(User.name + " " + User.lastname)
+    : stringAvatar("N N");
 
+  const navigate = useNavigate();
+
+  /**
+   * @brief Funcioens encargadas de abrir y cerrar el menu
+   */
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -46,9 +62,6 @@ const IconUserMenu = (props) => {
       .finally(() => setAnchorElUser(null));
   };
 
-  const loginPath = "/auth/login";
-  const registerPath = "/auth/register";
-
   const reloadOrRedirect = (path) => {
     // SI estoy en la pagina y vuelvo apretar el mismo boton recarga
     // Si no estoy , redirige a esta
@@ -59,6 +72,7 @@ const IconUserMenu = (props) => {
       setAnchorElUser(null);
     }
   };
+
   const onClickMenu = async (e, id) => {
     const actions = {
       [settings_login[0].id]: () => reloadOrRedirect(loginPath),
@@ -70,11 +84,6 @@ const IconUserMenu = (props) => {
     await action();
   };
 
-  const avatarname = isAuthenticated
-    ? stringAvatar(User.name + " " + User.lastname)
-    : stringAvatar("N N");
-
-  const [hover, setHover] = useState(false);
   return (
     <Box sx={{ flexGrow: 0 }}>
       <>
@@ -93,9 +102,10 @@ const IconUserMenu = (props) => {
             alignItems: "center",
             justifyContent: "center",
             border: "1px solid transparent",
-            backgroundImage: hover || anchorElUser
-              ? "linear-gradient(white,white), linear-gradient(120deg,rgba(255, 203, 2, 0.631) 0%, rgba(255, 116, 2, 0.631) 33%, rgba(228, 33, 83, 0.631) 66%, rgba(60, 58, 229, 0.631) 100%)"
-              : "",
+            backgroundImage:
+              hover || anchorElUser
+                ? "linear-gradient(white,white), linear-gradient(120deg,rgba(255, 203, 2, 0.631) 0%, rgba(255, 116, 2, 0.631) 33%, rgba(228, 33, 83, 0.631) 66%, rgba(60, 58, 229, 0.631) 100%)"
+                : "",
             borderRadius: "7px",
             borderImageSlice: "1",
             backgroundOrigin: "border-box",

@@ -27,19 +27,23 @@ import {
   centeringStyles,
 } from "../theme.jsx";
 import { doformatCUIL } from "../utiles.js";
-
+/**
+ * @brief Se encarga de renderizar el formulario de recuperación de contraseña.
+ */
 const PasswordForgot = () => {
-  //const [isSubmitted, setIsSubmitted] = useState(false);
+  // Variables de texto
   const commonbutton = useCommonsButtonString();
   const passwordforgot = useComponentPasswordForgotString();
   const passwordalert = useComponentPasswordAlertString();
   const commonfields = useCommonsFieldString();
 
+  // Servicios del backend
+  const { send_forgot_password_email } = usePasswordService();
+
+  // Variables de estado
   const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
   const [send, setSend] = useState(false);
-  const { send_forgot_password_email } = usePasswordService();
-
   const [formattedCUIL, setFormattedCUIL] = useState("");
 
   const navigate = useNavigate();
@@ -52,6 +56,9 @@ const PasswordForgot = () => {
     }
   };
 
+  /**
+   * @brief Se encarga de enviar la peticion al backend sin antes verificar el CUIL
+   */
   const send_email = async () => {
     if (!formattedCUIL.trim() || formattedCUIL.length !== 13) {
       setError(true);
@@ -68,6 +75,9 @@ const PasswordForgot = () => {
     }
   };
 
+  /**
+   * @brief Se encarga de reenviar el email
+   */
   const handleReSend = async () => {
     setOpen(true);
     setSend(false);
@@ -75,6 +85,9 @@ const PasswordForgot = () => {
     return await send_email();
   };
 
+  /**
+   * @brief Se encarga de verificar el CUIL 
+   */
   const handleCUILChange = (event) => {
     const inputValue = event.target.value;
     let formatted = doformatCUIL(inputValue);
@@ -84,7 +97,6 @@ const PasswordForgot = () => {
   return (
     <>
       <ProcessAlert open={open} loading={send} success={!error} />
-
       <Card sx={cardLoginStyle}>
         <CardHeader title={passwordforgot.title} />
         <CardContent sx={boxLoginSyle}>

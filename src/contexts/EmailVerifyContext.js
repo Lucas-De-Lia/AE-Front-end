@@ -9,10 +9,7 @@ const EmailVerifyContext = createContext();
 
 export const EmailVerifyProvider = ({ children }) => {
   /**
-   * Re-sends the verification email to the user if they haven't verified their email address yet.
-   * @async
-   * @returns {boolean} true if the verification email was sent successfully, false otherwise. True don't means that the email was already verified.
-   * @throws {Error} if there was an error sending the verification email.
+   * @brief Reenvia el email de verificación , si el usuario todavía no ha verificado su correo.
    */
   const resend_verify_email = async () => {
     try {
@@ -22,22 +19,15 @@ export const EmailVerifyProvider = ({ children }) => {
         { headers: { "X-API-Key": APP_KEY } }
       );
       const { message } = response.data;
-      return message !== null; // Return true if the request was successful
+      return message !== null;
     } catch (error) {
-      console.error("Error al reenviar el correo:", error); // Log the error
-      return false; // Return false if there was an error
+      console.error("Error al reenviar el correo:", error);
+      return false;
     }
   };
 
   /**
-   * Sends the credentials to verify the email, and returns true if the email is verified.
-   * This function is called when the user clicks on the verification link in the email.
-   * @async
-   * @param {string} id - the ID for verification
-   * @param {string} hash - the hash for verification
-   * @param {number} expires - the expiration time for the verification link
-   * @param {string} signature - the signature for verification
-   * @return {boolean} true if email is verified, false if not
+   * @brief Envia el email de verificación, devuelve verdarosi el email esta verificado.
    */
   const send_confirmation_verify = async (id, hash, expires, signature) => {
     try {
@@ -58,11 +48,7 @@ export const EmailVerifyProvider = ({ children }) => {
   };
 
   /**
-   * Sends confirmation code to the specified email address for verification
-   * @async
-   * @param {string} code - The confirmation code to send
-   * @param {string} email - The email address to send the confirmation code to
-   * @returns {boolean} - True if the confirmation code was successfully sent, otherwise false
+   * @brief Enviael codigo de verificacion a la direccion de correo electronico especificada.
    */
   const send_confirmation_code = async (code, email) => {
     try {
@@ -81,17 +67,14 @@ export const EmailVerifyProvider = ({ children }) => {
       }
       return false;
     } catch (error) {
-      // Log an error message if there was an error during email verification
       console.error("Error during email verification:", error);
       return false;
     }
   };
 
+
   /**
-   * Send confirmation email
-   * @param {string} password - The password to use for verification
-   * @param {string} email - The email address to send the confirmation email to
-   * @returns {Promise<boolean>} - True if confirmation is successful, otherwise false
+   * @brief Envia el email de confirmacion.
    */
   const send_confirmation_email = async (password, email) => {
     try {

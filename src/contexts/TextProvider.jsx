@@ -6,6 +6,10 @@ import LangString from "../contexts/text/es_AR.json";
  * @property {React.ReactNode | React.ReactNode[] | JSX.Element | JSX.Element[]} children
  */
 
+/**
+ * Obtiene el texto de ( context/text ) y aqui esta definido una serie de funciones que devuelven una estructura JSON 
+ * Con los textos , de esta manera podemos modificar los textos sin cambiar el codigo.
+ */
 const baseTextContext = createContext(LangString);
 
 export function useRootFAQString() {

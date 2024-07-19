@@ -4,24 +4,31 @@ import { useService } from "../contexts/ServiceContext.js";
 import { useLoginString } from "../contexts/TextProvider.jsx";
 import { doformatCUIL } from "../utiles.js";
 
-//TODO QUITAR TEMAS
+/**
+ * @brief Componente de logeo, permite al usuario iniciar seccion.
+ */
 const LoginFragment = React.forwardRef((props, ref) => {
+  // Variables de texto
   const [labels] = useLoginString();
-
-  const [loginSuccess, setLoginSuccess] = React.useState(false);
-  const [loginFail, setLoginFail] = React.useState(false);
-
-  const [formattedCUIL, setFormattedCUIL] = useState("");
+  // Servicios del backend
   const { authenticate } = useService();
+  // Variables de estado
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [loginFail, setLoginFail] = useState(false);
+  const [passwordsd, setPassword] = useState("");
+  const [formattedCUIL, setFormattedCUIL] = useState("");
+
+  /**
+   * @brief Gestiona los text field
+   */
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
     let formatted = doformatCUIL(inputValue);
-
     setFormattedCUIL(formatted);
   };
-
-  const [passwordsd, setPassword] = React.useState("");
-
+  /**
+   * @brief Envia al usuario a la pantalla de recuperación de cuenta
+   */
   const handleOnChangePassword = (event) => {
     setPassword(event.target.value);
   };
@@ -41,13 +48,11 @@ const LoginFragment = React.forwardRef((props, ref) => {
 
   return (
     <>
-      {" "}
       <Stack spacing={2}>
         <TextField
           sx={{
-            width: "100%", // Ancho completo en pantallas móviles
+            width: "100%", 
             "@media (min-width: 600px)": {
-              // Ajusta según sea necesario para tamaños mayores
               width: "25vw",
             },
           }}
@@ -64,9 +69,8 @@ const LoginFragment = React.forwardRef((props, ref) => {
         />
         <TextField
           sx={{
-            width: "100%", // Ancho completo en pantallas móviles
+            width: "100%", 
             "@media (min-width: 600px)": {
-              // Ajusta según sea necesario para tamaños mayores
               width: "25vw",
             },
           }}

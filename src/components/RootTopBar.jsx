@@ -1,4 +1,5 @@
 import MenuIcon from "@mui/icons-material/Menu";
+import { useMediaQuery } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
@@ -8,11 +9,10 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/system";
 import React, { useMemo, useState } from "react";
-import IconUserMenu from "../fragments/topbar/IconUserMenu.jsx";
-import { useMediaQuery } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import { useService } from "../contexts/ServiceContext.js";
 import { useRootTopbarString } from "../contexts/TextProvider.jsx";
+import IconUserMenu from "../fragments/topbar/IconUserMenu.jsx";
 import {
   boxSMmenu,
   iconButtonTopStyle,
@@ -20,14 +20,23 @@ import {
   menuStyles,
 } from "../theme.jsx";
 
-
+/**
+ * @brief Muestra el encabezado de la página
+ */
 const RootTopBar = (props) => {
+  // Variables de textos
   const labels = useRootTopbarString();
 
+  // Ancla del menu desplegable
   const [anchorElNav, setAnchorElNav] = useState(null);
-  const { User, serverDates, isAuthenticated, AE } = useService(); //states context
+  // Servicios del backend
+  const { User, serverDates, isAuthenticated, AE } = useService();
+
   const navigate = useNavigate();
+
   const today = useMemo(() => new Date(), []);
+
+  // Opciones del menu
   const pages = useMemo(
     () => [
       { label: labels.titles[0], disabled: false },
@@ -47,6 +56,9 @@ const RootTopBar = (props) => {
     [User, serverDates, labels, today, AE]
   );
 
+  /**
+   * @brief Maneja la accion al clickear un chip
+   */
   const handleoOnClickMenu = (e, index) => {
     switch (index) {
       case 1:
@@ -135,7 +147,7 @@ const RootTopBar = (props) => {
           <Box
             sx={{
               flexGrow: 1,
-              display: !useMediaQuery('(max-width:600px)')? "flex": "none",
+              display: !useMediaQuery("(max-width:600px)") ? "flex" : "none",
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -145,7 +157,7 @@ const RootTopBar = (props) => {
           <Box
             sx={{
               flexGrow: 1,
-              display: useMediaQuery('(max-width:600px)')? "flex": "none",
+              display: useMediaQuery("(max-width:600px)") ? "flex" : "none",
             }}
           />
           <IconUserMenu userAuth={isAuthenticated} />
@@ -155,35 +167,4 @@ const RootTopBar = (props) => {
   );
 };
 
-//<ButtonMenu userAuth={isAuthenticated} />
-
-/**
-                 *           <Box sx={boxXLmenu}>
-            <img
-              src={labels.logo.src}
-              alt="Logo imagen"
-              onClick={handleLogoClick}
-              style={logoTopStyle}
-            />
-
-            <Stack direction="row" paddingLeft={2} spacing={2}>
-              {isAuthenticated &&
-                pages.map(
-                  (page, index) =>
-                    !page.disabled && (
-                      <Button
-                        //variant="contained"
-                        variant="outlined"
-                        size="small"
-                        key={page.label + "-large-menu-appbar"}
-                        disabled={page.disabled ? "true" : undefined}
-                        onClick={(e) => handleoOnClickMenu(e, index)}
-                      >
-                        {page.label}
-                      </Button>
-                    )
-                )}
-            </Stack>
-          </Box>
-                 * sx={boxSMmenu} */
 export default RootTopBar;

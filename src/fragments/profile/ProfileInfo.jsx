@@ -14,13 +14,25 @@ import EmailBackdrop from "../EmailBackdrop.jsx";
 import SixtysecFragment from "../SixtysecFragment.jsx";
 import IconUserBadge from "./ProfileIconUserBadge.jsx";
 
+/**
+ * @brief Componente que contiene el nombre y el menu del usuario para gestionar su cuenta
+ */
 const ProfileInfo = () => {
+  // Variables de texto
   const aeprofilestring = useComponentAEProfileString();
   const commonfields = useCommonsFieldString();
-  const nav = useNavigate();
-  const { AE, User, fetch_end_pdf, fetch_start_pdf } = useService();
 
+  const nav = useNavigate();
+  // Servicios del backend;
+  const { AE, User, fetch_end_pdf, fetch_start_pdf } = useService();
   const { resend_verify_email } = useEmailVerify();
+  // Variable de estado
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  /**
+   * @brief Abre una ventana con el certificado de finalización de AE
+   */
   const handleEndPDF = async () => {
     try {
       const pdfUrl = await fetch_end_pdf();
@@ -30,6 +42,9 @@ const ProfileInfo = () => {
       console.error("Error al abrir el PDF:", error);
     }
   };
+  /**
+   * @brief Abre una ventana con el certificado de AE
+   */
   const handleStartPDF = async () => {
     try {
       const pdfUrl = await fetch_start_pdf();
@@ -39,14 +54,12 @@ const ProfileInfo = () => {
       console.error("Error al abrir el PDF:", error);
     }
   };
-
   const handleGoTo = (url) => {
     nav(url);
   };
-
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-
+  /**
+   * @brief Reenvia el email de verificación.
+   */
   const sendEmail = async () => {
     setOpen(true);
     setLoading(true);
@@ -76,7 +89,6 @@ const ProfileInfo = () => {
           </Typography>
           <Typography variant="h5">{User.cuil}</Typography>
           <Typography variant="body1">{User.name}</Typography>
-          {/** ingresar botones de ojito y descarga*/}
         </Stack>
         <Stack padding={2} spacing={1} sx={centeringStyles}>
           {User.ae === AE.FINALIZED && (

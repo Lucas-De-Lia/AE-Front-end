@@ -30,32 +30,40 @@ import {
 } from "../theme.jsx";
 
 /**
- * @brief This component is used to unregister the user from the system.
- *
- * @return {JSX.Element} The component.
+ * @brief Este componente se envarga de "dar de baja" la autoexclusion (ssi es la primera ) y esta entre el 5-6 mes
  */
 const AEFinalize = () => {
+  // Variables con los textos
   const commonbuttons = useCommonsButtonString();
   const aefinalizelabels = useComponentAEFinalizeString();
   const commonfields = useCommonsFieldString();
 
-  const [open, setOpen] = useState(false);
-  const [error, setError] = useState(false);
   const navigate = useNavigate();
 
+  // Variables de estado
+  // controla si se ve el formulario de finalizacion de la AE
+  const [open, setOpen] = useState(false);
+  // controla si se ve el mensaje de exito o de error
+  const [error, setError] = useState(false);
+  // almacenar el password
   const [password, setPassword] = useState("");
 
   const handleOnChangePassword = (event) => {
     setPassword(event.target.value);
   };
 
+  // Servicios para comunicarse con el backend
   const { User, finalize_ae, refesh_fn } = useService();
+  // Si no estoy logeado redirijo al login
   useEffect(() => {
     if (User === null) {
       navigate("/");
     }
   }, [navigate, User]);
 
+  /**
+   * @brief Se encarga de hacer la llamada al backend para dar de baja la AE
+   */
   const handleSend = async () => {
     let result = await finalize_ae(password);
     setError(!result);
@@ -66,7 +74,9 @@ const AEFinalize = () => {
       navigate("/ae/profile");
     }
   };
-
+  /**
+   * @brief Se encarga de cerrar y retoceder
+   */
   const handleClose = () => {
     if (!open) {
       navigate(-1);

@@ -9,14 +9,17 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { usePublicResources } from "../contexts/PublicResourcesContext";
 /**
- * This function is a React component that displays a PDF document.
- * @param {object} props - The properties of the component.
+ * @brief Se encarga de renderizar la vista de noticas, es la vista detallada de las noticas
  */
 const NewsView = () => {
+  // Servicios del backend
+  const { fetch_news_pdf } = usePublicResources();
+  // Variables de estado
   const [pdf, setPdf] = useState([]);
   const { id } = useParams();
-  const { fetch_news_pdf } = usePublicResources();
-
+  /**
+   * @brief Se encarga de hacer el fetch de las noticas,y setear lavisualizacion del pdf
+   */
   const fetchData = useCallback(async () => {
     try {
       const news_pdf = await fetch_news_pdf(id);

@@ -1,32 +1,33 @@
 import {
   Box,
-  Divider,
   Grid,
   Grow,
   Pagination,
   Skeleton,
   Stack,
-  debounce,
+  debounce
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { lazy, useCallback, useEffect, useMemo, useState } from "react";
 import { usePublicResources } from "../contexts/PublicResourcesContext";
+import { useNewsInfoAlert } from "../contexts/TextProvider.jsx";
+import AlertFragment from "../fragments/AlertFragmet.jsx";
 import { centeringStyles } from "../theme.jsx";
 import { isMobileDevice } from "../utiles.js";
-import AlertFragment from "../fragments/AlertFragmet.jsx";
-import { useNewsInfoAlert } from "../contexts/TextProvider.jsx";
 
 const NewsCard = lazy(() => import("./NewsCard.jsx"));
 
 /**
- * This function takes in an array of PDFs and returns a view of 3 PDFs in a row.
- * @param {PDF[]} news - An array of news objects, each representing a PDFs.
- * @returns {JSX.Element} A view of 3 PDFs in a row.
+ * @brief Se encarga de renderizar la tabla de noticas, haciendo el fetch de las noticias, la paginacion y crea las NewsCards
  */
 const NewsTable = () => {
+  // Variables de texto
+  const labels_news = useNewsInfoAlert();
+
   const theme = useTheme();
 
+  // Media queries para obtener la cantidad optima de noticis para la vista
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("lg"));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const itemsPerPage = isMobileDevice()
@@ -37,22 +38,23 @@ const NewsTable = () => {
       : 2
     : 3;
 
+  // Servicios del backend
   const { fetch_news_list } = usePublicResources();
+
+  // Variables de estado
   const [fetchNews, setFetchNews] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const labels_news = useNewsInfoAlert();
 
-  const visibleNewss = useMemo(
-    () => fetchNews,
-    [fetchNews ]
-  );
+  const visibleNewss = useMemo(() => fetchNews, [fetchNews]);
+
+  /**
+   * @brief Se encarga de hacer el fetch de las noticas y calcula los datos necesarios para la paginacion
+   */
   const fetchDataCallback = useCallback(async () => {
     try {
-      const fetch_news = await fetch_news_list(currentPage,itemsPerPage);
-      console.log(fetch_news);
+      const fetch_news = await fetch_news_list(currentPage, itemsPerPage);
       const totalItems = fetch_news.total;
-      //console.log(totalItems)
       setTotalPages(Math.ceil(totalItems / itemsPerPage));
       setFetchNews(fetch_news.data);
     } catch (error) {
@@ -66,20 +68,21 @@ const NewsTable = () => {
     [fetchDataCallback]
   );
 
-  useEffect(() => {
-    if(fetchNews.length === 0){
-      fetchData();
-    }
-  },[]);
-
+  /**
+   * @brief Se encarga de cambiar la pagina, haciendo el nuevo fetch
+   */
   const handlePageChange = async (_event, page) => {
-    console.log(page);
-    const fetch_news = await fetch_news_list(page,itemsPerPage);
-    console.log(fetch_news);
+    const fetch_news = await fetch_news_list(page, itemsPerPage);
     setFetchNews(fetch_news.data);
     setCurrentPage(page);
-  }
-  //
+  };
+
+  useEffect(() => {
+    if (fetchNews.length === 0) {
+      fetchData();
+    }
+  }, []);
+
   return (
     <>
       <AlertFragment
@@ -87,7 +90,6 @@ const NewsTable = () => {
         title={labels_news.alert.info.title}
         body={labels_news.alert.info.body}
       />
-
       <Stack
         sx={{
           display: "flex",
@@ -96,7 +98,12 @@ const NewsTable = () => {
       >
         {fetchNews.length > 0 ? (
           <>
-            <Grid container paddingTop={3} spacing={3} sx={{ ...centeringStyles }}>
+            <Grid
+              container
+              paddingTop={3}
+              spacing={3}
+              sx={{ ...centeringStyles }}
+            >
               {visibleNewss.map((element, index) => (
                 <Grow in={true} key={index}>
                   <Grid item key={index}>

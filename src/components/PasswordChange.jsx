@@ -29,21 +29,24 @@ import {
 import { sleep } from "../utiles.js";
 
 /**
- * The `ResetPassword` function is a React component that handles the process of resetting a user's
- * password.
- * @returns The `ResetPassword` component is returning a JSX element, specifically a `Card` component
- * with various child components such as `CardHeader`, `CardContent`, `Collapse`, `Alert`, and
- * `CardActions`.
+ * @brief Permite cambiar la contraseña del usuario
  */
 const PasswordChange = () => {
+  //Variables de texto
   const commonbutton = useCommonsButtonString();
   const passwordchange = useComponentPasswordChangeString();
   const passwordalert = useComponentPasswordAlertString();
+
   const nav = useNavigate();
+  // Service de backend
   const { User, setUser, setIsAuthenticated } = useService();
-  const ref = useRef(null);
-  const [error, setError] = useState(false);
   const { change_user_password } = usePasswordService();
+  // Referencias del password
+  const ref = useRef(null);
+  // Variables de estado
+  const [error, setError] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (User === null) {
@@ -51,17 +54,24 @@ const PasswordChange = () => {
     }
   }, [nav, User]);
 
-  const handleAcept = async (input) => {
-    const { error, data } = ref.current.sendData(input);
-    setError(error);
+  /**
+   * @brief Se encarga de obtener las caontraseña, y gestionas los errores , y envia la peticion y setea las variables de
+   * estado para mostrarlos en el componente con sus mensajes de error y existo.
+   */
+  const handleAccept = async (input) => {
+    const { error, data } = ref.current.sendData(input); // obtengo los datos y error
+    setError(error); // seteo el error
     if (!error) {
+      // si no tiene error
       try {
+        // envio la peticion
         const response = await change_user_password(data);
-        setError(!response);
-        setOpen(true);
-        setLoading(false);
+        setError(!response); // seteo el error
+        setOpen(true); // muestro el alert
+        setLoading(false); // seteo el loading
         await sleep(1000);
         if (response) {
+          // deslogea el usuario ya que se cambio el dato
           setUser(null);
           setIsAuthenticated(false);
           nav("/auth/login", { replace: true });
@@ -75,12 +85,11 @@ const PasswordChange = () => {
       }
     }
   };
+
   const handleBack = () => {
     nav(-1);
   };
 
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   return (
     <>
       <ProcessAlert open={open} loading={loading} success={!error} />
@@ -113,7 +122,7 @@ const PasswordChange = () => {
             <Button size="small" onClick={handleBack} color="inherit">
               {commonbutton.back}
             </Button>
-            <Button size="small" onClick={handleAcept}>
+            <Button size="small" onClick={handleAccept}>
               {commonbutton.ok}
             </Button>
           </CardActions>

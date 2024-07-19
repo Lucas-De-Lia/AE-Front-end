@@ -4,18 +4,24 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import { motion } from "framer-motion";
 import React, { useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useNavigate } from "react-router-dom";
 import { gridNewsCardBoxStyle, gridNewsCardStyle } from "../theme.jsx";
-import { motion } from "framer-motion";
 
+/**
+ * @brief Se encarga de mostrar una noticia en un card
+ */
 const NewsCard = React.memo(({ anews }) => {
   const navigate = useNavigate();
+  // Controla la visibilidad de la noticia segun se carga.
   const [load, setLoad] = useState(false);
 
+  // desestructura la noticia
   const { id, url, title, abstract } = anews;
 
+  // Redirige a una vista mas detallada
   const handleReadMoreClick = () => {
     navigate(`/document/${id}`);
   };

@@ -6,6 +6,9 @@ import { useComponentAEProfileString } from "../../contexts/TextProvider.jsx";
 import { badgeUserAnchorStyle, boxUserbadgeStyle } from "../../theme.jsx";
 import { stringAvatar } from "../../utiles";
 
+/**
+ * @brief Bandage que indica el estado del usario si esta excluido o sin exclusion
+ */
 function IconUserBadge({ username, isActive }) {
   const statusColor =
     isActive !== null ? (isActive ? "success" : "error") : "secondary";
