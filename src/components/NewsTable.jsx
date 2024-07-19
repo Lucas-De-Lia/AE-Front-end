@@ -73,8 +73,20 @@ const NewsTable = () => {
    */
   const handlePageChange = async (_event, page) => {
     const fetch_news = await fetch_news_list(page, itemsPerPage);
-    setFetchNews(fetch_news.data);
-    setCurrentPage(page);
+    if(fetch_news.length > 0){
+      const totalItems = fetch_news.total;
+      setTotalPages(Math.ceil(totalItems / itemsPerPage));
+      setFetchNews(fetch_news.data);
+      setCurrentPage(page);
+    }
+    else{
+      // Esto es para que si tengo cargada en memoria una pagina y justo borran esa pagina,lo que haga es visualizar la anterior a esa pagina.
+      const fetch_news = await fetch_news_list(page-1, itemsPerPage);
+      const totalItems = fetch_news.total;
+      setTotalPages(Math.ceil(totalItems / itemsPerPage));
+      setFetchNews(fetch_news.data);
+      setCurrentPage(page-1);
+    }
   };
 
   useEffect(() => {
