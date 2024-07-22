@@ -133,7 +133,7 @@ const FormInfo = React.forwardRef((props, ref) => {
           <Grid container sx={centeringStyles} spacing={{ xs: 1, sm: 2 }}>
             {["name", "lastname", "cuil"].map((field) => (
               <Grid item key={field + "grid-item"}>
-                <TextField
+                <TextField 
                   required
                   size="small"
                   variant="standard"
@@ -150,7 +150,7 @@ const FormInfo = React.forwardRef((props, ref) => {
                 />
               </Grid>
             ))}
-            <Grid item>
+            <Grid item xs={6} sm={3}>
               <TextField
                 id="dates"
                 key="dates"
@@ -171,7 +171,6 @@ const FormInfo = React.forwardRef((props, ref) => {
                 variant="standard"
               />
             </Grid>
-
             <Grid item>
               <FormControl>
                 <InputLabel

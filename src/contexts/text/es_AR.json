@@ -124,7 +124,12 @@
               "apartment": "Apartamento",
               "state": "Provincia",
               "city": "Localidad",
-              "postalCode": "Código Postal"
+              "postalCode": "Código Postal",
+              "helper_text":{
+                "requiered": "Obligatorio",
+                "floor": "Numero de 0-50",
+                "apartment": "Numero de 0-9 o letra A-Z"
+              }
             },
             "date_plane": {
               "title": "¡Atención!",

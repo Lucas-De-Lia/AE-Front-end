@@ -133,10 +133,10 @@ const FormExtra = React.forwardRef(
 
     return (
       <CardContent>
-        <Grid container sx={centeringStyles} spacing={3}>
+        <Grid container sx={centeringStyles} spacing={2}>
           {registerState && (
             <>
-              <Grid item xs={12} sm={5}>
+              <Grid item >
                 <TextField
                   id={"email"}
                   label={formextralabels["email"]}
@@ -158,7 +158,7 @@ const FormExtra = React.forwardRef(
                   variant="standard"
                 />
               </Grid>
-              <Grid item xs={12} sm={5}>
+              <Grid item>
                 <TextField
                   id={"emailCopy"}
                   label={formextralabels["email"] + " Repetir"}
@@ -176,7 +176,7 @@ const FormExtra = React.forwardRef(
               </Grid>
             </>
           )}
-          <Grid item xs={12} sm={5}>
+          <Grid item >
             <MuiTelInput
               sx={{ pt: 3 }}
               id="area-code"
@@ -198,11 +198,11 @@ const FormExtra = React.forwardRef(
         </Grid>
         <Grid
           container
-          sx={centeringStyles}
+          sx={{...centeringStyles, paddingTop: 2}}
           spacing={2}
           direction={{ xs: "column", sm: "column" }}
         >
-          <Grid item xs={12} md={6}>
+          <Grid item >
             <Box>
               <AlertFragment
                 type={
@@ -217,7 +217,7 @@ const FormExtra = React.forwardRef(
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item >
             <Box>
               <TextField
                 fullWidth

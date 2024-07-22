@@ -5,7 +5,7 @@ import {
   Pagination,
   Skeleton,
   Stack,
-  debounce
+  debounce,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -72,21 +72,18 @@ const NewsTable = () => {
    * @brief Se encarga de cambiar la pagina, haciendo el nuevo fetch
    */
   const handlePageChange = async (_event, page) => {
-    const fetch_news = await fetch_news_list(page, itemsPerPage);
-    if(fetch_news.length > 0){
-      const totalItems = fetch_news.total;
-      setTotalPages(Math.ceil(totalItems / itemsPerPage));
-      setFetchNews(fetch_news.data);
-      setCurrentPage(page);
-    }
-    else{
+    let pagefind = page;
+    let fetch_news = await fetch_news_list(pagefind, itemsPerPage);
+    if (!fetch_news.length > 0) {
       // Esto es para que si tengo cargada en memoria una pagina y justo borran esa pagina,lo que haga es visualizar la anterior a esa pagina.
-      const fetch_news = await fetch_news_list(page-1, itemsPerPage);
+      fetch_news = await fetch_news_list(pagefind - 1, itemsPerPage);
+      pagefind = page - 1;
       const totalItems = fetch_news.total;
-      setTotalPages(Math.ceil(totalItems / itemsPerPage));
-      setFetchNews(fetch_news.data);
-      setCurrentPage(page-1);
     }
+    const totalItems = fetch_news.total;
+    setTotalPages(Math.ceil(totalItems / itemsPerPage));
+    setFetchNews(fetch_news.data);
+    setCurrentPage(pagefind);
   };
 
   useEffect(() => {

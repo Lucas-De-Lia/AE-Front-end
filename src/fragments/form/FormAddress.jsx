@@ -229,9 +229,9 @@ const FormAddress = React.forwardRef((props, ref) => {
 
   return (
     <CardContent>
-      <Grid container sx={centeringStyles} spacing={3}>
+      <Grid container sx={centeringStyles} spacing={2}>
         {["state", "substate", "city", "address"].map((field) => (
-          <Grid key={`grid.${field}`} item xs={12} sm={4}>
+          <Grid key={`grid.${field}`} item xs={6} sm={3}>
             <Autocomplete
               autoHighlight
               id={field}
@@ -264,7 +264,7 @@ const FormAddress = React.forwardRef((props, ref) => {
           </Grid>
         ))}
         {["number", "floor", "apartment", "postalCode"].map((field) => (
-          <Grid key={`grid.${field}`} item xs={12} sm={3}>
+          <Grid key={`grid.${field}`} item xs={6} sm={3}>
             <TextField
               id={field}
               key={field}
@@ -272,7 +272,7 @@ const FormAddress = React.forwardRef((props, ref) => {
               size="small"
               required={["postalCode", "number"].includes(field)}
               helperText={
-                ["postalCode", "number"].includes(field) ? "Obligatorio" : ""
+                ["postalCode", "number"].includes(field) ? formaddresslables.helper_text["requiered"] : formaddresslables.helper_text[field]
               }
               error={errors[field]}
               onChange={(event) =>
