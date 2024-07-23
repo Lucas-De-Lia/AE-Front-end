@@ -74,7 +74,7 @@ const NewsTable = () => {
   const handlePageChange = async (_event, page) => {
     let pagefind = page;
     let fetch_news = await fetch_news_list(pagefind, itemsPerPage);
-    if (!fetch_news.length > 0) {
+    if (!fetch_news.data.length > 0) {
       // Esto es para que si tengo cargada en memoria una pagina y justo borran esa pagina,lo que haga es visualizar la anterior a esa pagina.
       fetch_news = await fetch_news_list(pagefind - 1, itemsPerPage);
       pagefind = page - 1;

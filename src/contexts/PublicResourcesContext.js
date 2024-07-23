@@ -144,6 +144,7 @@ export const PublicResourcesProvider = ({ children }) => {
           headers: { "X-API-Key": APP_KEY },
         }
       );
+      console.log(response);
       return response.data ? response.data : [];
     } catch (error) {
       console.error("Error fetching news list:", error);
