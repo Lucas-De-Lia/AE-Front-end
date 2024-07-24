@@ -1,3 +1,5 @@
+import CryptoJS from 'crypto-js';
+
 /**
  * @brief Verifica si el string es un numero
  * @param {Event} e  es el evento del onchange (e.target.value)
@@ -434,8 +436,25 @@ export const handleCopyCut = (event) => {
   // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
 };
 
+// Función para cifrar datos
+export const encryptData = (data, key) => {
+  const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
+  return encryptedData;
+};
+
+// Función para descifrar datos
+export const decryptData = (encryptedData, key) => {
+  const bytes = CryptoJS.AES.decrypt(encryptedData, key);
+  const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  return decryptedData;
+};
+
+
+
 const utiles = {
   handlePaste,
+  decryptData,
+  encryptData,
   handleCopyCut,
   isStartdate,
   isEnddate,

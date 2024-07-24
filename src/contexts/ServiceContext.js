@@ -7,10 +7,11 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { dates_to_json_calendar, sleep } from "../utiles";
+import { dates_to_json_calendar, sleep, encryptData, decryptData } from "../utiles";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
+const KEY_CRYPT = process.env.REACT_APP_CRYPT;
 
 /**
  * Enum representing the status of AE
@@ -49,10 +50,10 @@ export const ServiceProvider = ({ children }) => {
     if (newval === null) {
       localStorage.removeItem("authorization"); // Remove the "authorization" item from sessionStorage if newval is null
     } else {
-      localStorage.setItem("authorization", JSON.stringify(newval)); // Store the newval in sessionStorage as a JSON string
+      let encryptAuth = encryptData(JSON.stringify(newval), KEY_CRYPT); // encrypto los datos de logeo
+      localStorage.setItem("authorization", encryptAuth); // Store the newval in sessionStorage as a JSON string
     }
   };
-
   /**
    * @brief Guarda los datos de Authorization y las setea en axios.
    */
@@ -328,9 +329,17 @@ export const ServiceProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const parsedAuthorization = JSON.parse(
-      localStorage.getItem("authorization") || "null"
-    );
+    let parsedAuthorization = null;
+    const encryptedAuth = localStorage.getItem("authorization");
+    if (encryptedAuth) {
+      try {
+        const decryptedAuth = decryptData(encryptedAuth, KEY_CRYPT);
+        parsedAuthorization = JSON.parse(decryptedAuth);
+      } catch (error) {
+        console.error("Error parsing or decrypting authorization data:", error);
+        parsedAuthorization = JSON.parse(null);
+      }
+    }
     if (
       parsedAuthorization &&
       parsedAuthorization.timestamp >= Date.now() - 3600000
