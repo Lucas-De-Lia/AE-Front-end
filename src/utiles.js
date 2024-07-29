@@ -1,4 +1,4 @@
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
 
 /**
  * @brief Verifica si el string es un numero
@@ -45,7 +45,7 @@ export const base64toBlob = (data) => {
 };
 /**
  * @brief Obtiene las fechas de AE para el dia actual.
- * @returns 
+ * @returns
  */
 export const getDates = () => {
   let startDay = new Date();
@@ -66,7 +66,7 @@ export const getDates = () => {
 };
 /**
  * @brief Retorna verdadero si la app esta siendo ejecutada en movile.
- * @returns {Boolean} 
+ * @returns {Boolean}
  */
 export const isMobileDevice = () => {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -74,9 +74,9 @@ export const isMobileDevice = () => {
   );
 };
 /**
- * 
- * @param {*} dates 
- * @returns 
+ *
+ * @param {*} dates
+ * @returns
  */
 export const json_to_json_calendar = (dates) => {
   let result = null;
@@ -142,10 +142,10 @@ export const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 /**
- * @brief Toma un email(string) y lo censura obeniendo de 
+ * @brief Toma un email(string) y lo censura obeniendo de
  *  ejemplo@dominio.com -> eje****@dom***.com
- * @param {*} email 
- * @returns 
+ * @param {*} email
+ * @returns
  */
 export const shortEmail = (email) => {
   let splitemail = email.split("@");
@@ -176,8 +176,8 @@ function stringToColor(string) {
 }
 /**
  * @brief Verifica que la fecha de input este en el rango de -18 años y -100años
- * @param {Date} inputDAte 
- * @returns 
+ * @param {Date} inputDAte
+ * @returns
  */
 export const datecontrol = (inputDAte) => {
   let today = new Date();
@@ -195,8 +195,8 @@ export const datecontrol = (inputDAte) => {
 };
 /**
  * @brief Parsea los dates de php a los de js restandole al mes 1.
- * @param {*} inputdate 
- * @returns 
+ * @param {*} inputdate
+ * @returns
  */
 export const parseDate = (inputdate) => {
   const [year, month, day] = inputdate.split("-").map(Number);
@@ -204,8 +204,8 @@ export const parseDate = (inputdate) => {
 };
 /**
  * @brief Crea unaestructura con el color y las iniciales para mostrar en el Icono del perfil.
- * @param {string} name 
- * @returns 
+ * @param {string} name
+ * @returns
  */
 export const stringAvatar = (name) => {
   return {
@@ -227,8 +227,8 @@ function obtenerIniciales(nombre) {
 }
 /**
  * @brief Agrega un formato al cuil, con - es decir: 1-2345678-9
- * @param {*} inputValue 
- * @returns 
+ * @param {*} inputValue
+ * @returns
  */
 export const doformatCUIL = (inputValue) => {
   const sanitizedValue = inputValue.replace(/\D/g, "");
@@ -243,8 +243,8 @@ export const doformatCUIL = (inputValue) => {
 };
 /**
  * @brief Elimina cualquier letra del string, lo trunca a 4 caracteres para asegurar que sea un codigo postal
- * @param {*} inputValue 
- * @returns 
+ * @param {*} inputValue
+ * @returns
  */
 export const doPostalCode = (inputValue) => {
   const sanitizedValue = inputValue.replace(/\D/g, "");
@@ -254,8 +254,8 @@ export const doPostalCode = (inputValue) => {
 };
 /**
  * @brief Realiza un parse a int y verifica que el numero sea un numero entre 0 y 50.
- * @param {string} value 
- * @returns 
+ * @param {string} value
+ * @returns
  */
 export const doFloor = (value) => {
   const floorNumber = parseInt(value, 10) || 0;
@@ -263,16 +263,16 @@ export const doFloor = (value) => {
 };
 /**
  * @brief Verifica que el string sean solo numeros.
- * @param {*} value 
- * @returns 
+ * @param {*} value
+ * @returns
  */
 export const itsNumber = (value) => {
   return /^\d+$/.test(value);
 };
 /**
  * @brief Asegura que el valor del apartamentro sea o una sola letra o un solo numero.
- * @param {*} value 
- * @returns 
+ * @param {*} value
+ * @returns
  */
 export const doApartment = (value) => {
   const sanitizedValue = value.replace(/[^A-Z0-9]/gi, "").toUpperCase();
@@ -281,7 +281,7 @@ export const doApartment = (value) => {
 /**
  * @brief Verifica que el email tenga un formato de email
  * @param {*} email Email a testear
- * @returns 
+ * @returns
  */
 export const doEmail = (email) => {
   const trimmedEmail = email.trim();
@@ -295,8 +295,8 @@ export const doEmail = (email) => {
 };
 /**
  * @brief Asegura que el numero, tenga el formato de un telefono
- * @param {string} phonein 
- * @returns 
+ * @param {string} phonein
+ * @returns
  */
 export const doPhone = (phonein) => {
   let phone = phonein.replace(/\D/g, "");
@@ -315,9 +315,9 @@ export const doPhone = (phonein) => {
 };
 /**
  * @brief Verifica que la constraseñas sean iguales y que cumplan con los requerimientos de almenos una letra , un numero y almenos 8 caracteres
- * @param {*} password1 
- * @param {*} password2 
- * @returns 
+ * @param {*} password1
+ * @param {*} password2
+ * @returns
  */
 export const testpassword = (password1, password2) => {
   let re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
@@ -348,7 +348,7 @@ export const isSameMonth = (date1, date2) => {
  * @param {*} start Fecha inicial
  * @param {*} day Fecha a testear
  * @param {*} end Fecha final
- * @returns 
+ * @returns
  */
 export const dateBetween = (start, day, end) => {
   return start.getDate() <= day && day <= end.getDate();
@@ -360,9 +360,9 @@ export const monthGreater = (date1, date2) => {
 
 /**
  * @brief Retorna el verdadero indice de una celda en la lista de dias.
- * @param {} cellIndex 
- * @param {*} rowIndex 
- * @returns 
+ * @param {} cellIndex
+ * @param {*} rowIndex
+ * @returns
  */
 export const realIndex = (cellIndex, rowIndex) => {
   return cellIndex + 7 * rowIndex;
@@ -381,11 +381,11 @@ export const dayLessEqual = (day, date1, cellIndex, rowIndex) => {
   );
 };
 /**
- * @brif Verifica que dos string no tengan mas de una cantidad de diferencias.
- * @param {*} string1 
- * @param {*} string2 
- * @param {*} max 
- * @returns 
+ * @brief Verifica que dos string no tengan mas de una cantidad de diferencias.
+ * @param {*} string1
+ * @param {*} string2
+ * @param {*} max
+ * @returns
  */
 export const stringDiff = (string1, string2, max) => {
   if (string1.length === string2.length) {
@@ -436,20 +436,54 @@ export const handleCopyCut = (event) => {
   // Aquí podrías mostrar un mensaje al usuario o simplemente no hacer nada
 };
 
-// Función para cifrar datos
+/**
+ * @brief Funcion encargada encrypt data
+ * @param {*} data datos
+ * @param {*} key clave AES
+ * @returns
+ */
 export const encryptData = (data, key) => {
-  const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
-  return encryptedData;
+  const iv = CryptoJS.lib.WordArray.random(16);
+  const stringData = JSON.stringify(data);
+  const encryptedData = CryptoJS.AES.encrypt(
+    stringData,
+    CryptoJS.enc.Base64.parse(key),
+    {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }
+  );
+  const encrypted = iv.concat(encryptedData.ciphertext);
+  return CryptoJS.enc.Base64.stringify(encrypted);
 };
 
-// Función para descifrar datos
-export const decryptData = (encryptedData, key) => {
-  const bytes = CryptoJS.AES.decrypt(encryptedData, key);
-  const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-  return decryptedData;
+/**
+ * @brief Funcion encrypt data
+ * @param {*} encryptedData data encryptada
+ * @param {*} key calve AES
+ * @returns
+ */
+export const decryptData = (encryptedBase64, key) => {
+  const encrypted = CryptoJS.enc.Base64.parse(encryptedBase64);
+  const iv = CryptoJS.lib.WordArray.create(encrypted.words.slice(0, 4), 16);
+  const encryptedData = CryptoJS.lib.WordArray.create(
+    encrypted.words.slice(4),
+    encrypted.sigBytes - 16
+  );
+  const stringData = CryptoJS.AES.decrypt(
+    {
+      ciphertext: encryptedData,
+    },
+    CryptoJS.enc.Base64.parse(key),
+    {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }
+  );
+  return JSON.parse(stringData.toString(CryptoJS.enc.Utf8));
 };
-
-
 
 const utiles = {
   handlePaste,

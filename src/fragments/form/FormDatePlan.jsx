@@ -34,8 +34,8 @@ const FormDatePlan = React.forwardRef((props, ref) => {
    */
   const handleErrors = async () => {
     let response = await verifyCaptcha(refCaptcha.current.getValue());
-    if (response.data.success) {
-      setErrors(!response.data.success);
+    if (response.success) {
+      setErrors(!response.success);
     }
     return errors;
   };

@@ -1,9 +1,11 @@
 import axios from "axios";
 import React, { createContext, useContext } from "react";
+import { encryptData, decryptData } from "../utiles";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const URL_GEOREF = process.env.REACT_APP_GEOREF_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
+const KEY_CRYPT = process.env.REACT_APP_CRYPT;
 
 const PublicResourseContext = createContext();
 const DEFAULT = { id: 0, nombre: "Ninguno" };
@@ -136,7 +138,7 @@ export const PublicResourcesProvider = ({ children }) => {
    */
   const fetch_news_list = async (current_page, page_size) => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/resources/get-news-list`,
         { page_size: page_size },
         {
@@ -144,8 +146,9 @@ export const PublicResourcesProvider = ({ children }) => {
           headers: { "X-API-Key": APP_KEY },
         }
       );
-      console.log(response);
-      return response.data ? response.data : [];
+      const lista = decryptData(data.data,KEY_CRYPT);
+      console.log("Lista" . lista);
+      return lista ? lista : [];
     } catch (error) {
       console.error("Error fetching news list:", error);
       return null;
@@ -157,14 +160,15 @@ export const PublicResourcesProvider = ({ children }) => {
    */
   const fetch_news_pdf = async (id) => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/resources/get-news-pdf`,
         {
           id: id,
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      return response.data ? response.data : [];
+      const pdf = decryptData(data.data,KEY_CRYPT);
+      return pdf ? pdf : [];
     } catch (error) {
       console.error("Error fetching PDF viewer:", error);
       return null;
@@ -176,13 +180,14 @@ export const PublicResourcesProvider = ({ children }) => {
    */
   const fetch_faq = async () => {
     try {
-      const response = await axios.get(
+      const {data} = await axios.get(
         `${URL_BACKEND}/api/resources/getQuestions`,
         {
           headers: { "X-API-Key": APP_KEY },
         }
       );
-      return response.data ? response.data : [];
+      const faq = decryptData(data.data,KEY_CRYPT);
+      return faq ? faq : [];
     } catch (error) {
       console.error("Error fetching Answers&Questions:", error);
       return [];

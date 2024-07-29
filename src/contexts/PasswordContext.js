@@ -1,8 +1,10 @@
 import axios from "axios";
 import React, { createContext, useContext } from "react";
+import { encryptData, decryptData } from "../utiles";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
+const KEY_CRYPT = process.env.REACT_APP_CRYPT;
 
 const PasswordServiceContext = createContext();
 
@@ -12,19 +14,20 @@ export const PasswordServiceProvider = ({ children }) => {
    */
   const send_forgot_password_email = async (cuil) => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/password/forgot`,
         {
-          cuil: cuil,
+          data: encryptData({ cuil: cuil }, KEY_CRYPT),
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
 
-      const { status } = response.data;
+      const { status } = decryptData(data.data, KEY_CRYPT);
 
       return status === "We have emailed your password reset link.";
     } catch (error) {
-      console.error("Error during password reset:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during password reset:", msg);
       return false;
     }
   };
@@ -39,20 +42,26 @@ export const PasswordServiceProvider = ({ children }) => {
     password_confirmation
   ) => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/password/reset`,
         {
-          token: token,
-          cuil: cuil,
-          password: password,
-          password_confirmation: password_confirmation,
+          data: encryptData(
+            {
+              token: token,
+              cuil: cuil,
+              password: password,
+              password_confirmation: password_confirmation,
+            },
+            KEY_CRYPT
+          ),
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { status } = response.data;
+      const { status } = decryptData(data.data, KEY_CRYPT);
       return status === "Your password has been reset.";
     } catch (error) {
-      console.error("Error during password reset:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during password reset:", msg);
       return false;
     }
   };
@@ -60,17 +69,18 @@ export const PasswordServiceProvider = ({ children }) => {
   /**
    * @brief  Cambia la contraseña de un usuario, requiere la contraseña vieja
    */
-  const change_user_password = async (data) => {
+  const change_user_password = async (infoUser) => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/password/change`,
-        data,
+        { data: encryptData(infoUser, KEY_CRYPT) },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { message } = response.data;
+      const { message } = decryptData(data.data, KEY_CRYPT);
       return message === "Password changed successfully";
     } catch (error) {
-      console.error("Error al cambiar la contraseña:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error al cambiar la contraseña:", msg);
       return false;
     }
   };

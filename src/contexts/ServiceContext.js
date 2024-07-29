@@ -7,7 +7,12 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { dates_to_json_calendar, sleep, encryptData, decryptData } from "../utiles";
+import {
+  dates_to_json_calendar,
+  sleep,
+  encryptData,
+  decryptData,
+} from "../utiles";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
@@ -79,18 +84,17 @@ export const ServiceProvider = ({ children }) => {
   const authenticate = async (username, password) => {
     try {
       // Send a POST request to the backend API to authenticate the user
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/auth/login`,
         {
-          cuil: username,
-          password: password,
+          data: encryptData({ cuil: username, password: password }, KEY_CRYPT),
         },
         {
           headers: { "X-API-Key": APP_KEY },
           withCredentials: true,
         }
       );
-      let { authorization, user } = response.data;
+      let { authorization, user } = decryptData(data.data, KEY_CRYPT);
       if (user && authorization) {
         // Save the authorization token for future requests
         saveAuth(authorization);
@@ -98,7 +102,7 @@ export const ServiceProvider = ({ children }) => {
         try {
           // Get additional user data from the backend API
           const aeResponse = await axios.get(`${URL_BACKEND}/api/ae/dates`);
-          const { type, dates } = aeResponse.data;
+          const { type, dates } = decryptData(aeResponse.data.data, KEY_CRYPT);
           user.ae = type;
           if (dates.startDay) {
             // Convert dates to calendar format and set it in the state
@@ -115,7 +119,8 @@ export const ServiceProvider = ({ children }) => {
       }
       return false;
     } catch (error) {
-      console.error("Error during login:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during login:", msg);
       return false;
     }
   };
@@ -126,17 +131,19 @@ export const ServiceProvider = ({ children }) => {
   const unauthenticate = async () => {
     try {
       // Send a POST request to the logout endpoint
-      const response = await axios.post(`${URL_BACKEND}/api/auth/logout`);
-      const { message } = response.data;
+      const { data } = await axios.post(`${URL_BACKEND}/api/auth/logout`);
+      const { message } = decryptData(data.data, KEY_CRYPT);
       if (message === "Successfully logged out") {
         // Clear user data and authentication status
         setUser(null);
+        setAuthorization(null);
         setIsAuthenticated(false);
         setServerDates(null);
       }
       return true;
     } catch (error) {
-      console.error("Error during logout:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during logout:", msg);
       return false;
     }
   };
@@ -146,10 +153,11 @@ export const ServiceProvider = ({ children }) => {
    */
   const registerRequest = async (register_user) => {
     try {
+      console.log(register_user);
       // Send a POST request to the backend API to register the user
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/auth/register`,
-        register_user,
+        { data: encryptData(register_user, KEY_CRYPT) },
         {
           headers: {
             "X-API-Key": APP_KEY,
@@ -157,12 +165,14 @@ export const ServiceProvider = ({ children }) => {
           },
         }
       );
-      const { message, authorization } = response.data;
+      console.log(data.data);
+      const { message, authorization } = decryptData(data.data, KEY_CRYPT);
       saveAuth(authorization);
       return message === "User created successfully";
     } catch (error) {
       // Log and handle any errors that occur during the registration process
-      console.error("Error during register:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during register:", msg);
       return false;
     }
   };
@@ -172,15 +182,15 @@ export const ServiceProvider = ({ children }) => {
    */
   const fetch_user_data = async () => {
     try {
-      const response = await axios.get(
+      const { data } = await axios.get(
         `${URL_BACKEND}/api/ae/fetch-user-data`,
         {},
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { data } = response;
-      return data;
+      return decryptData(data.data, KEY_CRYPT);
     } catch (error) {
-      console.error("Error al obtener el UserData:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error al obtener el UserData:", msg);
       return null;
     }
   };
@@ -191,12 +201,12 @@ export const ServiceProvider = ({ children }) => {
   const start_ae_n = async (register_user) => {
     try {
       // Send a POST request to start the AE process
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/ae/start-n`,
-        register_user,
+        { data: encryptData(register_user, KEY_CRYPT) },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const message = response.data;
+      const message = decryptData(data.data, KEY_CRYPT);
       if (message === "Agregado") {
         // Reset server dates
         setServerDates(null);
@@ -205,7 +215,8 @@ export const ServiceProvider = ({ children }) => {
       return false;
     } catch (error) {
       // Log and return false if an error occurs during the registration process
-      console.error("Error during register:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during register:", msg);
       return false;
     }
   };
@@ -215,17 +226,18 @@ export const ServiceProvider = ({ children }) => {
    */
   const finalize_ae = async (password) => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/ae/finalize`,
         {
-          password: password,
+          data: encryptData({ password: password }, KEY_CRYPT),
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { status } = response.data;
+      const { status } = decryptData(data.data, KEY_CRYPT);
       return status === "Finalizado";
     } catch (error) {
-      console.error("Error during register:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during register:", msg);
       return false;
     }
   };
@@ -235,15 +247,16 @@ export const ServiceProvider = ({ children }) => {
    */
   const fetch_end_pdf = async () => {
     try {
-      const response = await axios.get(
+      const { data } = await axios.get(
         `${URL_BACKEND}/api/ae/fetch-end-pdf`,
         {},
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { content } = response.data;
+      const { content } = decryptData(data.data, KEY_CRYPT);
       return content;
     } catch (error) {
-      console.error("Error al obtener el PDF:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error al obtener el PDF:", msg);
       return null;
     }
   };
@@ -253,15 +266,16 @@ export const ServiceProvider = ({ children }) => {
    */
   const fetch_start_pdf = async () => {
     try {
-      const response = await axios.get(
+      const { data } = await axios.get(
         `${URL_BACKEND}/api/ae/fetch-start-pdf`,
         {},
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { content } = response.data;
+      const { content } = decryptData(data.data, KEY_CRYPT);
       return content;
     } catch (error) {
-      console.error("Error al obtener el PDF:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error al obtener el PDF:", msg);
       return null;
     }
   };
@@ -277,7 +291,8 @@ export const ServiceProvider = ({ children }) => {
         { headers: { "X-API-Key": APP_KEY } }
       )
       .catch((error) => {
-        console.error("Error al refrescar:", error);
+        let msg = decryptData(error.response.data.data, KEY_CRYPT);
+        console.error("Error al refrescar:", msg);
         return false;
       });
     const responseDates = axios
@@ -285,15 +300,18 @@ export const ServiceProvider = ({ children }) => {
         headers: { "X-API-Key": APP_KEY },
       })
       .catch((error) => {
-        console.error("Error al refrescar:", error);
+        let msg = decryptData(error.response.data.data, KEY_CRYPT);
+        console.error("Error al refrescar:", msg);
       });
     return await Promise.all([responseRefresh, responseDates]).then(
       (responses) => {
-        if (responses[0]) {
-          const { user } = responses[0].data;
+        let responseAuth = decryptData(responses[0].data.data, KEY_CRYPT);
+        if (responseAuth) {
+          const { user } = responseAuth;
           if (user) {
+            let responseDate = decryptData(responses[1].data.data, KEY_CRYPT);
             if (responses[1]) {
-              const { type, dates } = responses[1].data;
+              const { type, dates } = responseDate;
               user.ae = type;
               if (dates.startDay) {
                 setServerDates(dates_to_json_calendar(dates));
@@ -315,17 +333,17 @@ export const ServiceProvider = ({ children }) => {
    * @brief Envia el token del Captcha para verificar su validez.
    */
   const verifyCaptcha = async (tokenvalue) => {
-    const response = await axios.post(
+    const { data } = await axios.post(
       `${URL_BACKEND}/api/captcha`,
       {
-        token: tokenvalue,
+        data: encryptData({ token: tokenvalue }, KEY_CRYPT),
       },
       {
         headers: { "X-API-Key": APP_KEY },
         withCredentials: true,
       }
     );
-    return response;
+    return decryptData(data.data, KEY_CRYPT);
   };
 
   useEffect(() => {

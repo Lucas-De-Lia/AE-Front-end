@@ -1,9 +1,11 @@
 // AuthContext.js
 import axios from "axios";
 import React, { createContext, useContext } from "react";
+import { decryptData, encryptData } from "../utiles";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
+const KEY_CRYPT = process.env.REACT_APP_CRYPT;
 
 const EmailVerifyContext = createContext();
 
@@ -13,15 +15,16 @@ export const EmailVerifyProvider = ({ children }) => {
    */
   const resend_verify_email = async () => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/email/notification`,
         {},
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { message } = response.data;
+      const { message } = decryptData(data.data, KEY_CRYPT);
       return message !== null;
     } catch (error) {
-      console.error("Error al reenviar el correo:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error al reenviar el correo:", msg);
       return false;
     }
   };
@@ -31,18 +34,18 @@ export const EmailVerifyProvider = ({ children }) => {
    */
   const send_confirmation_verify = async (id, hash, expires, signature) => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/email/verify/${id}/${hash}?expires=${expires}&signature=${signature}`,
         {},
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { message } = response.data;
-      console.log(response);
+      const { message } = decryptData(data.data, KEY_CRYPT);
       return (
         message === "Email verified" || message === "Email already verified"
       );
     } catch (error) {
-      console.error("Error during email verification:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during email verification:", msg);
       return false;
     }
   };
@@ -53,25 +56,27 @@ export const EmailVerifyProvider = ({ children }) => {
   const send_confirmation_code = async (code, email) => {
     try {
       // Send a POST request to the backend API to confirm the email verification
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/auth/email/verify/confirm`,
         {
-          code: code,
-          email: email,
+          data: encryptData(
+            {
+              code: code,
+              email: email,
+            },
+            KEY_CRYPT
+          ),
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { message } = response.data;
-      if (message === "Confirmation successful") {
-        return true;
-      }
-      return false;
+      const { message } = decryptData(data.data, KEY_CRYPT);
+      return message === "Confirmation successful";
     } catch (error) {
-      console.error("Error during email verification:", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during email verification:", msg);
       return false;
     }
   };
-
 
   /**
    * @brief Envia el email de confirmacion.
@@ -79,19 +84,25 @@ export const EmailVerifyProvider = ({ children }) => {
   const send_confirmation_email = async (password, email) => {
     try {
       // Send a post request to the backend API to send the confirmation email
-      const result = await axios.post(
+      const { data } = await axios.post(
         `${URL_BACKEND}/api/email/change`,
         {
-          current_password: password,
-          email: email,
+          data: encryptData(
+            {
+              current_password: password,
+              email: email,
+            },
+            KEY_CRYPT
+          ),
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const { message } = result.data;
+      const { message } = decryptData(data.data, KEY_CRYPT);
       return message === "Verification send successfully";
     } catch (error) {
       // Log and return false if there's an error during the confirmation process
-      console.error("Error during code verification: ", error);
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error during code verification: ", msg);
       return false;
     }
   };

@@ -343,6 +343,7 @@ export const AECreate = () => {
                       study={stepData[2].study}
                       phone={stepData[2].phone}
                       email={stepData[2].email}
+                      files={[]}
                       registerState={false}
                       ref={refs}
                     />
