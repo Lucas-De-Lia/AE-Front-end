@@ -445,6 +445,7 @@ export const handleCopyCut = (event) => {
 export const encryptData = (data, key) => {
   const iv = CryptoJS.lib.WordArray.random(16);
   const stringData = JSON.stringify(data);
+  const hash = CryptoJS.SHA256(stringData);
   const encryptedData = CryptoJS.AES.encrypt(
     stringData,
     CryptoJS.enc.Base64.parse(key),
@@ -455,7 +456,7 @@ export const encryptData = (data, key) => {
     }
   );
   const encrypted = iv.concat(encryptedData.ciphertext);
-  return CryptoJS.enc.Base64.stringify(encrypted);
+  return CryptoJS.enc.Base64.stringify(encrypted.concat(hash));
 };
 
 /**
@@ -466,10 +467,14 @@ export const encryptData = (data, key) => {
  */
 export const decryptData = (encryptedBase64, key) => {
   const encrypted = CryptoJS.enc.Base64.parse(encryptedBase64);
+  const hash = CryptoJS.lib.WordArray.create(
+    encrypted.words.slice(encrypted.words.length - 8),
+    32
+  );
   const iv = CryptoJS.lib.WordArray.create(encrypted.words.slice(0, 4), 16);
   const encryptedData = CryptoJS.lib.WordArray.create(
-    encrypted.words.slice(4),
-    encrypted.sigBytes - 16
+    encrypted.words.slice(4, encrypted.words.length - 8),
+    encrypted.sigBytes - 16 - 32
   );
   const stringData = CryptoJS.AES.decrypt(
     {
@@ -482,6 +487,10 @@ export const decryptData = (encryptedBase64, key) => {
       padding: CryptoJS.pad.Pkcs7,
     }
   );
+  const hash2 = CryptoJS.SHA256(stringData.toString(CryptoJS.enc.Utf8));
+  if ( !hash2 ===hash)  {
+    throw new Error("Invalid hash");
+  }
   return JSON.parse(stringData.toString(CryptoJS.enc.Utf8));
 };
 
