@@ -151,9 +151,8 @@
             "file_attach": {
               "title": "Subir Imágenes del DNI",
               "body": [
-                "Por favor, sube <strong>DOS (2)</strong> imágenes del DNI, del frente y el reverso.",
-                "Asegúrate de que ambos lados sean visibles y legibles.",
-                "Puedes subir SOLO DOS (2) en total."
+                "Por favor, sube <strong>Una (1)</strong> imágen del DNI, del frente.",
+                "Asegúrate de que sea visible y legible."
               ],
               "files_selected": {
                 "title": "Imágenes del DNI (*)",

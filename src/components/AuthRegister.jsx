@@ -1,5 +1,4 @@
-import React, { Suspense, useRef, useState } from "react";
-
+import React, { useRef, useState } from "react";
 // Material-UI Components
 import {
   Box,
@@ -11,7 +10,6 @@ import {
   CircularProgress,
   Divider,
   Grid,
-  Skeleton,
   Stack,
   Step,
   StepLabel,
@@ -48,7 +46,8 @@ import {
   centeringStyles,
   stepStyle,
 } from "../theme.jsx";
-import { formatDate } from "../utiles.js";
+import { fileToBase64, formatDate } from "../utiles.js";
+
 /**
  * @brief Componente que muestra el formulario de registro.
  */
@@ -135,8 +134,7 @@ const AuthRegister = () => {
         address: stepData[1].address.nombre,
         phone: stepData[2].phone,
         startdate: formatDate(new Date()),
-        dni1: stepData[2].files[0],
-        dni2: stepData[2].files[1],
+        dni: await fileToBase64(stepData[2].files[0]),
       };
       let result = await registerRequest(register_user);
       updateErrorAtIndex(4, !result);
@@ -287,15 +285,9 @@ const AuthRegister = () => {
       <Divider />
       <CardContent>
         <Stack>
-          <Suspense
-            fallback={
-              <Box sx={{ padding: 2, height: 400 }}>
-                <Skeleton height={400} />
-              </Box>
-            }
-          >
+
             <Box padding={2}>{StepperStage(activeStep)}</Box>
-          </Suspense>
+         
           <Stepper
             ref={stepperRef}
             activeStep={activeStep}

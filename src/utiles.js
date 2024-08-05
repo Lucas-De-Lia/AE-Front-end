@@ -488,12 +488,20 @@ export const decryptData = (encryptedBase64, key) => {
     }
   );
   const hash2 = CryptoJS.SHA256(stringData.toString(CryptoJS.enc.Utf8));
-  if ( !hash2 ===hash)  {
+  if (!hash2 === hash) {
     throw new Error("Invalid hash");
   }
   return JSON.parse(stringData.toString(CryptoJS.enc.Utf8));
 };
 
+export const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
 const utiles = {
   handlePaste,
   decryptData,

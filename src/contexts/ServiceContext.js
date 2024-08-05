@@ -153,7 +153,6 @@ export const ServiceProvider = ({ children }) => {
    */
   const registerRequest = async (register_user) => {
     try {
-      console.log(register_user);
       // Send a POST request to the backend API to register the user
       const { data } = await axios.post(
         `${URL_BACKEND}/api/auth/register`,
@@ -165,7 +164,6 @@ export const ServiceProvider = ({ children }) => {
           },
         }
       );
-      console.log(data.data);
       const { message, authorization } = decryptData(data.data, KEY_CRYPT);
       saveAuth(authorization);
       return message === "User created successfully";

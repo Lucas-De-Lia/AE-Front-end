@@ -68,7 +68,7 @@ const FormInfo = React.forwardRef((props, ref) => {
   const FieldsDetectedError = {
     name: (value) => handleEmptyness(value),
     lastname: (value) => handleEmptyness(value),
-    cuil: (value) => handleEmptyness(value) || value.length === 11,
+    cuil: (value) => handleEmptyness(value) || value.length !== 13,
     birthdate: (value) => handleDateControl(value) || handleEmptyness(value),
     gender: (value) => handleNonDefaultGender(value),
     password: (value) => handleEmptyness(value),

@@ -1,8 +1,18 @@
-import { Box, Button, CardContent, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardContent,
+  FormControl,
+  Grid,
+  IconButton,
+  Input,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { MuiTelInput } from "mui-tel-input";
 import React, { useImperativeHandle, useState } from "react";
 import {
-  useCommonsButtonString,
+  //useCommonsButtonString,
   useFormExtraString,
   useFormFileAttachString,
 } from "../../contexts/TextProvider.jsx";
@@ -12,9 +22,10 @@ import {
   emailConocido,
   handleCopyCut,
   handlePaste,
-  shortFileName,
 } from "../../utiles.js";
 import AlertFragment from "../AlertFragmet.jsx";
+import { blue } from "@mui/material/colors";
+import ClearIcon from "@mui/icons-material/Clear";
 
 /**
  * @brief Step del formulario de registro, encargado de los datos extra y las imagenes del documento.
@@ -24,7 +35,7 @@ const FormExtra = React.forwardRef(
     // Variables de texto
     const formextralabels = useFormExtraString();
     const formfileattachlabels = useFormFileAttachString();
-    const commonbuttonlabels = useCommonsButtonString();
+    //const commonbuttonlabels = useCommonsButtonString();
     // Variables de datos.
     const [userData, setUserData] = useState({
       phone,
@@ -39,14 +50,13 @@ const FormExtra = React.forwardRef(
     const [emailCopy, setEmailCopy] = useState([]);
 
     //boton de carga de archivos una ves que se cargan las dos imagenes se desactiva
-    const [isButtonDisabled, setButtonDisabled] = useState(false);
+    const [isButtonDisabled, setButtonDisabled] = useState(files.length > 0);
 
     // Estructura que gestiona los errores.
     const [errors, setErrors] = useState({
       phone: false,
       email: false,
-      files_size: false,
-      files_type: false,
+      file: files.length < 0,
     });
 
     /**
@@ -62,37 +72,25 @@ const FormExtra = React.forwardRef(
     /**
      * @brief Funcion encagada de gestionar la suba de archivos
      *  */
-    const handleFileChange = (event) => {
-      let files = event.target.files;
-      let selectedFilesArray = [];
-      if (userData.files) {
-        selectedFilesArray = userData.files;
+    const handleFileChange = (files) => {
+      let file = files[0];
+      if (file.type && file.type.startsWith("image/")) {
+        setErrors({
+          ...errors,
+          files: false,
+        });
+        setUserData({ ...userData, files: [file] });
+        setButtonDisabled(true);
+      } else {
+        setErrors({
+          ...errors,
+          files: true,
+        });
       }
-
-      // Limitar la cantidad de archivos a 2
-      for (let i = 0; i < Math.min(files.length, 2); i++) {
-        let file = files[i];
-        if (file.type && file.type.startsWith("image/")) {
-          selectedFilesArray.push(file);
-          setErrors({
-            ...errors,
-            files_type: false,
-          });
-        } else {
-          setErrors({
-            ...errors,
-            files_type: true,
-          });
-        }
-      }
-
-      setUserData({ ...userData, files: selectedFilesArray });
-      setButtonDisabled(selectedFilesArray.length >= 2);
     };
+
     const handleRemoveFile = (index) => {
-      const updatedFiles = userData.files;
-      updatedFiles.splice(index, 1);
-      setUserData({ userData, files: updatedFiles });
+      setUserData({ userData, files: [] });
       setButtonDisabled(false);
     };
 
@@ -109,15 +107,8 @@ const FormExtra = React.forwardRef(
           !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
           !emailConocido(email) ||
           emailCopy !== email,
-        files_size: files.length < 2,
-        files_type: false,
+        file: files.length === 0,
       };
-      for (const file of files) {
-        if (!file.type.startsWith("image/")) {
-          errors_r.files_type = true;
-          break;
-        }
-      }
       setErrors(errors_r);
       return Object.values(errors_r).some(Boolean);
     };
@@ -131,12 +122,34 @@ const FormExtra = React.forwardRef(
       getData,
     }));
 
+    const [highlight, setHighlight] = useState(false);
+
+    const handleDragEnter = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (userData.files !== null) {
+        setHighlight(true);
+      }
+    };
+    const handleDragLeave = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setHighlight(false);
+    };
+    const handleDrop = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setHighlight(false);
+      // Manejar los archivos aquí
+      handleFileChange(event.dataTransfer.files);
+    };
+
     return (
       <CardContent>
         <Grid container sx={centeringStyles} spacing={2}>
           {registerState && (
             <>
-              <Grid item >
+              <Grid item>
                 <TextField
                   id={"email"}
                   label={formextralabels["email"]}
@@ -176,7 +189,7 @@ const FormExtra = React.forwardRef(
               </Grid>
             </>
           )}
-          <Grid item >
+          <Grid item>
             <MuiTelInput
               sx={{ pt: 3 }}
               id="area-code"
@@ -198,57 +211,110 @@ const FormExtra = React.forwardRef(
         </Grid>
         <Grid
           container
-          sx={{...centeringStyles, paddingTop: 2}}
+          sx={{ ...centeringStyles }}
           spacing={2}
           direction={{ xs: "column", sm: "column" }}
         >
-          <Grid item >
-            <Box>
-              <AlertFragment
-                type={
-                  errors.files_size || errors.files_type
-                    ? "error"
-                    : userData.files.length == 2
-                    ? "success"
-                    : "info"
-                }
-                title={formfileattachlabels.title}
-                body={formfileattachlabels.body}
-              />
-            </Box>
-          </Grid>
-          <Grid item >
-            <Box>
-              <TextField
-                fullWidth
-                id="fileInput"
-                label={formfileattachlabels.files_selected.title}
-                type="file"
-                InputLabelProps={{ shrink: true }}
-                variant="outlined"
-                accept="image/*"
-                multiple
-                size="small"
-                error={errors.files_size || errors.files_type}
-                disabled={isButtonDisabled}
-                onChange={handleFileChange}
-              />
-              {userData.files.length > 0 && (
-                <div>
-                  <p>{formfileattachlabels.files_selected.list}</p>
-                  <ul>
+          <Grid item>
+            <FormControl
+              sx={{
+                border: "2px dashed #ccc",
+                borderRadius: "8px",
+                margin: "15px auto",
+                padding: "20px",
+                ...(highlight && { borderColor: "primary.main" }),
+              }}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <Stack spacing={2} sx={centeringStyles}>
+                <AlertFragment
+                  type={
+                    errors.files_size || errors.files_type
+                      ? "error"
+                      : userData.files.length === 2
+                      ? "success"
+                      : "info"
+                  }
+                  title={formfileattachlabels.title}
+                  body={formfileattachlabels.body}
+                />
+                <Input
+                  type="file"
+                  inputProps={{ accept: "image/*" }}
+                  sx={{ display: "none" }}
+                  id="file-upload"
+                  onChange={(e) => {
+                    handleFileChange(e.target.files);
+                  }}
+                  error={errors.files_size || errors.files_type}
+                  disabled={isButtonDisabled}
+                />
+                <label htmlFor="file-upload">
+                  <Button
+                    variant="contained"
+                    component="span"
+                    disabled={isButtonDisabled}
+                    sx={{
+                      backgroundColor: "info.main",
+                      "&:hover": {
+                        backgroundColor: blue[800],
+                      },
+                      borderRadius: "8px",
+                      padding: "8px 8px",
+                      //fontFamily: "sans-serif",
+                    }}
+                  >
+                    Subir Imagen
+                  </Button>
+                </label>
+                {userData.files.length > 0 && (
+                  <Box sx={centeringStyles}>
                     {userData.files.map((file, index) => (
-                      <li key={index}>
-                        {shortFileName(file.name)}
-                        <Button onClick={() => handleRemoveFile(index)}>
-                          {commonbuttonlabels.delete}
-                        </Button>
-                      </li>
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: "40vh",
+                          border: "1px solid #ccc",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          margin: "10px auto",
+                          padding: "-1px",
+                          position: "relative",
+                        }}
+                      >
+                        <IconButton
+                          size="small"
+                          onClick={() => handleRemoveFile(index)}
+                          sx={{
+                            position: "absolute",
+                            top: 5,
+                            right: 5,
+                            backgroundColor: "#ccc",
+                          }}
+                          aria-label="delete"
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                        <Box
+                          component="img"
+                          sx={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "inherit",
+                            objectFit: "fill",
+                          }}
+                          src={URL.createObjectURL(file)}
+                          alt={`file-${index}`}
+                        />
+                      </Box>
                     ))}
-                  </ul>
-                </div>
-              )}
-            </Box>
+                  </Box>
+                )}
+              </Stack>
+            </FormControl>
           </Grid>
         </Grid>
       </CardContent>
