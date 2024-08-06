@@ -1,9 +1,8 @@
 import { Autocomplete, CardContent, Grid, TextField } from "@mui/material";
 import React, {
-  useCallback,
   useEffect,
   useImperativeHandle,
-  useState,
+  useState
 } from "react";
 import { usePublicResources } from "../../contexts/PublicResourcesContext.js";
 import { useFormAddressString } from "../../contexts/TextProvider.jsx";
@@ -29,6 +28,7 @@ const FormAddress = React.forwardRef((props, ref) => {
     get_citys_name,
     get_substate_names,
     get_address_names,
+    test_postal_code,
     DEFAULT,
   } = usePublicResources();
 
@@ -105,7 +105,7 @@ const FormAddress = React.forwardRef((props, ref) => {
   /**
    * @brief Gestiona los cambios de los estados en la estructura "Fields" aplicando un formato de ser necesario "Formatters" y ejecutando una acción "FieldsActions".
    */
-  const handleChange = useCallback(async (value, field, formatter) => {
+  const handleChange = async (value, field, formatter) => {
     if (value === null) value = DEFAULT;
     if (FieldsActions.hasOwnProperty(field)) {
       await FieldsActions[field](value);
@@ -114,61 +114,57 @@ const FormAddress = React.forwardRef((props, ref) => {
         await FieldsActions["other"](value, field);
       }
     }
-  });
+  };
 
   /**
    * @brief Funcion que se encarga de obtener las sugerencias para los campos .
    */
-  const getSuggestions = useCallback(
-    async (field, value = "") => {
-      let fields = [];
-      switch (field) {
-        default:
-          throw new Error("Wrong field");
-        case "state":
-          fields = await get_province_names();
-          break;
-        case "substate":
-          fields = await get_substate_names(value);
-          break;
-        case "city":
-          fields = await get_citys_name(Fields["state"][1].nombre, value);
-          break;
-        case "address":
-          fields = await get_address_names(
-            Fields["state"][1].nombre,
-            Fields["substate"][1].nombre,
-            value
-          );
-          break;
-      }
+  const getSuggestions = async (field, value = "") => {
+    let fields = [];
+    switch (field) {
+      default:
+        throw new Error("Wrong field");
+      case "state":
+        fields = await get_province_names();
+        break;
+      case "substate":
+        fields = await get_substate_names(value);
+        break;
+      case "city":
+        fields = await get_citys_name(Fields["state"][1].nombre, value);
+        break;
+      case "address":
+        fields = await get_address_names(
+          Fields["state"][1].nombre,
+          Fields["substate"][1].nombre,
+          value
+        );
+        break;
+    }
 
-      setSuggestions((prevSuggestions) => ({
-        ...prevSuggestions,
-        [field]: fields,
-      }));
-      return fields;
-    },
-    [
-      Fields,
-      get_province_names,
-      get_substate_names,
-      get_citys_name,
-      get_address_names,
-    ]
-  );
+    setSuggestions((prevSuggestions) => ({
+      ...prevSuggestions,
+      [field]: fields,
+    }));
+    return fields;
+  };
 
   /**
    * @brief Verifica si existen errores en los campos obligatorios / o que tengan alguna restricción. y devuelve un booleano
    */
-  const handleErrors = useCallback(() => {
+  const handleErrors = async () => {
+    let postal = parseInt(Fields["postalCode"]);
+    let booleanPostal = await test_postal_code(
+      Fields["state"][0].nombre,
+      Fields["city"][0].nombre,
+      postal
+    );
     const newErrors = {
       state: !Fields["state"][0].id,
       substate: !Fields["substate"][0].id,
       city: !Fields["city"][0].id,
       address: !Fields["address"][0].id,
-      postalCode:
-        Fields["postalCode"][0] === "" && Fields["postalCode"][0].length !== 4,
+      postalCode: Fields["postalCode"][0] === "" || booleanPostal, // rangos segun https://zippopotam.us/
       number:
         Fields["number"][0] === "" ||
         !itsNumber(Fields["number"][0]) ||
@@ -178,7 +174,7 @@ const FormAddress = React.forwardRef((props, ref) => {
 
     setErrors(newErrors);
     return Object.values(newErrors).some(Boolean);
-  }, [Fields]);
+  };
 
   const getData = () => {
     return {
@@ -202,7 +198,7 @@ const FormAddress = React.forwardRef((props, ref) => {
    * @brief Gestiona el inicio, esto es para poder cargar una dirección cuando viene por props , por ejemplo cuando nav por el formulario
    * o carga los datos de un usuario ya autoexcluido para renovar.
    */
-  const startup = useCallback(async (props) => {
+  const startup = async (props) => {
     let states = await get_province_names();
     let substates = await get_substate_names(props.state.nombre);
     let citys = await get_citys_name(props.state.nombre, props.substate.nombre);
@@ -217,7 +213,7 @@ const FormAddress = React.forwardRef((props, ref) => {
       address: address,
       substate: substates,
     });
-  }, []);
+  };
 
   useEffect(() => {
     if (props.substate !== "Ninguno") {
@@ -272,7 +268,9 @@ const FormAddress = React.forwardRef((props, ref) => {
               size="small"
               required={["postalCode", "number"].includes(field)}
               helperText={
-                ["postalCode", "number"].includes(field) ? formaddresslables.helper_text["requiered"] : formaddresslables.helper_text[field]
+                ["postalCode", "number"].includes(field)
+                  ? formaddresslables.helper_text["requiered"]
+                  : formaddresslables.helper_text[field]
               }
               error={errors[field]}
               onChange={(event) =>

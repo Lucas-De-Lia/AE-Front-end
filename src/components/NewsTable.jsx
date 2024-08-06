@@ -78,7 +78,6 @@ const NewsTable = () => {
       // Esto es para que si tengo cargada en memoria una pagina y justo borran esa pagina,lo que haga es visualizar la anterior a esa pagina.
       fetch_news = await fetch_news_list(pagefind - 1, itemsPerPage);
       pagefind = page - 1;
-      const totalItems = fetch_news.total;
     }
     const totalItems = fetch_news.total;
     setTotalPages(Math.ceil(totalItems / itemsPerPage));

@@ -1,9 +1,10 @@
 import axios from "axios";
 import React, { createContext, useContext } from "react";
-import { encryptData, decryptData } from "../utiles";
+import { decryptData } from "../utiles";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const URL_GEOREF = process.env.REACT_APP_GEOREF_URL;
+const URL_POSTAL = process.env.REACT_APP_POSTAL_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
 const KEY_CRYPT = process.env.REACT_APP_CRYPT;
 
@@ -134,6 +135,31 @@ export const PublicResourcesProvider = ({ children }) => {
   };
 
   /**
+   * @brief Obtiene si el codigo postal pertenece a la provincia y ciudad 
+   * devuelve true si existe error y false si no existe error
+   */
+  const test_postal_code = async (province, city, postal_code) => {
+    if (postal_code <= 9431 || postal_code >= 1601) {
+      const { data } = await axios.get(`${URL_POSTAL}/AR/${postal_code}`);
+      console.log(data);
+      if (data) {
+        let places = data.places;
+        console.log(places);
+        let filter_state = places.filter(
+          (item) =>
+            item.state.toLowerCase() === province.toLowerCase() &&
+            item["place name"].toLowerCase() === city.toLowerCase()
+        );
+        console.log(filter_state);
+        if (filter_state.length > 0) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  /**
    * @brief Obtiene la lista de noticias
    */
   const fetch_news_list = async (current_page, page_size) => {
@@ -146,8 +172,8 @@ export const PublicResourcesProvider = ({ children }) => {
           headers: { "X-API-Key": APP_KEY },
         }
       );
-      const lista = decryptData(data.data,KEY_CRYPT);
-      console.log("Lista" . lista);
+      const lista = decryptData(data.data, KEY_CRYPT);
+      console.log("Lista".lista);
       return lista ? lista : [];
     } catch (error) {
       console.error("Error fetching news list:", error);
@@ -167,7 +193,7 @@ export const PublicResourcesProvider = ({ children }) => {
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const pdf = decryptData(data.data,KEY_CRYPT);
+      const pdf = decryptData(data.data, KEY_CRYPT);
       return pdf ? pdf : [];
     } catch (error) {
       console.error("Error fetching PDF viewer:", error);
@@ -180,13 +206,13 @@ export const PublicResourcesProvider = ({ children }) => {
    */
   const fetch_faq = async () => {
     try {
-      const {data} = await axios.get(
+      const { data } = await axios.get(
         `${URL_BACKEND}/api/resources/getQuestions`,
         {
           headers: { "X-API-Key": APP_KEY },
         }
       );
-      const faq = decryptData(data.data,KEY_CRYPT);
+      const faq = decryptData(data.data, KEY_CRYPT);
       return faq ? faq : [];
     } catch (error) {
       console.error("Error fetching Answers&Questions:", error);
@@ -197,6 +223,7 @@ export const PublicResourcesProvider = ({ children }) => {
   return (
     <PublicResourseContext.Provider
       value={{
+        test_postal_code,
         fetch_news_list,
         fetch_news_pdf,
         get_province_names,
