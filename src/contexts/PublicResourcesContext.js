@@ -135,29 +135,35 @@ export const PublicResourcesProvider = ({ children }) => {
   };
 
   /**
-   * @brief Obtiene si el codigo postal pertenece a la provincia y ciudad 
+   * @brief Obtiene si el codigo postal pertenece a la provincia y ciudad
    * devuelve true si existe error y false si no existe error
    */
   const test_postal_code = async (province, city, postal_code) => {
-    if (postal_code <= 9431 || postal_code >= 1601) {
-      const { data } = await axios.get(`${URL_POSTAL}/AR/${postal_code}`);
-      console.log(data);
-      if (data) {
-        let places = data.places;
-        console.log(places);
-        let filter_state = places.filter(
-          (item) =>
-            item.state.toLowerCase() === province.toLowerCase() &&
-            item["place name"].toLowerCase() === city.toLowerCase()
-        );
-        console.log(filter_state);
-        if (filter_state.length > 0) {
-          return false;
+    let prov = quitarAcentos(province).toUpperCase();
+    let citys = quitarAcentos(city).toUpperCase();
+    if (1601 <= postal_code || postal_code <= 9431) {
+      //return false;
+      try {
+        const { data } = await axios.get(`${URL_POSTAL}/AR/${postal_code}`, {});
+        if (data) {
+          let places = data.places;
+          let filter_state = places.filter(
+            (item) => item.state === prov && item["place name"] === citys
+          );
+          if (filter_state.length > 0) {
+            return false;
+          }
         }
+      } catch (error) {
+        console.error("Error en el test de el codigo postal: ", error);
       }
     }
     return true;
   };
+
+  function quitarAcentos(string) {
+    return string.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
 
   /**
    * @brief Obtiene la lista de noticias

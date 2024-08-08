@@ -303,26 +303,34 @@ export const ServiceProvider = ({ children }) => {
       });
     return await Promise.all([responseRefresh, responseDates]).then(
       (responses) => {
-        let responseAuth = decryptData(responses[0].data.data, KEY_CRYPT);
-        if (responseAuth) {
-          const { user } = responseAuth;
-          if (user) {
-            let responseDate = decryptData(responses[1].data.data, KEY_CRYPT);
-            if (responses[1]) {
-              const { type, dates } = responseDate;
-              user.ae = type;
-              if (dates.startDay) {
-                setServerDates(dates_to_json_calendar(dates));
+        if (responses[0].data) {
+          let responseAuth = decryptData(responses[0].data.data, KEY_CRYPT);
+          if (responseAuth) {
+            const { user } = responseAuth;
+            if (user) {
+              if (responses[1].data) {
+                let responseDate = decryptData(
+                  responses[1].data.data,
+                  KEY_CRYPT
+                );
+                if (responses[1]) {
+                  const { type, dates } = responseDate;
+                  user.ae = type;
+                  if (dates.startDay) {
+                    setServerDates(dates_to_json_calendar(dates));
+                  }
+                }
+                setUser(user);
+                setIsAuthenticated(true);
               }
             }
-            setUser(user);
-            setIsAuthenticated(true);
           }
         }
         return false;
       }
     );
   };
+
   const refesh = useCallback(async () => {
     return await refesh_fn();
   }, []);
