@@ -142,7 +142,7 @@ export const PublicResourcesProvider = ({ children }) => {
     let prov = quitarAcentos(province).toUpperCase();
     let citys = quitarAcentos(city).toUpperCase();
     if (1601 <= postal_code || postal_code <= 9431) {
-      //return false;
+      return false;
       try {
         const { data } = await axios.get(`${URL_POSTAL}/AR/${postal_code}`, {});
         if (data) {
@@ -179,7 +179,6 @@ export const PublicResourcesProvider = ({ children }) => {
         }
       );
       const lista = decryptData(data.data, KEY_CRYPT);
-      console.log("Lista".lista);
       return lista ? lista : [];
     } catch (error) {
       console.error("Error fetching news list:", error);

@@ -26,6 +26,7 @@ import {
 import AlertFragment from "../AlertFragmet.jsx";
 import { blue } from "@mui/material/colors";
 import ClearIcon from "@mui/icons-material/Clear";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 /**
  * @brief Step del formulario de registro, encargado de los datos extra y las imagenes del documento.
@@ -266,6 +267,7 @@ const FormExtra = React.forwardRef(
                       padding: "8px 8px",
                       //fontFamily: "sans-serif",
                     }}
+                    startIcon={<CloudUploadIcon />}
                   >
                     Subir Imagen
                   </Button>

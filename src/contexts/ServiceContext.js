@@ -293,6 +293,7 @@ export const ServiceProvider = ({ children }) => {
         console.error("Error al refrescar:", msg);
         return false;
       });
+
     const responseDates = axios
       .get(`${URL_BACKEND}/api/ae/dates`, {
         headers: { "X-API-Key": APP_KEY },
@@ -301,28 +302,27 @@ export const ServiceProvider = ({ children }) => {
         let msg = decryptData(error.response.data.data, KEY_CRYPT);
         console.error("Error al refrescar:", msg);
       });
+
     return await Promise.all([responseRefresh, responseDates]).then(
       (responses) => {
-        if (responses[0].data) {
+        if (responses[0] && responses[0].data) {
           let responseAuth = decryptData(responses[0].data.data, KEY_CRYPT);
           if (responseAuth) {
             const { user } = responseAuth;
             if (user) {
-              if (responses[1].data) {
+              if (responses[1] && responses[1].data) {
                 let responseDate = decryptData(
                   responses[1].data.data,
                   KEY_CRYPT
                 );
-                if (responses[1]) {
-                  const { type, dates } = responseDate;
-                  user.ae = type;
-                  if (dates.startDay) {
-                    setServerDates(dates_to_json_calendar(dates));
-                  }
+                const { type, dates } = responseDate;
+                user.ae = type;
+                if (dates.startDay) {
+                  setServerDates(dates_to_json_calendar(dates));
                 }
-                setUser(user);
-                setIsAuthenticated(true);
               }
+              setUser(user);
+              setIsAuthenticated(true);
             }
           }
         }
@@ -352,6 +352,28 @@ export const ServiceProvider = ({ children }) => {
     return decryptData(data.data, KEY_CRYPT);
   };
 
+
+  /**
+   * @brief Buscar el historial
+   */
+  const fetch_history= async (current_page,page_size) => {
+    try {
+      const { data } = await axios.post(
+        `${URL_BACKEND}/api/ae/history`,
+        { page_size: page_size },
+        {
+          params: { page: current_page },
+          headers: { "X-API-Key": APP_KEY },
+        }
+      );
+      const list = decryptData(data.data, KEY_CRYPT);
+      return list ? list : [];;
+    } catch (error) {
+      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      console.error("Error al obtener el history:", msg);
+      return null;
+    }
+  }
   useEffect(() => {
     let parsedAuthorization = null;
     const encryptedAuth = localStorage.getItem("authorization");
@@ -381,6 +403,7 @@ export const ServiceProvider = ({ children }) => {
     <ServiceContext.Provider
       value={{
         refesh_fn,
+        fetch_history,
         fetch_end_pdf,
         isAuthenticated,
         setIsAuthenticated,

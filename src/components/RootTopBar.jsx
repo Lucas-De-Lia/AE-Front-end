@@ -1,5 +1,5 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import { useMediaQuery } from "@mui/material";
+import { Button, Popper, useMediaQuery } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
@@ -15,10 +15,12 @@ import { useRootTopbarString } from "../contexts/TextProvider.jsx";
 import IconUserMenu from "../fragments/topbar/IconUserMenu.jsx";
 import {
   boxSMmenu,
+  buttonTopStyle,
   iconButtonTopStyle,
   logoTopStyle,
   menuStyles,
 } from "../theme.jsx";
+import MenuButton from "../fragments/topbar/MenuButtom.jsx";
 
 /**
  * @brief Muestra el encabezado de la página
@@ -44,6 +46,8 @@ const RootTopBar = (props) => {
       {
         label: labels.titles[2],
         disabled: User !== null ? User.ae !== AE.NON_AE : false,
+        Popper:
+          "Este botón está deshabilitado porque ya tienes una autoexclusion activa.",
       },
       {
         label: labels.titles[3],
@@ -51,6 +55,8 @@ const RootTopBar = (props) => {
           User !== null && User.ae === AE.FINISHABLE
             ? today < serverDates.fifthMonth || today > serverDates.sixthMonth
             : true,
+        Popper:
+          "Este botón está deshabilitado porque no estás en la fecha indicada.",
       },
     ],
     [User, serverDates, labels, today, AE]
@@ -103,7 +109,7 @@ const RootTopBar = (props) => {
       <Container>
         <Toolbar disableGutters>
           <Box sx={boxSMmenu}>
-            {isAuthenticated && (
+            {isAuthenticated && false && (
               <>
                 <IconButton {...iconButtonTopStyle} onClick={handleOpenNavMenu}>
                   <MenuIcon />
@@ -143,6 +149,13 @@ const RootTopBar = (props) => {
               onClick={handleLogoClick}
               style={logoTopStyle}
             />
+            {isAuthenticated &&
+              pages.map((page, index) => (
+                <MenuButton
+                  page={page}
+                  onClick={(e) => handleoOnClickMenu(e, index)}
+                />
+              ))}
           </Box>
           <Box
             sx={{
@@ -151,9 +164,7 @@ const RootTopBar = (props) => {
               justifyContent: "center",
               alignItems: "center",
             }}
-          >
-            <Typography variant="h4">Control de Acceso al Juego</Typography>
-          </Box>
+          ></Box>
           <Box
             sx={{
               flexGrow: 1,
@@ -166,5 +177,17 @@ const RootTopBar = (props) => {
     </AppBar>
   );
 };
+/**
+ *           <Box
+            sx={{
+              flexGrow: 1,
+              display: !useMediaQuery("(max-width:600px)") ? "flex" : "none",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h4">Control de Acceso al Juego</Typography>
+          </Box>
+ */
 
 export default RootTopBar;

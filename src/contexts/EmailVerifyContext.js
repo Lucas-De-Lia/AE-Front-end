@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { createContext, useContext } from "react";
 import { decryptData, encryptData } from "../utiles";
+import { useService } from "./ServiceContext";
 
 const URL_BACKEND = process.env.REACT_APP_BACK_URL;
 const APP_KEY = process.env.REACT_APP_KEY;
@@ -10,6 +11,7 @@ const KEY_CRYPT = process.env.REACT_APP_CRYPT;
 const EmailVerifyContext = createContext();
 
 export const EmailVerifyProvider = ({ children }) => {
+  const { Authorization } = useService();
   /**
    * @brief Reenvia el email de verificación , si el usuario todavía no ha verificado su correo.
    */
@@ -40,8 +42,9 @@ export const EmailVerifyProvider = ({ children }) => {
         { headers: { "X-API-Key": APP_KEY } }
       );
       const { message } = decryptData(data.data, KEY_CRYPT);
+      console.log(message);
       return (
-        message === "Email verified" || message === "Email already verified"
+        message === "Email verified" || message === "Email already Verified"
       );
     } catch (error) {
       let msg = decryptData(error.response.data.data, KEY_CRYPT);

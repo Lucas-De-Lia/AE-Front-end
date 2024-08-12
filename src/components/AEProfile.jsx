@@ -11,6 +11,7 @@ import CustomChip from "../fragments/profile/PofileCustomChip.jsx";
 import ProfileInfo from "../fragments/profile/ProfileInfo.jsx";
 import { centeringStyles } from "../theme.jsx";
 import { isSameMonth } from "../utiles.js";
+import Historial from "../fragments/profile/Historial.jsx";
 
 const Grid = lazy(() => import("@mui/material/Grid"));
 const Paper = lazy(() => import("@mui/material/Paper"));
@@ -157,11 +158,14 @@ const AEProfile = () => {
                 </Stack>
               </Paper>
             ) : (
-              <AlertFragment
-                type={"warning"}
-                title={labels.calendar.alert_warning_finish.title}
-                body={labels.calendar.alert_warning_finish.body}
-              />
+              <Stack spacing={2}>
+                <AlertFragment
+                  type={"warning"}
+                  title={labels.calendar.alert_warning_finish.title}
+                  body={labels.calendar.alert_warning_finish.body}
+                />
+                <Historial />
+              </Stack>
             )}
           </Grid>
         </Grid>

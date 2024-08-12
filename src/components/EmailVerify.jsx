@@ -7,6 +7,7 @@ import { useEmailVerify } from "../contexts/EmailVerifyContext";
 import { useService } from "../contexts/ServiceContext";
 import { useComponentEmailVerifyString } from "../contexts/TextProvider.jsx";
 import AlertFragment from "../fragments/AlertFragmet.jsx";
+import { sleep } from "../utiles.js";
 
 /**
  * @brief Se visualiza cuando un entras al link de la verificacion de email
@@ -38,16 +39,20 @@ const EmailVerify = () => {
   const verifyEmail = useCallback(async () => {
     const result = null;
     try {
-      const result = send_confirmation_verify(id, hash, expires, signature);
+      const result = await send_confirmation_verify(
+        id,
+        hash,
+        expires,
+        signature
+      );
       console.log(result);
       setSuccess(result);
-      setLoading(result);
     } catch (error) {
       setSuccess(false);
-      setLoading(false);
     } finally {
-      await Promise.all([result]);
-      navigate("/", { replace: true });
+      setLoading(false);
+      await sleep(2000);
+      navigate("/",{replace: true});
     }
   }, [
     id,
@@ -62,7 +67,7 @@ const EmailVerify = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      verifyEmail();
+    verifyEmail();
     }
   }, [isAuthenticated, verifyEmail]);
 
