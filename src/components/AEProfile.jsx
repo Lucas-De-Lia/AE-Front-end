@@ -158,15 +158,16 @@ const AEProfile = () => {
                 </Stack>
               </Paper>
             ) : (
-              <Stack spacing={2}>
-                <AlertFragment
-                  type={"warning"}
-                  title={labels.calendar.alert_warning_finish.title}
-                  body={labels.calendar.alert_warning_finish.body}
-                />
-                <Historial />
-              </Stack>
+              <AlertFragment
+                type={"warning"}
+                title={labels.calendar.alert_warning_finish.title}
+                body={labels.calendar.alert_warning_finish.body}
+              />
             )}
+          </Grid>
+
+          <Grid item>
+            <Historial />
           </Grid>
         </Grid>
       ) : (

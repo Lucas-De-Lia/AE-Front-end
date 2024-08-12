@@ -165,7 +165,7 @@ const Historial = () => {
 
   return (
     <>
-      {visibleAE && (
+      {visibleAE.length > 1 && (
         <Paper sx={{ borderRadius: "7px" }}>
           <TableContainer sx={{ paddingBottom: 1 }}>
             <Table sx={{ minWidth: 650, padding: 1 }}>
