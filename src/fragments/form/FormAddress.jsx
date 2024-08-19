@@ -1,9 +1,5 @@
 import { Autocomplete, CardContent, Grid, TextField } from "@mui/material";
-import React, {
-  useEffect,
-  useImperativeHandle,
-  useState
-} from "react";
+import React, { useEffect, useImperativeHandle, useState } from "react";
 import { usePublicResources } from "../../contexts/PublicResourcesContext.js";
 import { useFormAddressString } from "../../contexts/TextProvider.jsx";
 import { centeringStyles } from "../../theme.jsx";
@@ -171,7 +167,6 @@ const FormAddress = React.forwardRef((props, ref) => {
         Fields["number"][0] >= 9999 ||
         Fields["number"][0] <= 0,
     };
-
     setErrors(newErrors);
     return Object.values(newErrors).some(Boolean);
   };

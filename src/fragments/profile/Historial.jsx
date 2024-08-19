@@ -13,6 +13,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Typography,
   debounce,
   tableCellClasses,
 } from "@mui/material";
@@ -46,6 +47,7 @@ function TablePaginationActions(props) {
   return (
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
       <IconButton
+        size="small"
         onClick={handleFirstPageButtonClick}
         disabled={page === 0}
         aria-label="first page"
@@ -53,6 +55,7 @@ function TablePaginationActions(props) {
         {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
       <IconButton
+        size="small"
         onClick={handleBackButtonClick}
         disabled={page === 0}
         aria-label="previous page"
@@ -64,6 +67,7 @@ function TablePaginationActions(props) {
         )}
       </IconButton>
       <IconButton
+        size="small"
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
@@ -75,6 +79,7 @@ function TablePaginationActions(props) {
         )}
       </IconButton>
       <IconButton
+        size="small"
         onClick={handleLastPageButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="last page"
@@ -84,6 +89,8 @@ function TablePaginationActions(props) {
     </Box>
   );
 }
+
+const Color = "black";
 
 const estados = [
   "Vigente",
@@ -113,6 +120,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const StyledPagination = styled(TablePagination)(({ theme }) => ({
+  // hide last border
+  "& td, & th": {
+    border: 0,
+  },
+}));
+
 const Historial = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -120,17 +134,17 @@ const Historial = () => {
   const [fetchAE, setFetchAE] = useState([]);
   const { fetch_history } = useService();
 
-  // ---------------------------- CAMBIAR ----------------------------------
   const visibleAE = useMemo(() => fetchAE, [fetchAE]);
 
   /**
-   * @brief Se encarga de hacer el fetch de las noticas y calcula los datos necesarios para la paginacion
+   * @brief Se encarga de hacer el fetch de las ae y calcula los datos necesarios para la paginacion
    */
   const fetchDataCallback = useCallback(async () => {
     try {
       const fetch_hst = await fetch_history(page + 1, rowsPerPage);
       //console.log(fetch_hst);
       const totalItems = fetch_hst.total;
+      console.log(fetch_hst.data);
       setTotalPages(Math.ceil(totalItems / rowsPerPage));
       setFetchAE(fetch_hst.data);
     } catch (error) {
@@ -151,6 +165,10 @@ const Historial = () => {
   }, []);
 
   // ---------------------------- CAMBIAR ----------------------------------
+  /**
+   * Esto es para que siempre la tabla tenga la misma cantidad de filas
+   * Si no tiene suficiente para agregar a la tabla las agrega en blanco.
+   */
   const emptyRows =
     page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - visibleAE.length) : 0;
 
@@ -166,65 +184,77 @@ const Historial = () => {
   return (
     <>
       {visibleAE.length > 1 && (
-        <Paper sx={{ borderRadius: "7px" }}>
-          <TableContainer sx={{ paddingBottom: 1 }}>
-            <Table sx={{ minWidth: 650, padding: 1 }}>
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>Fecha de Inicio</StyledTableCell>
-                  <StyledTableCell>Fecha de Fin</StyledTableCell>
-                  <StyledTableCell>Estado</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rowsPerPage > 0 &&
-                  visibleAE.map((row) => (
-                    <TableRow key={row.id_estado}>
-                      <StyledTableCell component="th" scope="row">
-                        {row.fecha_ae}
-                      </StyledTableCell>
-                      <StyledTableCell>{row.fecha_cierre_ae}</StyledTableCell>
-                      <StyledTableCell>
-                        {estados[row.id_nombre_estado - 1]}
-                      </StyledTableCell>
-                    </TableRow>
-                  ))}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <StyledTableCell colSpan={6} />
+        <Paper sx={{ padding: 1 }}>
+          <Box sx={{ borderRadius: "4px", border: "1px solid black" }}>
+            <Box
+              sx={{
+                backgroundColor: "black",
+                borderRadius: "4px 4px 0px 0px"
+              }}
+            >
+              <Typography variant="h4" padding={1} color={"white"}>
+                {"Tu Historial"}
+              </Typography>
+            </Box>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell size="small">
+                      Fecha de Inicio
+                    </StyledTableCell>
+                    <StyledTableCell size="small">Fecha de Fin</StyledTableCell>
+                    <StyledTableCell size="small">Estado</StyledTableCell>
                   </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    rowsPerPageOptions={[
-                      5,
-                      10,
-                      25,
-                      { label: "All", value: -1 },
-                    ]}
-                    colSpan={3}
-                    count={totalPages}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    slotProps={{
-                      select: {
-                        inputProps: {
-                          "aria-label": "rows per page",
+                </TableHead>
+                <TableBody>
+                  {rowsPerPage > 0 &&
+                    visibleAE.map((row) => (
+                      <StyledTableRow key={row.id_estado}>
+                        <StyledTableCell size="small">
+                          {row.fecha_ae}
+                        </StyledTableCell>
+                        <StyledTableCell size="small">
+                          {row.fecha_cierre_ae}
+                        </StyledTableCell>
+                        <StyledTableCell size="small">
+                          {estados[row.id_nombre_estado - 1]}
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                  {emptyRows > 0 && (
+                    <StyledTableRow style={{ height: 37 * emptyRows }}>
+                      <StyledTableCell colSpan={3} />
+                    </StyledTableRow>
+                  )}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <StyledPagination
+                      size="small"
+                      rowsPerPageOptions={[5,10]}
+                      colSpan={3}
+                      count={totalPages}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      slotProps={{
+                        select: {
+                          inputProps: {
+                            "aria-label": "rows per page",
+                          },
+                          native: true,
                         },
-                        native: true,
-                      },
-                    }}
-                    labelRowsPerPage={"Filas por pagina"}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
+                      }}
+                      labelRowsPerPage={"Filas por pagina"}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      ActionsComponent={TablePaginationActions}
+                    />
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+          </Box>
         </Paper>
       )}
     </>

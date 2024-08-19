@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { blue, red } from "@mui/material/colors";
 import React, { lazy, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,8 @@ const AEProfile = () => {
   const { User, serverDates, AE } = useService();
 
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Si no estoy loageado entonces voy a la raiz.
   useEffect(() => {
@@ -34,14 +36,15 @@ const AEProfile = () => {
       navigate("/");
     }
   }, [User, navigate, serverDates]);
-
+  // OPTIMIZAR
   return (
     <div>
       {User ? (
         <Grid
           container
-          spacing={1}
+          spacing={2}
           padding={User.ae !== AE.NON_AE ? 0 : 8}
+          //direction={isMobile ? "row" : "column"}
           sx={centeringStyles}
         >
           <Grid item>
@@ -49,125 +52,143 @@ const AEProfile = () => {
               <EmailVerifyProvider>
                 <ProfileInfo />
               </EmailVerifyProvider>
+            </Stack>
+          </Grid>
 
+          <Grid
+            paddingBlockStart={2}
+            container
+            spacing={2}
+            //direction={isMobile ? "row" : "column"}
+            sx={centeringStyles}
+          >
+            <Grid item id="msg-finalized">
               {User.ae === AE.FINALIZED && (
                 <AlertFragment
                   type={"warning"}
+                  sx={{ width: "35vw" }}
                   title={labels.calendar.alert_warning_finalize_onprocess.title}
                   body={labels.calendar.alert_warning_finalize_onprocess.body}
                 />
               )}
-            </Stack>
-          </Grid>
+            </Grid>
 
-          <Grid item>
-            {User.ae !== AE.NON_AE ? (
-              <Paper>
-                <Stack
-                  paddingTop={2}
-                  paddingBlock={2}
-                  spacing={3}
-                  sx={{
-                    width: "77vw",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Grid
-                    item
-                    sx={{ justifyContent: "center", alignItems: "center" }}
+            <Grid item id="calendar-item">
+              {User.ae !== AE.NON_AE && (
+                <Paper sm={6}>
+                  <Stack
+                    paddingTop={2}
+                    paddingBlock={2}
+                    spacing={3}
+                    sx={{
+                      //width: "77vw",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
                   >
-                    <Typography variant="h4">
-                      {labels.calendar.title}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item>
                     <Grid
-                      container
-                      spacing={2}
-                      sx={{
-                        ...centeringStyles,
-                        minWidth: "77vw",
-                        paddingBottom: 4,
-                        overflow: "auto",
-                      }}
+                      item
+                      sx={{ justifyContent: "center", alignItems: "center" }}
                     >
-                      <Grid key={"0"} item>
-                        <Calendar
-                          key={"0-calendar"}
-                          intStart={serverDates.startDay}
-                          intEnd={serverDates.startDay}
-                          msg={labels.calendar.tooltip[0]}
-                        />
-                      </Grid>
+                      <Typography variant="h4">
+                        {labels.calendar.title}
+                      </Typography>
+                    </Grid>
 
-                      {serverDates.hasOwnProperty("fifthMonth") && (
-                        <Grid key={"1"} item>
+                    <Grid item>
+                      <Grid
+                        container
+                        spacing={2}
+                        sx={{
+                          //...centeringStyles,
+                          justifyContent: "center",
+                          //minWidth: "77vw",
+                          paddingBottom: 4,
+                          overflow: "auto",
+                          padding: 2,
+                        }}
+                      >
+                        <Grid key={"0"} item>
                           <Calendar
-                            key={"1-calendar"}
-                            intStart={serverDates.fifthMonth}
-                            intEnd={serverDates.sixthMonth}
-                            msg={labels.calendar.tooltip[1]}
+                            key={"0-calendar"}
+                            intStart={serverDates.startDay}
+                            intEnd={serverDates.startDay}
+                            msg={labels.calendar.tooltip[0]}
                           />
                         </Grid>
-                      )}
 
-                      {serverDates.hasOwnProperty("fifthMonth") &&
-                        !isSameMonth(
-                          serverDates.fifthMonth,
-                          serverDates.sixthMonth
-                        ) && (
-                          <Grid key={"2"} item>
+                        {serverDates.hasOwnProperty("fifthMonth") && (
+                          <Grid key={"1"} item>
                             <Calendar
-                              key={"2-calendar"}
-                              intStart={serverDates.sixthMonth}
-                              intEnd={serverDates.fifthMonth}
+                              key={"1-calendar"}
+                              intStart={serverDates.fifthMonth}
+                              intEnd={serverDates.sixthMonth}
                               msg={labels.calendar.tooltip[1]}
                             />
                           </Grid>
                         )}
 
-                      <Grid key={"3"} item>
-                        <Calendar
-                          key={"3-calendar"}
-                          intStart={serverDates.lastMonth}
-                          intEnd={serverDates.lastMonth}
-                          msg={labels.calendar.tooltip[2]}
-                        />
+                        {serverDates.hasOwnProperty("fifthMonth") &&
+                          !isSameMonth(
+                            serverDates.fifthMonth,
+                            serverDates.sixthMonth
+                          ) && (
+                            <Grid key={"2"} item>
+                              <Calendar
+                                key={"2-calendar"}
+                                intStart={serverDates.sixthMonth}
+                                intEnd={serverDates.fifthMonth}
+                                msg={labels.calendar.tooltip[1]}
+                              />
+                            </Grid>
+                          )}
+
+                        <Grid key={"3"} item>
+                          <Calendar
+                            key={"3-calendar"}
+                            intStart={serverDates.lastMonth}
+                            intEnd={serverDates.lastMonth}
+                            msg={labels.calendar.tooltip[2]}
+                          />
+                        </Grid>
                       </Grid>
                     </Grid>
-                  </Grid>
 
-                  <Grid item sx={centeringStyles}>
-                    <Stack direction={"row"} spacing={2}>
-                      <CustomChip
-                        paddingTop={3}
-                        text={labels.calendar.chip[0]}
-                        color={blue[200]}
-                      />
-                      {serverDates.hasOwnProperty("fifthMonth") && (
+                    <Grid item sx={centeringStyles}>
+                      <Stack direction={"row"} spacing={2}>
                         <CustomChip
-                          text={labels.calendar.chip[1]}
-                          color={red[200]}
+                          paddingTop={3}
+                          text={labels.calendar.chip[0]}
+                          color={blue[200]}
                         />
-                      )}
-                    </Stack>
-                  </Grid>
-                </Stack>
-              </Paper>
-            ) : (
-              <AlertFragment
-                type={"warning"}
-                title={labels.calendar.alert_warning_finish.title}
-                body={labels.calendar.alert_warning_finish.body}
-              />
-            )}
-          </Grid>
+                        {serverDates.hasOwnProperty("fifthMonth") && (
+                          <CustomChip
+                            text={labels.calendar.chip[1]}
+                            color={red[200]}
+                          />
+                        )}
+                      </Stack>
+                    </Grid>
+                  </Stack>
+                </Paper>
+              )}
+            </Grid>
 
-          <Grid item>
-            <Historial />
+            <Grid item id="msg-non-ae">
+              {User.ae === AE.NON_AE && (
+                <AlertFragment
+                  sx={{ width: "35vw" }}
+                  type={"warning"}
+                  title={labels.calendar.alert_warning_finish.title}
+                  body={labels.calendar.alert_warning_finish.body}
+                />
+              )}
+            </Grid>
+
+            <Grid item>
+              <Historial />
+            </Grid>
           </Grid>
         </Grid>
       ) : (

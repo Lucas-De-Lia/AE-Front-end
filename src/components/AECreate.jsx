@@ -60,15 +60,12 @@ const sx_de = {
  * @brief El el comoponente encargado de la renovacion o creacion de una AE ,para un usuario ya registrado.
  */
 export const AECreate = () => {
-
   // Variables que tienen los textos
   const buttonlabels = useCommonsButtonString();
   const aecreatelabels = useComponentAECreateString();
   const onlytitles = useComponentAuthRegisterString().step_title;
 
   // Variables de estado
-  // expanded controla cual de todos los acordions se muestra
-  const [expanded, setExpanded] = useState(1);
   // Muestra el formulario de creacion o el mensaje de exito/error
   const [open, setOpen] = useState(false);
   // Si open es verdadero y loading tambine muestra un icono de carga
@@ -79,7 +76,7 @@ export const AECreate = () => {
 
   const [stepData, setStepData] = useState(null);
 
-  // Referencia al formulario visible por el expanded 
+  // Referencia al formulario visible por el expanded
   const refs = useRef(null);
 
   // Servicios de comunicacion conel backend (un conjunto de funciones y constantes utiles)
@@ -94,8 +91,8 @@ export const AECreate = () => {
   const navigate = useNavigate();
 
   /**
-   * @brief Hace un fetch a la API de geoloc para obtener la lista de provincias/etc y cargarlas en los selects. 
-  */
+   * @brief Hace un fetch a la API de geoloc para obtener la lista de provincias/etc y cargarlas en los selects.
+   */
   const getLocate = useCallback(
     async (response) => {
       let city_substate = response.city.split(" , ");
@@ -143,10 +140,9 @@ export const AECreate = () => {
         postalCode: info.postalCode,
       },
       {
-        occupation: info.occupation,
-        study: info.study,
         phone: info.phone,
         email: info.email,
+        files: [], // se quito lo de las files de la renovacion
       },
     ];
   };
@@ -165,7 +161,6 @@ export const AECreate = () => {
     }
   }, [fetch_user_data, getLocate]);
 
-
   useEffect(() => {
     //visualiza una vez cargado todo
     if (stepData) {
@@ -180,23 +175,6 @@ export const AECreate = () => {
     }
     updateValues();
   }, [User, navigate, setStepData, fetch_user_data, updateValues]);
-
-
-  /**
-   * @brief Funcion encargada de controlar el acordion
-   */
-  const handleChange = (panel) => (event, newExpanded) => {
-    if (expanded === "") {
-      setExpanded(newExpanded ? panel : false);
-    } else {
-      let ref = refs.current;
-      let a = !ref.handleErrors()
-        ? expanded !== panel
-          ? setExpanded(newExpanded ? panel : false)
-          : setExpanded("")
-        : undefined;
-    }
-  };
 
   /**
    * @brief Funcion encargada armar la estructura de informacion para el envio y lo realiza.
@@ -213,16 +191,15 @@ export const AECreate = () => {
         floor: stepData[1].floor,
         apartment: stepData[1].apartment,
         postalcode: stepData[1].postalCode,
-        city: stepData[1].city.nombre,
+        city:`${stepData[1].substate.nombre} , ${stepData[1].city.nombre}`,
         state: stepData[1].state.nombre,
         phone: stepData[2].phone,
         startdate: formatDate(new Date()),
-        occupation: stepData[2].occupation,
-        study: stepData[2].study,
       };
       let result = await start_ae_n(register_user);
-      setSendError(!result);
+      console.log(result);
       setOpen(true);
+      setSendError(!result);
     } catch (e) {
       console.error(e);
     }
@@ -233,9 +210,12 @@ export const AECreate = () => {
    */
   const handleSend = async () => {
     setSendError(true);
-    if (refs.current !== null && !refs.current.handleErrors()) {
+    let elemento = refs.current;
+    let error = await elemento.handleErrors()
+    if (elemento !== null && !error) {
       await handleRegister();
     }
+    setSendError(error);
   };
 
   /**
@@ -245,7 +225,7 @@ export const AECreate = () => {
     refesh_fn();
     navigate("/ae/profile");
   };
-  
+
   /**
    * @brief Se encarga de cerrar y retoceder
    */
@@ -289,67 +269,17 @@ export const AECreate = () => {
                 title={aecreatelabels.alert_info.title}
                 body={aecreatelabels.alert_info.body}
               />
-              <Accordion
-                sx={sx}
-                expanded={expanded === 1}
-                onChange={handleChange(1)}
-              >
-                <AccordionSummary
-                  sx={sx_summ}
-                  expandIcon={<ExpandMore />}
-                  aria-controls="panel2d-content"
-                  id="panel2d-header"
-                >
-                  <Typography variant="h7" color={grey[600]} component="div">
-                    {onlytitles[1]}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={sx_de}>
-                  {expanded === 1 && (
-                    <FormAddress
-                      address={stepData[1].address}
-                      floor={stepData[1].floor}
-                      apartment={stepData[1].apartment}
-                      state={stepData[1].state}
-                      substate={stepData[1].substate}
-                      number={stepData[1].number}
-                      city={stepData[1].city}
-                      postalCode={stepData[1].postalCode}
-                      ref={refs}
-                    />
-                  )}
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion
-                expanded={expanded === 2}
-                onChange={handleChange(2)}
-                sx={sx}
-              >
-                <AccordionSummary
-                  sx={sx_summ}
-                  expandIcon={<ExpandMore />}
-                  aria-controls="panel3d-content"
-                  id="panel3d-header"
-                >
-                  <Typography variant="h7" color={grey[600]} component="div">
-                    {onlytitles[2]}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={sx_de}>
-                  {expanded === 2 && (
-                    <FormExtra
-                      occupation={stepData[2].occupation}
-                      study={stepData[2].study}
-                      phone={stepData[2].phone}
-                      email={stepData[2].email}
-                      files={[]}
-                      registerState={false}
-                      ref={refs}
-                    />
-                  )}
-                </AccordionDetails>
-              </Accordion>
+              <FormAddress
+                address={stepData[1].address}
+                floor={stepData[1].floor}
+                apartment={stepData[1].apartment}
+                state={stepData[1].state}
+                substate={stepData[1].substate}
+                number={stepData[1].number}
+                city={stepData[1].city}
+                postalCode={stepData[1].postalCode}
+                ref={refs}
+              />
             </>
           )}
         </CardContent>
@@ -358,9 +288,9 @@ export const AECreate = () => {
           <Button size="small" color="inherit" onClick={handleBack}>
             {buttonlabels.cancel}
           </Button>
-
           <Button
             size="small"
+            disabled={errorSend}
             onClick={
               (!errorSend && open) || (errorSend && !open)
                 ? handleClose

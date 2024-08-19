@@ -1,5 +1,5 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import { Button, Popper, useMediaQuery } from "@mui/material";
+import { Button, Popper, useMediaQuery, useTheme } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
@@ -14,6 +14,7 @@ import { useService } from "../contexts/ServiceContext.js";
 import { useRootTopbarString } from "../contexts/TextProvider.jsx";
 import IconUserMenu from "../fragments/topbar/IconUserMenu.jsx";
 import {
+  Sm2,
   boxSMmenu,
   buttonTopStyle,
   iconButtonTopStyle,
@@ -21,6 +22,7 @@ import {
   menuStyles,
 } from "../theme.jsx";
 import MenuButton from "../fragments/topbar/MenuButtom.jsx";
+import { isMobileDevice } from "../utiles.js";
 
 /**
  * @brief Muestra el encabezado de la página
@@ -96,6 +98,8 @@ const RootTopBar = (props) => {
   const handleLogoClick = () => {
     navigate("/");
   };
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <AppBar
@@ -109,8 +113,8 @@ const RootTopBar = (props) => {
       <Container>
         <Toolbar disableGutters>
           <Box sx={boxSMmenu}>
-            {isAuthenticated && false && (
-              <>
+            {isAuthenticated && (
+              <Box sx={{ display: isMobile ? "flex" : "none" }}>
                 <IconButton {...iconButtonTopStyle} onClick={handleOpenNavMenu}>
                   <MenuIcon />
                 </IconButton>
@@ -140,7 +144,7 @@ const RootTopBar = (props) => {
                       )
                   )}
                 </Menu>
-              </>
+              </Box>
             )}
             <img
               src={labels.logo.src}
@@ -150,8 +154,10 @@ const RootTopBar = (props) => {
               style={logoTopStyle}
             />
             {isAuthenticated &&
+              !isMobile &&
               pages.map((page, index) => (
                 <MenuButton
+                  key={page.label + "-menu-buttons-appbar"}
                   page={page}
                   onClick={(e) => handleoOnClickMenu(e, index)}
                 />

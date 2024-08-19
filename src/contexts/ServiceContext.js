@@ -59,6 +59,7 @@ export const ServiceProvider = ({ children }) => {
       localStorage.setItem("authorization", encryptAuth); // Store the newval in sessionStorage as a JSON string
     }
   };
+
   /**
    * @brief Guarda los datos de Authorization y las setea en axios.
    */
@@ -204,14 +205,17 @@ export const ServiceProvider = ({ children }) => {
         { data: encryptData(register_user, KEY_CRYPT) },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const message = decryptData(data.data, KEY_CRYPT);
-      if (message === "Agregado") {
+
+      const { content } = decryptData(data.data, KEY_CRYPT);
+      console.log(content);
+      if (content === "Agregado") {
         // Reset server dates
         setServerDates(null);
         return true;
       }
       return false;
     } catch (error) {
+      console.log(error);
       // Log and return false if an error occurs during the registration process
       let msg = decryptData(error.response.data.data, KEY_CRYPT);
       console.error("Error during register:", msg);
@@ -352,11 +356,10 @@ export const ServiceProvider = ({ children }) => {
     return decryptData(data.data, KEY_CRYPT);
   };
 
-
   /**
    * @brief Buscar el historial
    */
-  const fetch_history= async (current_page,page_size) => {
+  const fetch_history = async (current_page, page_size) => {
     try {
       const { data } = await axios.post(
         `${URL_BACKEND}/api/ae/history`,
@@ -367,13 +370,14 @@ export const ServiceProvider = ({ children }) => {
         }
       );
       const list = decryptData(data.data, KEY_CRYPT);
-      return list ? list : [];;
+      return list ? list : [];
     } catch (error) {
       let msg = decryptData(error.response.data.data, KEY_CRYPT);
       console.error("Error al obtener el history:", msg);
       return null;
     }
-  }
+  };
+
   useEffect(() => {
     let parsedAuthorization = null;
     const encryptedAuth = localStorage.getItem("authorization");
