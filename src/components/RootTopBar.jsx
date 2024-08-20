@@ -1,5 +1,5 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import { Button, Popper, useMediaQuery, useTheme } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
@@ -13,16 +13,13 @@ import { useNavigate } from "react-router-dom";
 import { useService } from "../contexts/ServiceContext.js";
 import { useRootTopbarString } from "../contexts/TextProvider.jsx";
 import IconUserMenu from "../fragments/topbar/IconUserMenu.jsx";
+import MenuButton from "../fragments/topbar/MenuButtom.jsx";
 import {
-  Sm2,
   boxSMmenu,
-  buttonTopStyle,
   iconButtonTopStyle,
   logoTopStyle,
-  menuStyles,
+  menuStyles
 } from "../theme.jsx";
-import MenuButton from "../fragments/topbar/MenuButtom.jsx";
-import { isMobileDevice } from "../utiles.js";
 
 /**
  * @brief Muestra el encabezado de la página
@@ -43,22 +40,21 @@ const RootTopBar = (props) => {
   // Opciones del menu
   const pages = useMemo(
     () => [
-      { label: labels.titles[0], disabled: false },
-      { label: labels.titles[1], disabled: false },
+      { label: labels.titles[0], disabled: false, show: true },
+      { label: labels.titles[1], disabled: false, show: true },
       {
         label: labels.titles[2],
         disabled: User !== null ? User.ae !== AE.NON_AE : false,
+        show: true,
         Popper:
           "Este botón está deshabilitado porque ya tienes una autoexclusion activa.",
       },
       {
         label: labels.titles[3],
-        disabled:
-          User !== null && User.ae === AE.FINISHABLE
-            ? today < serverDates.fifthMonth || today > serverDates.sixthMonth
-            : true,
+        show: User !== null && User.ae === AE.FINISHABLE,
+        disabled: serverDates !== null ? today < serverDates.fifthMonth || today > serverDates.sixthMonth: true,
         Popper:
-          "Este botón está deshabilitado porque no estás en la fecha indicada.",
+          "Este botón está deshabilitado porque no estás en la fecha indicada o no es tu primera exclusión.",
       },
     ],
     [User, serverDates, labels, today, AE]
@@ -155,13 +151,16 @@ const RootTopBar = (props) => {
             />
             {isAuthenticated &&
               !isMobile &&
-              pages.map((page, index) => (
-                <MenuButton
-                  key={page.label + "-menu-buttons-appbar"}
-                  page={page}
-                  onClick={(e) => handleoOnClickMenu(e, index)}
-                />
-              ))}
+              pages.map(
+                (page, index) =>
+                  page.show && (
+                    <MenuButton
+                      key={page.label + "-menu-buttons-appbar"}
+                      page={page}
+                      onClick={(e) => handleoOnClickMenu(e, index)}
+                    />
+                  )
+              )}
           </Box>
           <Box
             sx={{
@@ -183,17 +182,5 @@ const RootTopBar = (props) => {
     </AppBar>
   );
 };
-/**
- *           <Box
-            sx={{
-              flexGrow: 1,
-              display: !useMediaQuery("(max-width:600px)") ? "flex" : "none",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h4">Control de Acceso al Juego</Typography>
-          </Box>
- */
 
 export default RootTopBar;

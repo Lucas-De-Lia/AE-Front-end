@@ -90,8 +90,6 @@ function TablePaginationActions(props) {
   );
 }
 
-const Color = "black";
-
 const estados = [
   "Vigente",
   "Renovado",
@@ -144,7 +142,6 @@ const Historial = () => {
       const fetch_hst = await fetch_history(page + 1, rowsPerPage);
       //console.log(fetch_hst);
       const totalItems = fetch_hst.total;
-      console.log(fetch_hst.data);
       setTotalPages(Math.ceil(totalItems / rowsPerPage));
       setFetchAE(fetch_hst.data);
     } catch (error) {
@@ -184,7 +181,7 @@ const Historial = () => {
   return (
     <>
       {visibleAE.length > 1 && (
-        <Paper sx={{ padding: 1 }}>
+        <Paper sx={{ padding: 0.2 }}>
           <Box sx={{ borderRadius: "4px", border: "1px solid black" }}>
             <Box
               sx={{
