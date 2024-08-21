@@ -133,7 +133,7 @@ const AuthLogin = () => {
               label={commonfields.cuil}
               required
               disabled={loginSuccess}
-              helperText={"Sin '-', se agregan solos"}
+              helperText={authloginlabels.helper_text.cuil}
               error={loginFail}
               value={cuil}
               onChange={handleInputChange}

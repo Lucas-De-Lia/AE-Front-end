@@ -6,7 +6,7 @@
         "title": "Preguntas Frecuentes"
       },
       "footer": {
-        "address": "Primera Junta 2724,Santa Fe Ciudad",
+        "address": "Primera Junta 2724, Santa Fe Ciudad",
         "phone": "+54 (342) 4815660",
         "email": "museo@loteriasantafe.gov.ar",
         "logo": {
@@ -27,7 +27,7 @@
         "login": "Ingresar",
         "skyp": "Saltar",
         "logout": "Salir",
-        "back": "Atras",
+        "back": "Atrás",
         "next": "Siguiente",
         "restart": "Reintentar",
         "send": "Enviar",
@@ -48,8 +48,8 @@
         "help": "Ayuda",
         "warning": "¡Advertencia!",
         "important": "¡Importante!",
-        "success": "Exito",
-        "request":"Obligatorio",
+        "success": "Éxito",
+        "request": "Obligatorio",
         "error": "Error",
         "thanks": "¡Muchas Gracias!",
         "send": {
@@ -68,7 +68,7 @@
           "error": {
             "title": "Estado de la solicitud",
             "body": ["Hubo un error al procesar su solicitud"],
-            "strong": "¡Reitente nuevamente!"
+            "strong": "¡Reintente nuevamente!"
           }
         }
       }
@@ -79,8 +79,8 @@
           "info": {
             "title": "Bienvenido a nuestro sitio web de autoexclusión para Juego Responsable.",
             "body": [
-              "Aquí encontrarás una herramienta diseñada para ayudarte a administrar y gestionar tus autoexclusiones de manera eficiente.",
-              "No te preocupes, aquí puedes encontrar los plazos claros y precisos para tu exclusion."
+              "Aquí encontrarás una herramienta diseñada para ayudarte a administrar y gestionar tus autoexclusiónes de manera eficiente.",
+              "No te preocupes, aquí puedes encontrar los plazos claros y precisos para tu exclusión."
             ]
           }
         }
@@ -92,6 +92,9 @@
             "password": "Recupera tu Cuenta",
             "account": "¿No tienes cuenta?",
             "faq": "Preguntas Frecuentes"
+          },
+          "helper_text": {
+            "cuil": "Obligatorio y sin '-' se agregan solos"
           },
           "alert": {
             "success": {
@@ -107,13 +110,8 @@
           }
         },
         "register": {
-          "title": "Formulario de AutoExclusion",
-          "step_title": [
-            "Información",
-            "Dirección",
-            "Otros",
-            "Prevista"
-          ],
+          "title": "Formulario de AutoExclusión",
+          "step_title": ["Información", "Dirección", "Otros", "Prevista"],
           "step": {
             "address": {
               "address": "Domicilio",
@@ -125,10 +123,10 @@
               "state": "Provincia",
               "city": "Localidad",
               "postalCode": "Código Postal",
-              "helper_text":{
-                "requiered": "Obligatorio",
-                "floor": "Numero de 0-50",
-                "apartment": "Numero de 0-9 o letra A-Z"
+              "helper_text": {
+                "required": "Obligatorio",
+                "floor": "Número de 0-50",
+                "apartment": "Número de 0-9 o letra A-Z"
               }
             },
             "date_plane": {
@@ -137,9 +135,9 @@
                 "Tu autoexclusión comienzaria el ",
                 "Si es su primera autoexclusión podría darte de baja desde ",
                 " hasta ",
-                "La autoexclusión terminará el dia ",
+                "La autoexclusión terminará el día ",
                 "y terminará el dia ",
-                "¿Esta seguro que desea continuar?"
+                "¿Está seguro que desea continuar?"
               ]
             },
             "extra": {
@@ -170,10 +168,10 @@
               "helper_text": {
                 "name": "Obligatorio",
                 "lastname": "Obligatorio",
-                "cuil": "Obligatorio y Sin '-' se agregan solos",
-                "birthdate": "Obligatorio y Debes ser mayor de edad",
-                "gender":"Obligatorio",
-                "password":"Obligatorio"
+                "cuil": "Obligatorio y sin '-' se agregan solos",
+                "birthdate": "Obligatorio y debes ser mayor de edad",
+                "gender": "Obligatorio",
+                "password": "Obligatorio"
               }
             }
           }
@@ -185,32 +183,32 @@
             "status": ["Excluido", "Finalizada"]
           },
           "link_label": {
-            "end_of_ae_certificate": "Constancia de fin de exclusion ",
+            "end_of_ae_certificate": "Constancia de fin de exclusión ",
             "start_of_ae_certificate": "Constancia de exclusión",
             "password_change": "Cambiar Contraseña",
             "email_change": "Cambiar Email",
-            "email_verify": "Renviar Email de Verificación"
+            "email_verify": "Reenviar Email de Verificación"
           },
           "calendar": {
-            "title": "Cronograma de Autoexclusion",
+            "title": "Cronograma de Autoexclusión",
             "chip": [
               "Fecha de Inicio y Fin",
-              "Periodo para Solicitar Fin de Autoexclusion"
+              "Periodo para Solicitar Fin de Autoexclusión"
             ],
             "tooltip": [
-              "Inicio de autoexclusion",
-              "Periodo para Solicitar Fin de Autoexclusion",
-              "Fin de autoexclusion"
+              "Inicio de autoexclusión",
+              "Periodo para Solicitar Fin de Autoexclusión",
+              "Fin de autoexclusión"
             ],
             "alert_warning_finalize_onprocess": {
               "title": "En Proceso de Finalizacion",
               "body": [
-                "Usted dio de baja la exclusion",
-                "<strong>Una vez terminado su periodo debaja</strong> (marcado en rojo en su calendario) podra ingresar libremente a los casinos"
+                "Usted dio de baja la exclusión",
+                "<strong>Una vez terminado su periodo debaja</strong> (marcado en rojo en su calendario) podrá ingresar libremente a los casinos"
               ]
             },
             "alert_warning_finish": {
-              "title": "Autoexclusion Finalizada",
+              "title": "Autoexclusión Finalizada",
               "body": [
                 "Actualmente, <strong>PUEDE ACCEDER A LOS CASINOS LIBREMENTE</strong> ya que no dispone de ninguna autoexclusión activa.",
                 "Para renovarla, le instamos a visitar la sección Nueva Exclusión en el menú, ubicado en la esquina superior izquierda de nuestra página web.",
@@ -218,26 +216,31 @@
                 "Agradecemos su atención y colaboración."
               ]
             }
+          },
+          "historial": {
+            "title": "Tu Historial",
+            "per_page": "Filas por página",
+            "columnas": ["Fecha de Inicio", "Fecha de Fin", "Estado"]
           }
         },
         "create": {
-          "title": "Nueva Autoexclusion",
+          "title": "Nueva Autoexclusión",
           "alert_info": {
             "title": "Informacion y Actualización de Datos",
             "body": [
               "Por favor, para actualizar su exclusión debemos verificar sus datos",
-              "En los siguientes campos podra actualizar sus datos personales de ser necesario",
+              "En los siguientes campos podrá actualizar sus datos personales de ser necesario",
               "Ten en cuenta que esta exclusión tendra la duracion de un año"
             ]
           }
         },
         "finalize": {
-          "title": "Dar de baja autoexclusion",
+          "title": "Dar de baja autoexclusión",
           "alert_warning": {
             "title": "¡Advertencia!",
             "body": [
-              "El proceso de  baja de una autoexclusion solo puede completarse durante la primera autoexclusion.",
-              "A partir de las siguientes autoexclusiones esto ya no es posible y la exclusion tendra un periodo de 12 meses.",
+              "El proceso de  baja de una autoexclusión solo puede completarse durante la primera autoexclusión.",
+              "A partir de las siguientes autoexclusiónes esto ya no es posible y la exclusión tendra un periodo de 12 meses.",
               "Después de finalizarlo, se restaurará tu acceso a los casinos. Si decides autoexcluirte nuevamente, por favor, dirígete a la sección de renovación, disponible después de concluir este procedimiento inicial."
             ]
           }

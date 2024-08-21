@@ -75,27 +75,33 @@ const AEProfile = () => {
 
             <Grid item id="calendar-item">
               {User.ae !== AE.NON_AE && (
-                <Paper sm={6}>
+                <Paper sm={6} sx={{ border: "1px solid black" }}>
+                  <Grid
+                    item
+                    sx={{
+                      width: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "black",
+                      borderRadius: "4px 4px 0px 0px",
+                      paddingTop: "2",
+                      paddingBottom: "4",
+                    }}
+                  >
+                    <Typography variant="h4" color={"white"}>
+                      {labels.calendar.title}
+                    </Typography>
+                  </Grid>
                   <Stack
                     paddingTop={2}
                     paddingBlock={2}
                     spacing={3}
                     sx={{
-                      //width: "77vw",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                     }}
                   >
-                    <Grid
-                      item
-                      sx={{ justifyContent: "center", alignItems: "center" }}
-                    >
-                      <Typography variant="h4">
-                        {labels.calendar.title}
-                      </Typography>
-                    </Grid>
-
                     <Grid item>
                       <Grid
                         container
@@ -187,7 +193,7 @@ const AEProfile = () => {
             </Grid>
 
             <Grid item>
-              <Historial />
+              <Historial text={labels.historial}/>
             </Grid>
           </Grid>
         </Grid>

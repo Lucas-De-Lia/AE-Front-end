@@ -124,7 +124,7 @@ const Calendar = ({ intStart, intEnd }) => {
           key={key}
           size="small"
           sx={{
-            padding: "5px",
+            padding: "2px",
             borderTopLeftRadius: range_start ? radius : 0,
             borderBottomLeftRadius: range_start ? radius : 0,
             borderTopRightRadius: range_end ? radius : 0,
@@ -144,7 +144,7 @@ const Calendar = ({ intStart, intEnd }) => {
         key={key}
         size="small"
         sx={{
-          padding: "5px",
+          padding: "2px",
           borderRadius: radius,
           backgroundColor: color,
         }}

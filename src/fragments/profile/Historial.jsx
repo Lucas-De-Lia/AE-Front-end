@@ -125,7 +125,7 @@ const StyledPagination = styled(TablePagination)(({ theme }) => ({
   },
 }));
 
-const Historial = () => {
+const Historial = ({ text }) => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -181,16 +181,15 @@ const Historial = () => {
   return (
     <>
       {visibleAE.length > 1 && (
-        <Paper sx={{ padding: 0.2 }}>
+        <Paper sx={{ padding: 0 }}>
           <Box sx={{ borderRadius: "4px", border: "1px solid black" }}>
             <Box
               sx={{
                 backgroundColor: "black",
-                borderRadius: "4px 4px 0px 0px"
               }}
             >
               <Typography variant="h4" padding={1} color={"white"}>
-                {"Tu Historial"}
+                {text.title}
               </Typography>
             </Box>
             <TableContainer>
@@ -198,10 +197,14 @@ const Historial = () => {
                 <TableHead>
                   <TableRow>
                     <StyledTableCell size="small">
-                      Fecha de Inicio
+                      {text.columnas[0]}
                     </StyledTableCell>
-                    <StyledTableCell size="small">Fecha de Fin</StyledTableCell>
-                    <StyledTableCell size="small">Estado</StyledTableCell>
+                    <StyledTableCell size="small">
+                      {text.columnas[1]}
+                    </StyledTableCell>
+                    <StyledTableCell size="small">
+                      {text.columnas[2]}
+                    </StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -229,7 +232,7 @@ const Historial = () => {
                   <TableRow>
                     <StyledPagination
                       size="small"
-                      rowsPerPageOptions={[5,10]}
+                      rowsPerPageOptions={[5, 10]}
                       colSpan={3}
                       count={totalPages}
                       rowsPerPage={rowsPerPage}
@@ -242,7 +245,7 @@ const Historial = () => {
                           native: true,
                         },
                       }}
-                      labelRowsPerPage={"Filas por pagina"}
+                      labelRowsPerPage={text.per_page}
                       onPageChange={handleChangePage}
                       onRowsPerPageChange={handleChangeRowsPerPage}
                       ActionsComponent={TablePaginationActions}
@@ -258,4 +261,5 @@ const Historial = () => {
   );
 };
 
+//borderRadius: "4px 4px 0px 0px"
 export default Historial;
