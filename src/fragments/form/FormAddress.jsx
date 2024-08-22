@@ -264,7 +264,7 @@ const FormAddress = React.forwardRef((props, ref) => {
               required={["postalCode", "number"].includes(field)}
               helperText={
                 ["postalCode", "number"].includes(field)
-                  ? formaddresslables.helper_text["requiered"]
+                  ? formaddresslables.helper_text["required"]
                   : formaddresslables.helper_text[field]
               }
               error={errors[field]}
