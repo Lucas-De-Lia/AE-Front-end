@@ -2,15 +2,24 @@ import {
   Box,
   Button,
   CardContent,
+  Fab,
   FormControl,
+  FormControlLabel,
   Grid,
   IconButton,
   Input,
   Stack,
+  Switch,
   TextField,
+  styled,
 } from "@mui/material";
 import { MuiTelInput } from "mui-tel-input";
-import React, { useImperativeHandle, useState } from "react";
+import React, {
+  useCallback,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import {
   //useCommonsButtonString,
   useFormExtraString,
@@ -22,15 +31,54 @@ import {
   emailConocido,
   handleCopyCut,
   handlePaste,
+  sleep,
 } from "../../utiles.js";
 import AlertFragment from "../AlertFragmet.jsx";
 import { blue } from "@mui/material/colors";
 import ClearIcon from "@mui/icons-material/Clear";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import Webcam from "react-webcam";
+import CameraIcon from "@mui/icons-material/Camera";
+import CameraswitchIcon from "@mui/icons-material/Cameraswitch";
+import WebcamCapture from "../WebCapture.jsx";
+
+const StyledSwitch = styled(Switch)(({ theme }) => ({
+  padding: 8,
+  "& .MuiSwitch-track": {
+    borderRadius: 22 / 2,
+    "&::before, &::after": {
+      content: '""',
+      position: "absolute",
+      top: "50%",
+      transform: "translateY(-50%)",
+      width: 16,
+      height: 16,
+    },
+    "&::before": {
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+        theme.palette.getContrastText(theme.palette.primary.main)
+      )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
+      left: 12,
+    },
+    "&::after": {
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+        theme.palette.getContrastText(theme.palette.primary.main)
+      )}" d="M19,13H5V11H19V13Z" /></svg>')`,
+      right: 12,
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    boxShadow: "none",
+    width: 16,
+    height: 16,
+    margin: 2,
+  },
+}));
 
 /**
  * @brief Step del formulario de registro, encargado de los datos extra y las imagenes del documento.
  */
+
 const FormExtra = React.forwardRef(
   ({ phone, email, registerState, files }, ref) => {
     // Variables de texto
@@ -43,6 +91,9 @@ const FormExtra = React.forwardRef(
       email,
       files,
     });
+
+    const [cameraOn, setCameraOn] = useState(false);
+    const webcamRef = useRef(null);
     // Estructura que guarda el formato que debe tener un campo
     const FieldFormatter = {
       phone: (value) => value,
@@ -231,47 +282,67 @@ const FormExtra = React.forwardRef(
               onDrop={handleDrop}
             >
               <Stack spacing={2} sx={centeringStyles}>
-                <AlertFragment
-                  type={
-                    errors.files_size || errors.files_type
-                      ? "error"
-                      : userData.files.length === 2
-                      ? "success"
-                      : "info"
+                <FormControlLabel
+                  value="top"
+                  control={
+                    <StyledSwitch
+                      onChange={(event) => {
+                        setCameraOn(event.target.checked);
+                      }}
+                    />
                   }
-                  title={formfileattachlabels.title}
-                  body={formfileattachlabels.body}
+                  label="Utilizar Camara"
+                  labelPlacement="start"
                 />
-                <Input
-                  type="file"
-                  inputProps={{ accept: "image/*" }}
-                  sx={{ display: "none" }}
-                  id="file-upload"
-                  onChange={(e) => {
-                    handleFileChange(e.target.files);
-                  }}
-                  error={errors.files_size || errors.files_type}
-                  disabled={isButtonDisabled}
-                />
-                <label htmlFor="file-upload">
-                  <Button
-                    variant="contained"
-                    component="span"
-                    disabled={isButtonDisabled}
-                    sx={{
-                      backgroundColor: "info.main",
-                      "&:hover": {
-                        backgroundColor: blue[800],
-                      },
-                      borderRadius: "8px",
-                      padding: "8px 8px",
-                      //fontFamily: "sans-serif",
-                    }}
-                    startIcon={<CloudUploadIcon />}
-                  >
-                    Subir Imagen
-                  </Button>
-                </label>
+                {!cameraOn ? (
+                  <>
+                    {" "}
+                    <AlertFragment
+                      type={
+                        errors.files_size || errors.files_type
+                          ? "error"
+                          : userData.files.length === 2
+                          ? "success"
+                          : "info"
+                      }
+                      title={formfileattachlabels.title}
+                      body={formfileattachlabels.body}
+                    />
+                    <Input
+                      type="file"
+                      inputProps={{ accept: "image/*" }}
+                      sx={{ display: "none" }}
+                      id="file-upload"
+                      onChange={(e) => {
+                        handleFileChange(e.target.files);
+                      }}
+                      error={errors.files_size || errors.files_type}
+                      disabled={isButtonDisabled}
+                    />
+                    <label htmlFor="file-upload">
+                      <Button
+                        variant="contained"
+                        component="span"
+                        disabled={isButtonDisabled}
+                        sx={{
+                          backgroundColor: "info.main",
+                          "&:hover": {
+                            backgroundColor: blue[800],
+                          },
+                          borderRadius: "8px",
+                          padding: "8px 8px",
+                          //fontFamily: "sans-serif",
+                        }}
+                        startIcon={<CloudUploadIcon />}
+                      >
+                        Subir Imagen
+                      </Button>
+                    </label>
+                  </>
+                ) : (
+                  <WebcamCapture ref={webcamRef} />
+                )}
+
                 {userData.files.length > 0 && (
                   <Box sx={centeringStyles}>
                     {userData.files.map((file, index) => (
@@ -325,3 +396,5 @@ const FormExtra = React.forwardRef(
 );
 
 export default FormExtra;
+
+/** */
