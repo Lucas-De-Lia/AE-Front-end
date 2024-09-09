@@ -392,6 +392,54 @@ export const gridNewsCardBoxStyle = {
   },
   // Otros estilos personalizados si es necesario
 };
+
+export const boxCapture = {
+  width: "25vw",
+  height: "60vh",
+  margin: "auto",
+  justifyContent: "space-between",
+
+  "@media (max-width: 600px)": {
+    width: "50vw",
+    height: "30vh",
+  },
+
+  "@media (min-width: 601px) and (max-width: 1280px)": {
+    width: "50vw",
+    height: "60vh",
+  },
+  "@media (min-width: 1281px) and (max-width: 1920px)": {
+    width: "100%",
+    height: "100%",
+  },
+
+  "@media (min-width: 1921px)": {
+    width: "100%",
+    height: "100%",
+  },
+};
+export const boxCam = {
+  width: "25vw",
+  height: "60vh",
+  "@media (max-width: 600px)": {
+    width: "60vw",
+    height: "50vh",
+  },
+
+  "@media (min-width: 601px) and (max-width: 1280px)": {
+    width: "50vw",
+    height: "50vh",
+  },
+  "@media (min-width: 1281px) and (max-width: 1920px)": {
+    width: "100%",
+    height: "100%",
+  },
+
+  "@media (min-width: 1921px)": {
+    width: "100%",
+    height: "100%",
+  },
+};
 const themeStyles = {
   Xl,
   Sm,
@@ -420,5 +468,7 @@ const themeStyles = {
   boxErrorAESyle,
   superCenter,
   gridProfileInfoStyle,
+  boxCapture,
+  boxCam,
 };
 export default themeStyles;

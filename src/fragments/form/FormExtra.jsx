@@ -11,6 +11,7 @@ import {
   Stack,
   Switch,
   TextField,
+  Typography,
   styled,
 } from "@mui/material";
 import { MuiTelInput } from "mui-tel-input";
@@ -25,7 +26,7 @@ import {
   useFormExtraString,
   useFormFileAttachString,
 } from "../../contexts/TextProvider.jsx";
-import { centeringStyles } from "../../theme.jsx";
+import { centeringStyles, boxCapture } from "../../theme.jsx";
 import {
   doEmail,
   emailConocido,
@@ -94,6 +95,7 @@ const FormExtra = React.forwardRef(
 
     const [cameraOn, setCameraOn] = useState(false);
     const webcamRef = useRef(null);
+    const [imageSrc, setImageSrc] = useState("");
     // Estructura que guarda el formato que debe tener un campo
     const FieldFormatter = {
       phone: (value) => value,
@@ -102,7 +104,7 @@ const FormExtra = React.forwardRef(
     const [emailCopy, setEmailCopy] = useState([]);
 
     //boton de carga de archivos una ves que se cargan las dos imagenes se desactiva
-    const [isButtonDisabled, setButtonDisabled] = useState(files.length > 0);
+    const [isButtonDisabled, setButtonDisabled] = useState(imageSrc.length > 0);
 
     // Estructura que gestiona los errores.
     const [errors, setErrors] = useState({
@@ -127,11 +129,24 @@ const FormExtra = React.forwardRef(
     const handleFileChange = (files) => {
       let file = files[0];
       if (file.type && file.type.startsWith("image/")) {
-        setErrors({
-          ...errors,
-          files: false,
-        });
-        setUserData({ ...userData, files: [file] });
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = () => {
+          setImageSrc(reader.result);
+          console.log(reader.result);
+          setErrors({
+            ...errors,
+            files: false,
+          });
+        };
+        reader.onerror = (error) => {
+          setErrors({
+            ...errors,
+            files: true,
+          });
+        };
+
         setButtonDisabled(true);
       } else {
         setErrors({
@@ -141,8 +156,13 @@ const FormExtra = React.forwardRef(
       }
     };
 
-    const handleRemoveFile = (index) => {
-      setUserData({ userData, files: [] });
+    const handleCameraChange = (e) => {
+      setCameraOn(e.target.checked);
+      setImageSrc("");
+      setButtonDisabled(false);
+    };
+    const handleRemoveFile = () => {
+      setImageSrc("");
       setButtonDisabled(false);
     };
 
@@ -150,7 +170,7 @@ const FormExtra = React.forwardRef(
      * @brief Funcion de gestion de errores.
      */
     const handleErrors = () => {
-      const { phone, email, files } = userData;
+      const { phone, email } = userData;
       const errors_r = {
         ...errors,
         phone: !phone.trim(),
@@ -159,14 +179,14 @@ const FormExtra = React.forwardRef(
           !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
           !emailConocido(email) ||
           emailCopy !== email,
-        file: files.length === 0,
+        file: imageSrc.length === 0,
       };
       setErrors(errors_r);
       return Object.values(errors_r).some(Boolean);
     };
 
     const getData = () => {
-      return userData;
+      return { ...userData, files: imageSrc };
     };
 
     useImperativeHandle(ref, () => ({
@@ -179,7 +199,7 @@ const FormExtra = React.forwardRef(
     const handleDragEnter = (event) => {
       event.preventDefault();
       event.stopPropagation();
-      if (userData.files !== null) {
+      if (imageSrc !== "") {
         setHighlight(true);
       }
     };
@@ -192,7 +212,6 @@ const FormExtra = React.forwardRef(
       event.preventDefault();
       event.stopPropagation();
       setHighlight(false);
-      // Manejar los archivos aquí
       handleFileChange(event.dataTransfer.files);
     };
 
@@ -273,41 +292,34 @@ const FormExtra = React.forwardRef(
                 border: "2px dashed #ccc",
                 borderRadius: "8px",
                 margin: "15px auto",
-                padding: "20px",
+                padding: "10px",
                 ...(highlight && { borderColor: "primary.main" }),
               }}
-              onDragEnter={handleDragEnter}
-              onDragOver={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
+              onDragEnter={cameraOn ? null : handleDragEnter}
+              onDragOver={cameraOn ? null : handleDragEnter}
+              onDragLeave={cameraOn ? null : handleDragLeave}
+              onDrop={cameraOn ? null : handleDrop}
             >
               <Stack spacing={2} sx={centeringStyles}>
                 <FormControlLabel
                   value="top"
-                  control={
-                    <StyledSwitch
-                      onChange={(event) => {
-                        setCameraOn(event.target.checked);
-                      }}
-                    />
-                  }
+                  control={<StyledSwitch onChange={handleCameraChange} />}
                   label="Utilizar Camara"
                   labelPlacement="start"
                 />
+                <AlertFragment
+                  type={
+                    errors.files_size || errors.files_type
+                      ? "error"
+                      : imageSrc.length === 2
+                      ? "success"
+                      : "info"
+                  }
+                  title={formfileattachlabels.title}
+                  body={formfileattachlabels.body}
+                />
                 {!cameraOn ? (
                   <>
-                    {" "}
-                    <AlertFragment
-                      type={
-                        errors.files_size || errors.files_type
-                          ? "error"
-                          : userData.files.length === 2
-                          ? "success"
-                          : "info"
-                      }
-                      title={formfileattachlabels.title}
-                      body={formfileattachlabels.body}
-                    />
                     <Input
                       type="file"
                       inputProps={{ accept: "image/*" }}
@@ -340,50 +352,67 @@ const FormExtra = React.forwardRef(
                     </label>
                   </>
                 ) : (
-                  <WebcamCapture ref={webcamRef} />
+                  <WebcamCapture
+                    ref={webcamRef}
+                    imageSrc={imageSrc}
+                    setImageSrc={setImageSrc}
+                  />
                 )}
 
-                {userData.files.length > 0 && (
+                {imageSrc.length > 0 && (
                   <Box sx={centeringStyles}>
-                    {userData.files.map((file, index) => (
-                      <Box
+                    <Box
+                      sx={{
+                        ...boxCapture,
+                        border: "1px solid #ccc",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        margin: "10px auto",
+                        padding: "-1px",
+                        position: "relative",
+                      }}
+                    >
+                      <Typography
+                        size="small"
                         sx={{
-                          width: "100%",
-                          height: "40vh",
-                          border: "1px solid #ccc",
+                          position: "absolute",
+                          bottom: 2,
+                          left: 2,
+                          paddingRight: 2,
+                          paddingLeft: 2,
                           borderRadius: "8px",
-                          overflow: "hidden",
-                          margin: "10px auto",
-                          padding: "-1px",
-                          position: "relative",
+                          backgroundColor: "rgba(240, 240, 240, 0.85)",
                         }}
                       >
-                        <IconButton
-                          size="small"
-                          onClick={() => handleRemoveFile(index)}
-                          sx={{
-                            position: "absolute",
-                            top: 5,
-                            right: 5,
-                            backgroundColor: "#ccc",
-                          }}
-                          aria-label="delete"
-                        >
-                          <ClearIcon />
-                        </IconButton>
-                        <Box
-                          component="img"
-                          sx={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "inherit",
-                            objectFit: "fill",
-                          }}
-                          src={URL.createObjectURL(file)}
-                          alt={`file-${index}`}
-                        />
-                      </Box>
-                    ))}
+                        {" Foto Subida: " +
+                          new Date(Date.now()).toLocaleString() +
+                          " "}
+                      </Typography>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRemoveFile()}
+                        sx={{
+                          position: "absolute",
+                          top: 5,
+                          right: 5,
+                          backgroundColor: "rgba(240, 240, 240, 0.85)",
+                        }}
+                        aria-label="delete"
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                      <Box
+                        component="img"
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: "inherit",
+                          objectFit: "fill",
+                        }}
+                        src={`${imageSrc}`}
+                        alt={`file`}
+                      />
+                    </Box>
                   </Box>
                 )}
               </Stack>

@@ -134,7 +134,7 @@ const AuthRegister = () => {
         address: stepData[1].address.nombre,
         phone: stepData[2].phone,
         startdate: formatDate(new Date()),
-        dni: await fileToBase64(stepData[2].files[0]),
+        dni: stepData[2].files,
       };
       let result = await registerRequest(register_user);
       updateErrorAtIndex(4, !result);
@@ -285,9 +285,8 @@ const AuthRegister = () => {
       <Divider />
       <CardContent>
         <Stack>
+          <Box padding={1}>{StepperStage(activeStep)}</Box>
 
-            <Box padding={2}>{StepperStage(activeStep)}</Box>
-         
           <Stepper
             ref={stepperRef}
             activeStep={activeStep}
