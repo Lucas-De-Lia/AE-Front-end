@@ -17,6 +17,7 @@ const SixtysecFragment = (props) => {
   const handleClick = async (event) => {
     if (!click) {
       const result = await props.action();
+      console.log("Aqui!");
       if (!result) {
         return;
       }
@@ -48,7 +49,7 @@ const SixtysecFragment = (props) => {
   };
 
   return (
-    <>
+    <div id={"timer-" + props.id}>
       {cloneElement(
         props.children,
         {
@@ -65,7 +66,7 @@ const SixtysecFragment = (props) => {
         },
         handleLabel()
       )}
-    </>
+    </div>
   );
 };
 

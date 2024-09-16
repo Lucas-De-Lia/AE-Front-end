@@ -41,49 +41,49 @@ const ProfileInfo = () => {
   const [openPDF, setOpenPDF] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(true);
 
-  // MEJORAR ESTO DESPUES YA QUE REPITO MUCHO CODIGO
-  /**
-   * @brief Abre una ventana con el certificado de finalización de AE
-   */
-  const handleEndPDF = async () => {
-    setOpenPDF(true);
-    try {
-      const pdfUrl = await fetch_end_pdf();
-      const link = document.createElement("a");
-      link.href = "data:application/pdf;base64," + pdfUrl;
-      link.download = "documento.pdf"; // Nombre del archivo descargado
-      document.body.appendChild(link); // Añadir el enlace al DOM
-      setLoading(false);
-      link.click(); // Simular clic en el enlace
-      document.body.removeChild(link);
-      setLoading(true);
-    } catch (error) {
-      // Manejar el error, por ejemplo, mostrar un mensaje al usuario
-      console.error("Error al abrir el PDF:", error);
+  const handleDownload = async (pdfBase64) => {
+    const byteCharacters = atob(pdfBase64);
+    const byteArrays = [];
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
     }
-    setOpenPDF(false);
+
+    const blob = new Blob(byteArrays, { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "constancia_exclusion.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
+
   /**
    * @brief Abre una ventana con el certificado de AE
    */
-  const handleStartPDF = async () => {
+  const handlePDF = async (fetch) => {
+    let value = true;
     setOpenPDF(true);
     try {
-      const pdfUrl = await fetch_start_pdf();
-      const link = document.createElement("a");
-      link.href = "data:application/pdf;base64," + pdfUrl;
-      link.download = "documento.pdf"; // Nombre del archivo descargado
-      document.body.appendChild(link); // Añadir el enlace al DOM
-      setLoading(false);
-      link.click(); // Simular clic en el enlace
-      document.body.removeChild(link);
-      setLoading(true);
+      const pdfUrl = await fetch();
+      await handleDownload(pdfUrl);
     } catch (error) {
-      // Manejar el error, por ejemplo, mostrar un mensaje al usuario
-      console.error("Error al abrir el PDF:", error);
+      console.error("Error al descargar el PDF:", error);
+      value = false;
+    } finally {
+      setLoadingPDF(false);
+      setOpenPDF(false);
     }
-    setOpenPDF(false);
+    return value;
   };
+
   const handleGoTo = (url) => {
     nav(url);
   };
@@ -143,14 +143,22 @@ const ProfileInfo = () => {
         </Stack>
         <Stack padding={2} spacing={1} sx={centeringStyles}>
           {User.ae === AE.FINALIZED && (
-            <Link size="small" onClick={handleEndPDF}>
-              {aeprofilestring.link_label.end_of_ae_certificate}
-            </Link>
+            <SixtysecFragment
+              id={1}
+              action={() => handlePDF(fetch_end_pdf)}
+              label={aeprofilestring.link_label.end_of_ae_certificate}
+            >
+              <Link />
+            </SixtysecFragment>
           )}
           {User.ae !== AE.NON_AE && User.ae !== AE.FINALIZED && (
-            <Link size="small" onClick={handleStartPDF}>
-              {aeprofilestring.link_label.start_of_ae_certificate}
-            </Link>
+            <SixtysecFragment
+              id={2}
+              action={() => handlePDF(fetch_start_pdf)}
+              label={aeprofilestring.link_label.start_of_ae_certificate}
+            >
+              <Link />
+            </SixtysecFragment>
           )}
           <Link size="small" onClick={(e) => handleGoTo("/password/change")}>
             {aeprofilestring.link_label.password_change}
@@ -161,6 +169,7 @@ const ProfileInfo = () => {
             </Link>
           ) : (
             <SixtysecFragment
+              id={3}
               action={sendEmail}
               label={aeprofilestring.link_label.email_verify}
             >
