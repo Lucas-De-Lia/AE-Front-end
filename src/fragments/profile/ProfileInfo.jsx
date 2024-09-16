@@ -142,7 +142,7 @@ const ProfileInfo = () => {
           <Typography variant="body1">{User.name}</Typography>
         </Stack>
         <Stack padding={2} spacing={1} sx={centeringStyles}>
-          {User.ae === AE.FINALIZED && (
+          {User.ae === AE.FINALIZED && false && (
             <SixtysecFragment
               id={1}
               action={() => handlePDF(fetch_end_pdf)}
@@ -151,7 +151,7 @@ const ProfileInfo = () => {
               <Link />
             </SixtysecFragment>
           )}
-          {User.ae !== AE.NON_AE && User.ae !== AE.FINALIZED && (
+          {User.ae !== AE.NON_AE && User.ae !== AE.FINALIZED && false && (
             <SixtysecFragment
               id={2}
               action={() => handlePDF(fetch_start_pdf)}
