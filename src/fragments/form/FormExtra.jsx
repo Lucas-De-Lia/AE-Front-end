@@ -303,6 +303,8 @@ const FormExtra = React.forwardRef(
               <Stack spacing={2} sx={centeringStyles}>
                 <FormControlLabel
                   value="top"
+                  disabled
+                  sx={{ display: "none" }}
                   control={<StyledSwitch onChange={handleCameraChange} />}
                   label="Utilizar Camara"
                   labelPlacement="start"
