@@ -65,7 +65,7 @@ const AuthRegister = () => {
   // Referencia al stepper
   const stepperRef = useRef(null);
   // Formulario actual (0,1,2,3);
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(0);
 
   // Errores de los steps
   const [errors, setErrors] = useState([

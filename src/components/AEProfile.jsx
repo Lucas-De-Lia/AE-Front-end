@@ -36,7 +36,7 @@ const AEProfile = () => {
       navigate("/");
     }
   }, [User, navigate, serverDates]);
-  // OPTIMIZAR
+
   return (
     <div>
       {User ? (
@@ -44,7 +44,6 @@ const AEProfile = () => {
           container
           spacing={2}
           padding={User.ae !== AE.NON_AE ? 0 : 8}
-          //direction={isMobile ? "row" : "column"}
           sx={centeringStyles}
         >
           <Grid item>
@@ -59,7 +58,6 @@ const AEProfile = () => {
             paddingBlockStart={2}
             container
             spacing={2}
-            //direction={isMobile ? "row" : "column"}
             sx={centeringStyles}
           >
             <Grid item id="msg-finalized">
@@ -83,7 +81,6 @@ const AEProfile = () => {
                       justifyContent: "center",
                       alignItems: "center",
                       backgroundColor: "black",
-                      borderRadius: "4px 4px 0px 0px",
                       paddingTop: "2",
                       paddingBottom: "4",
                     }}
@@ -193,7 +190,7 @@ const AEProfile = () => {
             </Grid>
 
             <Grid item>
-              <Historial text={labels.historial}/>
+              <Historial text={labels.historial} />
             </Grid>
           </Grid>
         </Grid>
