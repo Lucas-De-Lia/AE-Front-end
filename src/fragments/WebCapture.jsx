@@ -14,7 +14,9 @@ import { centeringStyles, boxCam } from "../theme";
 import AlertFragment from "./AlertFragmet";
 import FlipCameraIosIcon from "@mui/icons-material/FlipCameraIos";
 import { sleep } from "../utiles";
-
+/**
+ * @deprecated Ya no se usa, ya que andoid te deja subir foto
+ */
 export const WebcamCapture = React.forwardRef(
   ({ setImageSrc, imageSrc }, ref) => {
     const webcamRef = useRef(null);

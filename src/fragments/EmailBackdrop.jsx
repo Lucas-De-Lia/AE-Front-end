@@ -18,7 +18,6 @@ const EmailBackdrop = ({ open, loading }) => {
     >
       <Paper>
         <Box padding={4}>
-          {/*animacion de enviado*/}
           {loading ? (
             <CircularProgress />
           ) : (
