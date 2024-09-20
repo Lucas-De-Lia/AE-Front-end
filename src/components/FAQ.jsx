@@ -57,7 +57,7 @@ const FAQ = () => {
 
       <List
         sx={{
-          width: "100%",
+          width: "90vw",
           bgcolor: "background.paper",
           position: "relative",
           overflow: "auto",

@@ -10,8 +10,8 @@ import React, {
   useState,
 } from "react";
 import Webcam from "react-webcam";
-import { centeringStyles, boxCam } from "../theme";
-import AlertFragment from "./AlertFragmet";
+import { centeringStyles, boxCam } from "../theme.jsx";
+import AlertFragment from "./AlertFragmet.jsx";
 import FlipCameraIosIcon from "@mui/icons-material/FlipCameraIos";
 import { sleep } from "../utiles";
 /**

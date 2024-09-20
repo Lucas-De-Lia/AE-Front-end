@@ -41,8 +41,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:minify": "npm run build && webpack --config webpack.config.js",
-    "serv": "npm run build:minify && serve -s build -l tcp://10.1.121.24:3000",
-    "serv-safe": "npm run build:minify && serve -s build --ssl-key server.key --ssl-cert server.cert -l tcp://10.1.121.24:3000"
+    "serv": "npm run build:minify && serve -s build -l tcp://10.1.121.24:3000"
   },
   "eslintConfig": {
     "extends": [

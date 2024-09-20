@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Popper from "@mui/material/Popper";
-import { buttonTopStyle } from "../../theme";
+import { buttonTopStyle } from "../../theme.jsx";
 
 function MenuButton({ page, onClick }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -29,7 +29,6 @@ function MenuButton({ page, onClick }) {
           sx={buttonTopStyle}
           disabled={page.disabled}
           aria-label={page.disabled ? "Fuera de fecha" : ""}
-          
           onClick={onClick}
         >
           {page.label}
@@ -45,7 +44,7 @@ function MenuButton({ page, onClick }) {
               border: "1px solid",
             }}
           >
-           {page.Popper}
+            {page.Popper}
           </div>
         </Popper>
       )}
