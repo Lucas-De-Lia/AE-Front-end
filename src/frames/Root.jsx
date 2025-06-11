@@ -10,15 +10,16 @@ import {
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import React, { Suspense } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import RootFooter from "../components/RootFooter.jsx";
 import RootTopBar from "../components/RootTopBar.jsx";
 import { centeringStyles } from "../theme.jsx";
 
 export default function Root() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const itsHelp = () => window.location.pathname === "/faq";
+  const itsHelp = () => location.pathname === "/faq";
 
   const handleHelp = () => {
     if (itsHelp()) {

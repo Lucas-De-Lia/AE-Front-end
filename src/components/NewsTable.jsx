@@ -94,6 +94,9 @@ const NewsTable = () => {
   return (
     <>
       <AlertFragment
+        sx={{
+          mx: 2,
+        }}
         type={"info"}
         title={labels_news.alert.info.title}
         body={labels_news.alert.info.body}

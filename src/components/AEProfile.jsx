@@ -159,7 +159,7 @@ const AEProfile = () => {
                     </Grid>
 
                     <Grid item sx={centeringStyles}>
-                      <Stack direction={"row"} spacing={2}>
+                      <Stack direction={"column"} spacing={2}>
                         <CustomChip
                           paddingTop={3}
                           text={labels.calendar.chip[0]}

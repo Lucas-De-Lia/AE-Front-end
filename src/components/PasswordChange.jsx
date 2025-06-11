@@ -1,6 +1,7 @@
 import {
   Alert,
   AlertTitle,
+  Box,
   Button,
   Card,
   CardActions,
@@ -69,7 +70,7 @@ const PasswordChange = () => {
         setError(!response); // seteo el error
         setOpen(true); // muestro el alert
         setLoading(false); // seteo el loading
-        await sleep(1000);
+        await sleep(5000);
         if (response) {
           // deslogea el usuario ya que se cambio el dato
           setUser(null);
@@ -94,39 +95,49 @@ const PasswordChange = () => {
     <>
       <ProcessAlert open={open} loading={loading} success={!error} />
       {!open && (
-        <Card sx={cardLoginStyle}>
-          <CardHeader title={passwordchange.title} />
-          <CardContent sx={boxLoginSyle}>
-            <Stack spacing={2} sx={centeringStyles}>
-              <PasswordFragment ref={ref} />
-              <Collapse in={error}>
-                <Alert
-                  severity="error"
-                  style={{ textAlign: "left", marginTop: "16px" }}
-                >
-                  <AlertTitle>
-                    {passwordalert.info.requirements.title}
-                  </AlertTitle>
-                  <ul>
-                    {passwordalert.info.requirements.body.map(
-                      (lablel, index) => (
-                        <li key={index}>{lablel}</li>
-                      )
-                    )}
-                  </ul>
-                </Alert>
-              </Collapse>
-            </Stack>
-          </CardContent>
-          <CardActions sx={centerButtonsStyle}>
-            <Button size="small" onClick={handleBack} color="inherit">
-              {commonbutton.back}
-            </Button>
-            <Button size="small" onClick={handleAccept}>
-              {commonbutton.ok}
-            </Button>
-          </CardActions>
-        </Card>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Card sx={cardLoginStyle}>
+            <CardHeader title={passwordchange.title} />
+            <CardContent sx={boxLoginSyle}>
+              <Stack spacing={2} sx={centeringStyles}>
+                <Box component="form" onSubmit={handleAccept}>
+                  <PasswordFragment ref={ref} />
+                </Box>
+                <Collapse in={error}>
+                  <Alert
+                    severity="error"
+                    style={{ textAlign: "left", marginTop: "16px" }}
+                  >
+                    <AlertTitle>
+                      {passwordalert.info.requirements.title}
+                    </AlertTitle>
+                    <ul>
+                      {passwordalert.info.requirements.body.map(
+                        (lablel, index) => (
+                          <li key={index}>{lablel}</li>
+                        )
+                      )}
+                    </ul>
+                  </Alert>
+                </Collapse>
+              </Stack>
+            </CardContent>
+            <CardActions sx={centerButtonsStyle}>
+              <Button size="small" onClick={handleBack} color="inherit">
+                {commonbutton.back}
+              </Button>
+              <Button size="small" onClick={handleAccept} type="submit">
+                {commonbutton.ok}
+              </Button>
+            </CardActions>
+          </Card>
+        </Box>
       )}
     </>
   );

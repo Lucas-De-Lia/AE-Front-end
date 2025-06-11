@@ -1,4 +1,11 @@
-import { Button, Card, CardActions, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardHeader,
+  Stack,
+  TextField,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEmailVerify } from "../contexts/EmailVerifyContext";
@@ -12,6 +19,7 @@ import AlertFragment from "../fragments/AlertFragmet.jsx";
 import ProcessAlert from "../fragments/ProcessAlert.jsx";
 import { centerButtonsStyle } from "../theme.jsx";
 import { handleCopyCut, handlePaste, sleep } from "../utiles.js";
+import { m } from "framer-motion";
 
 /**
  * @brief Componente que muestra el formulario de cambio de email.
@@ -102,7 +110,7 @@ const EmailChange = () => {
   };
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} sx={{ mx: 3 }}>
       <AlertFragment
         type={"info"}
         title={emailchange.alert.info.title}
@@ -117,7 +125,8 @@ const EmailChange = () => {
       />
       {!open && (
         <Card>
-          <Stack spacing={2} padding={5}>
+          <CardHeader title={"Cambiar Email"} sx={{}} />
+          <Stack spacing={2} sx={{ px: 5, pb: 5 }}>
             <TextField
               name="email"
               variant="standard"
@@ -128,7 +137,7 @@ const EmailChange = () => {
               onCut={handleCopyCut}
               error={errorEmail}
               onChange={handleChange}
-              label={commonfields.email}
+              label={`Nuevo ${commonfields.email}`}
             />
             <TextField
               name="reemail"

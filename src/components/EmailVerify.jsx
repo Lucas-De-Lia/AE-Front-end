@@ -52,7 +52,7 @@ const EmailVerify = () => {
     } finally {
       setLoading(false);
       await sleep(2000);
-      navigate("/",{replace: true});
+      navigate("/", { replace: true });
     }
   }, [
     id,
@@ -67,7 +67,7 @@ const EmailVerify = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-    verifyEmail();
+      verifyEmail();
     }
   }, [isAuthenticated, verifyEmail]);
 

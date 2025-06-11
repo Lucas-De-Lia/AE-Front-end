@@ -278,7 +278,7 @@
             "warning": {
               "title": "Requisitos",
               "body": [
-                "El email asociado a tu cuenta debe estar <strong>verificado</strong>. Si no, no podemos asegurar que resivas el correo"
+                "El email asociado a tu cuenta debe estar <strong>verificado</strong>. Si no, no podemos asegurar que recibas el correo"
               ],
               "strong": "¡De lo contrario comunicate con servicio de soporte!"
             },
@@ -307,7 +307,7 @@
             "verify": {
               "title": "Requisitos",
               "body": [
-                "El email asociado a tu cuenta debe estar <strong>verificado</strong>. Si no, no podemos asegurar que resivas el correo"
+                "El email asociado a tu cuenta debe estar <strong>verificado</strong>. Si no, no podemos asegurar que recibas el correo"
               ],
               "strong": "¡De lo contrario comunicate con servicio de soporte tecnico!"
             }
@@ -331,7 +331,7 @@
           "title": "Cambio de Contraseña"
         },
         "forgot": {
-          "title": "Recuperar contraña"
+          "title": "Recuperar Contraseña"
         }
       },
       "message": {

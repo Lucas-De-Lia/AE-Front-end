@@ -1,4 +1,11 @@
-import { Button, CardActions, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardActions,
+  CardHeader,
+  Stack,
+  TextField,
+} from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import React, { useState } from "react";
@@ -8,10 +15,15 @@ import {
   useCommonsButtonString,
   useCommonsFieldString,
   useComponentPasswordAlertString,
+  useComponentPasswordForgotString,
 } from "../contexts/TextProvider.jsx";
 import AlertFragment from "../fragments/AlertFragmet.jsx";
 import ProcessAlert from "../fragments/ProcessAlert.jsx";
-import { buttonTopStyle, centerButtonsStyle } from "../theme.jsx";
+import {
+  buttonTopStyle,
+  cardLoginStyle,
+  centerButtonsStyle,
+} from "../theme.jsx";
 import { doformatCUIL } from "../utiles.js";
 /**
  * @brief Componente para cambiar la contraseña un vez entra al link de recuperar contraseña
@@ -21,6 +33,7 @@ const PasswordReset = () => {
   const passwordreq = useComponentPasswordAlertString();
   const commonbuttons = useCommonsButtonString();
   const commonfields = useCommonsFieldString();
+  const passwordforgot = useComponentPasswordForgotString();
 
   const navigate = useNavigate();
 
@@ -86,70 +99,81 @@ const PasswordReset = () => {
   return (
     <>
       {!send ? (
-        <Card>
-          <CardContent sx={{ padding: 4 }}>
-            <Stack spacing={2}>
-              <TextField
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Card>
+            <CardHeader title={passwordforgot.title} />
+            <CardContent sx={cardLoginStyle}>
+              <Stack spacing={2}>
+                <TextField
+                  size="small"
+                  id="cuil"
+                  label={commonfields.cuil}
+                  required
+                  disabled={null}
+                  error={error}
+                  value={cuil}
+                  onChange={handleCUILChange}
+                  variant="standard"
+                />
+                <TextField
+                  id="password"
+                  label={`Nueva ${commonfields.password.toLowerCase()}`}
+                  size="small"
+                  type="password"
+                  required
+                  autoComplete="off"
+                  error={error}
+                  value={password}
+                  onChange={handlePasswordChange}
+                  variant="standard"
+                />
+                <TextField
+                  id="passwordres"
+                  label={commonfields.repassword}
+                  size="small"
+                  type="password"
+                  required
+                  autoComplete="off"
+                  error={error}
+                  value={password_confirmation}
+                  onChange={handlePasswordConfirmationChange}
+                  variant="standard"
+                />
+              </Stack>
+              {error && (
+                <AlertFragment
+                  type="error"
+                  title={passwordreq.info.requirements.title}
+                  body={passwordreq.info.requirements.body}
+                />
+              )}
+            </CardContent>
+            <CardActions sx={centerButtonsStyle}>
+              <Button
                 size="small"
-                id="cuil"
-                label={commonfields.cuil}
-                required
-                sx={{ width: "25vw" }}
+                color="inherit"
+                onClick={null}
                 disabled={null}
-                error={error}
-                value={cuil}
-                onChange={handleCUILChange}
-                variant="standard"
-              />
-              <TextField
-                id="password"
-                label={commonfields.password}
+              >
+                {commonbuttons.cancel}
+              </Button>
+              <Button
                 size="small"
-                type="password"
-                sx={{ width: "25vw" }}
-                required
-                autoComplete="off"
-                error={error}
-                value={password}
-                onChange={handlePasswordChange}
-                variant="standard"
-              />
-              <TextField
-                id="passwordres"
-                label={commonfields.password}
-                size="small"
-                type="password"
-                sx={{ width: "25vw" }}
-                required
-                autoComplete="off"
-                error={error}
-                value={password_confirmation}
-                onChange={handlePasswordConfirmationChange}
-                variant="standard"
-              />
-            </Stack>
-            {error && (
-              <AlertFragment
-                type="error"
-                title={passwordreq.info.requirements.title}
-                body={passwordreq.info.requirements.body}
-              />
-            )}
-          </CardContent>
-          <CardActions sx={centerButtonsStyle}>
-            <Button size="small" color="inherit" onClick={null} disabled={null}>
-              {commonbuttons.cancel}
-            </Button>
-            <Button
-              size="small"
-              sx={buttonTopStyle}
-              onClick={sendData}
-              disabled={send}
-            >
-              {commonbuttons.ok}
-            </Button>
-          </CardActions>
-        </Card>
+                sx={buttonTopStyle}
+                onClick={sendData}
+                disabled={send}
+              >
+                {commonbuttons.ok}
+              </Button>
+            </CardActions>
+          </Card>
+        </Box>
       ) : (
         <ProcessAlert open={send} loading={loading} success={success} />
       )}

@@ -119,7 +119,7 @@ export const infoCArdStyle = {
 export const cardLoginStyle = {
   width: "50vw", // Altura por defecto
   "@media (max-width: 600px)": {
-    width: "100vw", // Altura para tamaños pequeños de pantalla (xs)
+    width: "80vw", // Altura para tamaños pequeños de pantalla (xs)
   },
   "@media (min-width: 601px) and (max-width: 960px)": {
     width: "100vw", // Altura para tamaños medianos de pantalla (sm)
