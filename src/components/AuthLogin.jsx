@@ -81,7 +81,6 @@ const AuthLogin = () => {
     setLoginFail(false);
     //se agrego para hacer validación en ejecución
     setPasswordErrors(testpassword(password, password));
-    console.log(passwordErrors);
     setPassword(password);
   };
 

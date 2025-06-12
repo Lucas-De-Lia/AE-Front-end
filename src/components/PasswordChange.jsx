@@ -70,7 +70,7 @@ const PasswordChange = () => {
         setError(!response); // seteo el error
         setOpen(true); // muestro el alert
         setLoading(false); // seteo el loading
-        await sleep(5000);
+        await sleep(3000);
         if (response) {
           // deslogea el usuario ya que se cambio el dato
           setUser(null);
@@ -96,19 +96,19 @@ const PasswordChange = () => {
       <ProcessAlert open={open} loading={loading} success={!error} />
       {!open && (
         <Box
+          component="form"
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
           }}
+          onSubmit={handleAccept}
         >
           <Card sx={cardLoginStyle}>
             <CardHeader title={passwordchange.title} />
             <CardContent sx={boxLoginSyle}>
               <Stack spacing={2} sx={centeringStyles}>
-                <Box component="form" onSubmit={handleAccept}>
-                  <PasswordFragment ref={ref} />
-                </Box>
+                <PasswordFragment ref={ref} />
                 <Collapse in={error}>
                   <Alert
                     severity="error"
@@ -129,10 +129,15 @@ const PasswordChange = () => {
               </Stack>
             </CardContent>
             <CardActions sx={centerButtonsStyle}>
-              <Button size="small" onClick={handleBack} color="inherit">
+              <Button
+                size="small"
+                onClick={handleBack}
+                color="inherit"
+                type="button"
+              >
                 {commonbutton.back}
               </Button>
-              <Button size="small" onClick={handleAccept} type="submit">
+              <Button size="small" type="submit">
                 {commonbutton.ok}
               </Button>
             </CardActions>
