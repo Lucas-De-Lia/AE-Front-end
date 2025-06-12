@@ -1,5 +1,6 @@
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
+  Box,
   Button,
   Card,
   CardActions,
@@ -8,6 +9,7 @@ import {
   Divider,
   Link,
   Stack,
+  Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +31,7 @@ import { TextField } from "@mui/material";
 
 import { useService } from "../contexts/ServiceContext.js";
 import ProcessAlert from "../fragments/ProcessAlert.jsx";
-import { doformatCUIL, sleep } from "../utiles.js";
+import { doformatCUIL, sleep, testpassword } from "../utiles.js";
 
 /**
  * @brief Componente que muestra el formulario de login.
@@ -56,6 +58,9 @@ const AuthLogin = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  //controla los erroreres en el password
+  const [passwordErrors, setPasswordErrors] = useState(null);
+
   const navigate = useNavigate();
 
   /**
@@ -71,9 +76,13 @@ const AuthLogin = () => {
    * @brief Se encarga de guardar la contraseña y setear el estado de open y los errores.
    */
   const handleOnChangePassword = (event) => {
+    const password = event.target.value;
     setOpen(false);
     setLoginFail(false);
-    setPassword(event.target.value);
+    //se agrego para hacer validación en ejecución
+    setPasswordErrors(testpassword(password, password));
+    console.log(passwordErrors);
+    setPassword(password);
   };
 
   // Si estoy logeado redirijo al profile
@@ -86,7 +95,11 @@ const AuthLogin = () => {
   /**
    * @brief Se encarga de hacer la llamada al backend para autenticar y setea los mensajes de exito/error, luego redirige si todo sale bien.
    */
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (passwordErrors === false || passwordErrors === null) {
+      return;
+    }
     setOpen(true);
     let result = await authenticate(cuil, password);
     setLoginSuccess(result);
@@ -98,8 +111,8 @@ const AuthLogin = () => {
         replace: true,
       });
     } else {
-      // apra que se pueda leer el cartel
-      await sleep(700);
+      // para que se pueda leer el cartel
+      await sleep(3000);
       setOpen(false);
       setLoading(true);
     }
@@ -116,82 +129,128 @@ const AuthLogin = () => {
         <CardHeader
           titleTypographyProps={{ variant: "h6" }}
           avatar={<LockOpenIcon />}
-          title={authloginlabels.title}
+          title={
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "80%",
+              }}
+            >
+              <Typography variant="h6">{authloginlabels.title}</Typography>
+            </Box>
+          }
         />
         <Divider />
-        <CardContent sx={boxLoginSyle}>
-          <Stack spacing={2}>
-            <TextField
-              sx={{
-                width: "100%",
-                "@media (min-width: 600px)": {
-                  width: "25vw",
-                },
-              }}
-              size="small"
-              id="cuil"
-              label={commonfields.cuil}
-              required
-              disabled={loginSuccess}
-              helperText={authloginlabels.helper_text.cuil}
-              error={loginFail}
-              value={cuil}
-              onChange={handleInputChange}
-              variant="standard"
-            />
-            <TextField
-              sx={{
-                width: "100%",
-                "@media (min-width: 600px)": {
-                  width: "25vw",
-                },
-              }}
-              size="small"
-              id="password"
-              label={commonfields.password}
-              type="password"
-              required
-              value={password}
-              onChange={handleOnChangePassword}
-              error={loginFail}
-              disabled={loginSuccess}
-              variant="standard"
-            />
-            <Link
-              size="small"
-              component="button"
-              disabled={loginSuccess}
-              sx={{ ...centeringStyles, padding: 1 }}
-              underline="hover"
-              onClick={() => {
-                navigate("/password/forgot");
-              }}
-              style={loginSuccess ? linksStyle : buttonTopStyle}
-            >
-              {authloginlabels.link_label.password}
-            </Link>
-            <Divider />
+        <form onSubmit={handleLogin}>
+          <CardContent
+            sx={{
+              ...boxLoginSyle,
+              width: "100%",
+              maxWidth: "25vw", // Limita el ancho máximo
+              margin: "0 auto", // Centra horizontalmente
+            }}
+          >
+            <Stack spacing={2}>
+              <TextField
+                sx={{
+                  width: "100%",
+                  "@media (min-width: 600px)": {
+                    width: "25vw",
+                  },
+                }}
+                size="small"
+                id="cuil"
+                label={commonfields.cuil}
+                required
+                disabled={loginSuccess}
+                helperText={authloginlabels.helper_text.cuil}
+                error={loginFail}
+                value={cuil}
+                onChange={handleInputChange}
+                variant="standard"
+              />
+              <TextField
+                sx={{
+                  width: "100%",
+                  "@media (min-width: 600px)": {
+                    width: "25vw",
+                  },
+                }}
+                size="small"
+                id="password"
+                label={commonfields.password}
+                type="password"
+                required
+                value={password}
+                onChange={handleOnChangePassword}
+                error={loginFail}
+                disabled={loginSuccess}
+                variant="standard"
+              />
+              {!passwordErrors && passwordErrors !== null ? (
+                <Box
+                  sx={{
+                    width: "100%",
+                    "@media (min-width: 600px)": {
+                      width: "25vw",
+                    },
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    align="left"
+                    sx={{
+                      hyphens: "auto",
+                      overflowWrap: "break-word", // asegura que no desborde
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {commonfields.passwordError}
+                  </Typography>
+                </Box>
+              ) : (
+                <></>
+              )}
+              <Link
+                size="small"
+                component="a"
+                disabled={loginSuccess}
+                sx={{ ...centeringStyles, padding: 1 }}
+                underline="hover"
+                onClick={() => {
+                  navigate("/password/forgot");
+                }}
+                style={loginSuccess ? linksStyle : buttonTopStyle}
+              >
+                {authloginlabels.link_label.password}
+              </Link>
+              <Divider />
 
-            <CardActions sx={centerButtonsStyle}>
-              <Button
-                size="small"
-                color="inherit"
-                onClick={handleCancel}
-                disabled={loginSuccess}
-              >
-                {commonbuttons.cancel}
-              </Button>
-              <Button
-                size="small"
-                sx={buttonTopStyle}
-                onClick={handleLogin}
-                disabled={loginSuccess}
-              >
-                {commonbuttons.ok}
-              </Button>
-            </CardActions>
-          </Stack>
-        </CardContent>
+              <CardActions sx={centerButtonsStyle}>
+                <Button
+                  size="small"
+                  color="inherit"
+                  onClick={handleCancel}
+                  disabled={loginSuccess}
+                >
+                  {commonbuttons.cancel}
+                </Button>
+                <Button
+                  size="small"
+                  sx={buttonTopStyle}
+                  onClick={handleLogin}
+                  disabled={loginSuccess}
+                  type="submit"
+                >
+                  {commonbuttons.ok}
+                </Button>
+              </CardActions>
+            </Stack>
+          </CardContent>
+        </form>
       </Card>
     </>
   );
