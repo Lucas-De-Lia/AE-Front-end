@@ -224,6 +224,7 @@ const FormAddress = React.forwardRef((props, ref) => {
         {["state", "substate", "city", "address"].map((field) => (
           <Grid key={`grid.${field}`} item xs={6} sm={3}>
             <Autocomplete
+              freeSolo={field === "address"}
               autoHighlight
               id={field}
               key={field}
@@ -279,6 +280,11 @@ const FormAddress = React.forwardRef((props, ref) => {
               value={Fields[field][0]}
               InputLabelProps={{
                 shrink: Boolean(Fields[field][0] !== ""),
+              }}
+              sx={{
+                mb: {
+                  xs: field === "postalCode" ? 2.5 : 0,
+                },
               }}
             />
           </Grid>

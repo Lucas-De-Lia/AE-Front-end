@@ -133,7 +133,7 @@ const FormInfo = React.forwardRef((props, ref) => {
           <Grid container sx={centeringStyles} spacing={{ xs: 1, sm: 2 }}>
             {["name", "lastname", "cuil"].map((field) => (
               <Grid item key={field + "grid-item"}>
-                <TextField 
+                <TextField
                   required
                   size="small"
                   variant="standard"
@@ -143,7 +143,17 @@ const FormInfo = React.forwardRef((props, ref) => {
                   value={userData[field]}
                   error={errors[field]}
                   helperText={forminfolabels.helper_text[field]}
-                  onChange={(event) => handleChange(field, event.target.value)}
+                  onChange={(event) => {
+                    if (field === "cuil") {
+                      handleChange(field, event.target.value);
+                      return;
+                    }
+                    const newValue = event.target.value.replace(
+                      /[^a-zA-Z\s]/g,
+                      ""
+                    );
+                    handleChange(field, newValue);
+                  }}
                   InputLabelProps={{
                     shrink: userData[field] !== "",
                   }}
@@ -171,8 +181,8 @@ const FormInfo = React.forwardRef((props, ref) => {
                 variant="standard"
               />
             </Grid>
-            <Grid item>
-              <FormControl>
+            <Grid item mb={2.5}>
+              <FormControl fullWidth variant="standard" size="small">
                 <InputLabel
                   sx={{ color: errors.gender ? red[600] : "inherit" }}
                   variant="standard"
@@ -207,9 +217,15 @@ const FormInfo = React.forwardRef((props, ref) => {
             </Grid>
           </Grid>
         </Grid>
-
         <Grid item key={"grid-item-passwords"}>
-          <Grid container spacing={{ xs: 1, sm: 2 }}>
+          <Grid
+            container
+            spacing={{ xs: 1, sm: 2 }}
+            sx={{
+              display: "flex",
+              ...centeringStyles,
+            }}
+          >
             {["password", "passrep"].map((field) => (
               <Grid item key={field + "grid-item"}>
                 <TextField
