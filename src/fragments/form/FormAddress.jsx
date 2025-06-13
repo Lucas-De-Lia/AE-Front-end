@@ -157,11 +157,7 @@ const FormAddress = React.forwardRef((props, ref) => {
    */
   const handleErrors = async () => {
     let postal = parseInt(Fields["postalCode"]);
-    let booleanPostal = await test_postal_code(
-      Fields["state"][0].nombre,
-      Fields["city"][0].nombre,
-      postal
-    );
+    let booleanPostal = await test_postal_code(postal);
     const newErrors = {
       state: !Fields["state"][0].id,
       substate: !Fields["substate"][0].id,
