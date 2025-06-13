@@ -1,4 +1,11 @@
-import { Autocomplete, CardContent, Grid, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  CardContent,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useImperativeHandle, useState } from "react";
 import { usePublicResources } from "../../contexts/PublicResourcesContext.js";
 import { useFormAddressString } from "../../contexts/TextProvider.jsx";
@@ -210,6 +217,11 @@ const FormAddress = React.forwardRef((props, ref) => {
     });
   };
 
+  const checkPostalCodeError = (postalCode) =>
+    postalCode < 1000 || postalCode > 9999;
+  //MANEJO DE ERRORES DEL POSTALCODE, NOTA: LO MANEJO ASI YA QUE EL CONTROL MEDIANTE LOS ESTADOS COMPLEJOS EXISTENTE SE VUELVE DIFICIL Y GENERA MUCHOS CAMBIOS EN EL CODIGO
+  const [postalCodeError, setPostalCodeError] = useState(false);
+
   useEffect(() => {
     if (props.substate !== "Ninguno") {
       startup(props);
@@ -217,6 +229,15 @@ const FormAddress = React.forwardRef((props, ref) => {
       getSuggestions("state");
     }
   }, [props, startup]);
+
+  useEffect(() => {
+    const postal = Fields["postalCode"][0];
+    if (postal !== "" && checkPostalCodeError(postal)) {
+      setPostalCodeError(true);
+    } else {
+      setPostalCodeError(false);
+    }
+  }, [Fields["postalCode"][0]]);
 
   return (
     <CardContent>
@@ -264,11 +285,17 @@ const FormAddress = React.forwardRef((props, ref) => {
               size="small"
               required={["postalCode", "number"].includes(field)}
               helperText={
-                ["postalCode", "number"].includes(field)
+                postalCodeError && field === "postalCode"
+                  ? "Código postal inválido"
+                  : ["postalCode", "number"].includes(field)
                   ? formaddresslables.helper_text["required"]
                   : formaddresslables.helper_text[field]
               }
-              error={errors[field]}
+              error={
+                field === "postalCode"
+                  ? postalCodeError && Fields["postalCode"][0] !== ""
+                  : errors[field]
+              }
               onChange={(event) =>
                 handleChange(
                   event.target.value,
@@ -283,7 +310,8 @@ const FormAddress = React.forwardRef((props, ref) => {
               }}
               sx={{
                 mb: {
-                  xs: field === "postalCode" ? 2.5 : 0,
+                  xs: field === "postalCode" && 2.5,
+                  md: field === "postalCode" && 0,
                 },
               }}
             />
