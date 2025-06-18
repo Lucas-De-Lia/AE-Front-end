@@ -24,7 +24,8 @@ import {
   cardLoginStyle,
   centerButtonsStyle,
 } from "../theme.jsx";
-import { doformatCUIL } from "../utiles.js";
+import { doformatCUIL, testpassword } from "../utiles.js";
+import { PasswordControl } from "./PasswordControl.jsx";
 /**
  * @brief Componente para cambiar la contraseña un vez entra al link de recuperar contraseña
  */
@@ -51,6 +52,7 @@ const PasswordReset = () => {
   const [cuil, setCuil] = useState();
   const [password, setPassword] = useState();
   const [password_confirmation, setPasswordConfirmation] = useState();
+  const [passwordError, setPasswordError] = useState(false);
   /**
    * @brief Maneja el cambio del CUIL
    */
@@ -144,6 +146,11 @@ const PasswordReset = () => {
                   value={password_confirmation}
                   onChange={handlePasswordConfirmationChange}
                   variant="standard"
+                />
+                <PasswordControl
+                  errors={passwordError}
+                  password={password}
+                  passrep={password_confirmation}
                 />
               </Stack>
               {error && (
