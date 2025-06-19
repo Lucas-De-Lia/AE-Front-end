@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePasswordService } from "../contexts/PasswordContext";
 import {
@@ -24,7 +24,7 @@ import {
   cardLoginStyle,
   centerButtonsStyle,
 } from "../theme.jsx";
-import { doformatCUIL, testpassword } from "../utiles.js";
+import { doformatCUIL, testCuil, testpassword } from "../utiles.js";
 import { PasswordControl } from "./PasswordControl.jsx";
 /**
  * @brief Componente para cambiar la contraseña un vez entra al link de recuperar contraseña
@@ -49,9 +49,10 @@ const PasswordReset = () => {
 
   //Variables de estado
   const token = new URLSearchParams(window.location.search).get("token");
-  const [cuil, setCuil] = useState();
-  const [password, setPassword] = useState();
-  const [password_confirmation, setPasswordConfirmation] = useState();
+  const [cuil, setCuil] = useState("");
+  const [cuilError, setCuilError] = useState(false);
+  const [password, setPassword] = useState("");
+  const [password_confirmation, setPasswordConfirmation] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   /**
    * @brief Maneja el cambio del CUIL
@@ -59,42 +60,59 @@ const PasswordReset = () => {
   const handleCUILChange = (event) => {
     let cuilf = doformatCUIL(event.target.value);
     setCuil(cuilf);
+    setCuilError(testCuil(cuilf));
   };
   /**
    * @brief Maneja el cambio de la contraseña
    */
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+    const newPassword = event.target.value;
+    setPassword(newPassword);
+    setPasswordError(!testpassword(newPassword, password_confirmation));
   };
   /**
    * @brief Maneja el cambio de la confirmación de la contraseña
    */
   const handlePasswordConfirmationChange = (event) => {
-    setPasswordConfirmation(event.target.value);
+    const newConfirmation = event.target.value;
+    setPasswordConfirmation(newConfirmation);
+    setPasswordError(!testpassword(password, newConfirmation));
   };
   /**
    * @brief Envia los datos para cambiar la contraseña
    */
   const sendData = async () => {
+    if (
+      passwordError ||
+      cuilError ||
+      password.length === 0 ||
+      password_confirmation.length === 0 ||
+      cuil.length === 0
+    )
+      return;
+    setLoading(true);
     setSend(true);
-    let result = null;
     try {
-      result = send_reset_password(
+      const result = await send_reset_password(
         token,
         cuil,
         password,
         password_confirmation
       );
       setSuccess(result);
-      setLoading(!result);
+      setLoading(false);
+      setTimeout(() => {
+        navigate("/", { replace: true });
+        setSend(false);
+      }, 3000);
     } catch (error) {
       setSuccess(false);
       setLoading(false);
-      setError(true);
-    } finally {
-      await Promise.all[result];
-      setSend(false);
-      navigate("/", { replace: true });
+      setSend(true);
+      setTimeout(() => {
+        setSend(false); // ocultar ProcessAlert
+        setError(true);
+      }, 3000);
     }
   };
 
@@ -118,10 +136,11 @@ const PasswordReset = () => {
                   label={commonfields.cuil}
                   required
                   disabled={null}
-                  error={error}
+                  error={cuilError}
                   value={cuil}
                   onChange={handleCUILChange}
                   variant="standard"
+                  helperText={"Obligatorio y sin '-' se agregan solos"}
                 />
                 <TextField
                   id="password"
@@ -156,8 +175,11 @@ const PasswordReset = () => {
               {error && (
                 <AlertFragment
                   type="error"
-                  title={passwordreq.info.requirements.title}
-                  body={passwordreq.info.requirements.body}
+                  title={"Ha ocurrido un error al procesar su solicitud."}
+                  body={[
+                    "Revise si los datos ingresados son correctos",
+                    "Si el problema persiste, vuelva a intentarlo más tarde.",
+                  ]}
                 />
               )}
             </CardContent>

@@ -62,7 +62,7 @@ export const PasswordServiceProvider = ({ children }) => {
     } catch (error) {
       let msg = decryptData(error.response.data.data, KEY_CRYPT);
       console.error("Error during password reset:", msg);
-      return false;
+      throw new Error(msg);
     }
   };
 

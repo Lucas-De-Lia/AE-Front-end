@@ -325,6 +325,11 @@ export const testpassword = (password1, password2) => {
   return password1 === password2 ? re.test(password1) : false;
 };
 
+export const testCuil = (cuil) => {
+  if (cuil !== "" && cuil.length === 13) return false;
+  return true;
+};
+
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export const isToday = (day, date) => {
@@ -518,6 +523,7 @@ const utiles = {
   isToday,
   isNum,
   testpassword,
+  testCuil,
   shortFileName,
   getDates,
   stringAvatar,
