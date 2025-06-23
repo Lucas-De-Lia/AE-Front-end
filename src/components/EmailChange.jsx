@@ -25,6 +25,7 @@ import { m } from "framer-motion";
  * @brief Componente que muestra el formulario de cambio de email.
  */
 const EmailChange = () => {
+  //todo: AGREGAR VALIDACIONES DE EMAIL Y CONTRASEÑA, GESTIONAR CUANDO SE ENVIA EL FORMULARIO Y MANEJAR LOS ERRORES BIEN
   // Variables con los textos
   const emailchange = useComponentEmailChangeString();
   const commonbuttons = useCommonsButtonString();
@@ -108,7 +109,6 @@ const EmailChange = () => {
       setOpen(false);
     }
   };
-
   return (
     <Stack spacing={2} sx={{ mx: 3 }}>
       <AlertFragment
