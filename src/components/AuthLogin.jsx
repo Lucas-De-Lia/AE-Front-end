@@ -1,5 +1,6 @@
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -58,9 +59,6 @@ const AuthLogin = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  //controla los erroreres en el password
-  const [passwordErrors, setPasswordErrors] = useState(null);
-
   const navigate = useNavigate();
 
   /**
@@ -79,8 +77,6 @@ const AuthLogin = () => {
     const password = event.target.value;
     setOpen(false);
     setLoginFail(false);
-    //se agrego para hacer validación en ejecución
-    setPasswordErrors(testpassword(password, password));
     setPassword(password);
   };
 
@@ -96,9 +92,6 @@ const AuthLogin = () => {
    */
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (passwordErrors === false || passwordErrors === null) {
-      return;
-    }
     setOpen(true);
     let result = await authenticate(cuil, password);
     setLoginSuccess(result);
@@ -188,30 +181,8 @@ const AuthLogin = () => {
                 disabled={loginSuccess}
                 variant="standard"
               />
-              {!passwordErrors && passwordErrors !== null ? (
-                <Box
-                  sx={{
-                    width: "100%",
-                    "@media (min-width: 600px)": {
-                      width: "25vw",
-                    },
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    color="error"
-                    align="left"
-                    sx={{
-                      hyphens: "auto",
-                      overflowWrap: "break-word", // asegura que no desborde
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {commonfields.passwordError}
-                  </Typography>
-                </Box>
-              ) : (
-                <></>
+              {loginFail && (
+                <Alert severity="error">Cuil o contraseña incorrectos</Alert>
               )}
               <Link
                 size="small"
