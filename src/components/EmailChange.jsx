@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Card,
   CardActions,
@@ -20,12 +21,18 @@ import ProcessAlert from "../fragments/ProcessAlert.jsx";
 import { centerButtonsStyle } from "../theme.jsx";
 import { handleCopyCut, handlePaste, sleep } from "../utiles.js";
 import { m } from "framer-motion";
+import Swal from "sweetalert2";
 
 /**
  * @brief Componente que muestra el formulario de cambio de email.
  */
 const EmailChange = () => {
   //todo: AGREGAR VALIDACIONES DE EMAIL Y CONTRASEÑA, GESTIONAR CUANDO SE ENVIA EL FORMULARIO Y MANEJAR LOS ERRORES BIEN
+  //todo: AGREGAR AL BACKEND QUE NO SE PRODUZCA EL CAMBIO DE EMAIL EFECTIVO HASTA QUE SE VERIFIQUE EL EMAIL QUE SE ENVIA PARA EL CAMBIO
+  //todo: AGREGAR UNA ALERTA ANTES DEL ENVIO DEL FORM QUE PREGUNTE SI VERDADERAMENTE SE QUIER CAMBIAR EL EMAIL
+  //todo: AGREGAR RENOVACION DE TOKEN PARA QUE NO SE CIERRE LA SESION
+  //! LAS VALIDACIONES DE EMAIL Y CONTRASEÑA ESTAN LISTAS, TAMBIEN ESTA LISTO EL CAMINO DE ERROR DEL CAMBIO
+  //! FALTA EL CAMINO DE EXITO CON EL CORREO DE VERIFICACION Y POSTERIOR DESACTIVACION DE EMAILVERIFIED
   // Variables con los textos
   const emailchange = useComponentEmailChangeString();
   const commonbuttons = useCommonsButtonString();
@@ -50,6 +57,7 @@ const EmailChange = () => {
 
   // controla que ls email sean iguales
   const [errorEmail, setErrorEmail] = useState(false);
+  const [sendError, setSendError] = useState(false);
 
   useEffect(() => {
     if (User === null) {
@@ -75,8 +83,11 @@ const EmailChange = () => {
       navigate("/ae/profile");
     } catch (error) {
       console.error("Error sending email:", error);
+      await sleep(3000);
       setSend(false);
       setLoading(false);
+      setOpen(false);
+      setSendError(true);
     }
   };
 
@@ -99,11 +110,25 @@ const EmailChange = () => {
   /**
    * @brief Se encarga de verificar los emails y permitir setear las variables para poder permitir enviar el email.
    */
-  const handleConfirm = async () => {
+  const handleConfirm = async (e) => {
+    e.preventDefault();
     if (formData.reemail === formData.email && formData.email !== "") {
       setErrorEmail(false);
-      setOpen(true);
-      await sendEmail();
+      Swal.fire({
+        title: "Estas seguro que los datos ingresados son correctos?",
+        text: "Al aceptar recibirás un email de verificación en tu nuevo correo, si no lo verificas el cambio no se hará efectivo.",
+        icon: "warning",
+        showDenyButton: true,
+        confirmButtonText: "Sí",
+        denyButtonText: "No",
+        confirmButtonColor: "#198754",
+      }).then((result) => {
+        if (result.isDenied) return;
+        if (result.isConfirmed) {
+          setOpen(true);
+          sendEmail();
+        }
+      });
     } else {
       setErrorEmail(true);
       setOpen(false);
@@ -125,50 +150,84 @@ const EmailChange = () => {
       />
       {!open && (
         <Card>
-          <CardHeader title={"Cambiar Email"} sx={{}} />
-          <Stack spacing={2} sx={{ px: 5, pb: 5 }}>
-            <TextField
-              name="email"
-              variant="standard"
-              value={formData.email}
-              autoComplete="off"
-              disabled={formData.send}
-              onPaste={handlePaste}
-              onCut={handleCopyCut}
-              error={errorEmail}
-              onChange={handleChange}
-              label={`Nuevo ${commonfields.email}`}
-            />
-            <TextField
-              name="reemail"
-              autoComplete="off"
-              variant="standard"
-              onPaste={handlePaste}
-              onCut={handleCopyCut}
-              error={errorEmail}
-              value={formData.reemail}
-              onChange={handleChange}
-              label={commonfields.renewemail}
-            />
-            <TextField
-              name="password"
-              autoComplete="new-password"
-              variant="standard"
-              error={errorEmail}
-              value={formData.password}
-              type="password"
-              onChange={handleChange}
-              label={commonfields.password}
-            />
-          </Stack>
-          <CardActions sx={centerButtonsStyle}>
-            <Button size="small" onClick={handleBack}>
-              {commonbuttons.back}
-            </Button>
-            <Button size="small" onClick={handleConfirm}>
-              {commonbuttons.send}
-            </Button>
-          </CardActions>
+          <form onSubmit={handleConfirm}>
+            <CardHeader title={"Cambiar Email"} sx={{}} />
+            <Stack spacing={2} sx={{ px: 5, pb: 5 }}>
+              <TextField
+                name="email"
+                variant="standard"
+                value={formData.email}
+                autoComplete="off"
+                disabled={formData.send}
+                onPaste={handlePaste}
+                onCut={handleCopyCut}
+                error={errorEmail}
+                onChange={handleChange}
+                label={`Nuevo ${commonfields.email}`}
+                required
+                type="email"
+              />
+              <TextField
+                name="reemail"
+                autoComplete="off"
+                variant="standard"
+                onPaste={handlePaste}
+                onCut={handleCopyCut}
+                error={errorEmail}
+                value={formData.reemail}
+                onChange={handleChange}
+                label={commonfields.renewemail}
+                required
+                type="email"
+              />
+              <TextField
+                name="password"
+                autoComplete="new-password"
+                variant="standard"
+                error={errorEmail}
+                value={formData.password}
+                type="password"
+                onChange={handleChange}
+                label={commonfields.password}
+                required
+              />
+              {errorEmail && (
+                <Alert
+                  severity="error"
+                  sx={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    fontSize: "1rem",
+                  }}
+                >
+                  Los Email deben ser iguales!
+                </Alert>
+              )}
+              {sendError && (
+                <Alert
+                  severity="error"
+                  sx={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    fontSize: "1rem",
+                  }}
+                >
+                  Ha habido un error al procesar su solicitud, revise los datos
+                  ingresados
+                </Alert>
+              )}
+            </Stack>
+            <CardActions sx={centerButtonsStyle}>
+              <Button size="small" onClick={handleBack}>
+                {commonbuttons.back}
+              </Button>
+              <Button size="small" type="submit">
+                {commonbuttons.send}
+              </Button>
+            </CardActions>
+          </form>
         </Card>
       )}
       <ProcessAlert open={open} loading={loading} success={send} />

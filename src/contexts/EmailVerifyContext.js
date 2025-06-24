@@ -106,7 +106,7 @@ export const EmailVerifyProvider = ({ children }) => {
       // Log and return false if there's an error during the confirmation process
       let msg = decryptData(error.response.data.data, KEY_CRYPT);
       console.error("Error during code verification: ", msg);
-      return false;
+      throw new Error(error);
     }
   };
 
