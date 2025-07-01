@@ -27,12 +27,6 @@ import Swal from "sweetalert2";
  * @brief Componente que muestra el formulario de cambio de email.
  */
 const EmailChange = () => {
-  //todo: AGREGAR VALIDACIONES DE EMAIL Y CONTRASEÑA, GESTIONAR CUANDO SE ENVIA EL FORMULARIO Y MANEJAR LOS ERRORES BIEN
-  //todo: AGREGAR AL BACKEND QUE NO SE PRODUZCA EL CAMBIO DE EMAIL EFECTIVO HASTA QUE SE VERIFIQUE EL EMAIL QUE SE ENVIA PARA EL CAMBIO
-  //todo: AGREGAR UNA ALERTA ANTES DEL ENVIO DEL FORM QUE PREGUNTE SI VERDADERAMENTE SE QUIER CAMBIAR EL EMAIL
-  //todo: AGREGAR RENOVACION DE TOKEN PARA QUE NO SE CIERRE LA SESION
-  //! LAS VALIDACIONES DE EMAIL Y CONTRASEÑA ESTAN LISTAS, TAMBIEN ESTA LISTO EL CAMINO DE ERROR DEL CAMBIO
-  //! FALTA EL CAMINO DE EXITO CON EL CORREO DE VERIFICACION Y POSTERIOR DESACTIVACION DE EMAILVERIFIED
   // Variables con los textos
   const emailchange = useComponentEmailChangeString();
   const commonbuttons = useCommonsButtonString();
@@ -65,18 +59,22 @@ const EmailChange = () => {
     }
   }, [navigate, User]);
 
+  useEffect(() => {
+    if (User.email_verified_at === null) {
+      navigate("/ae/profile");
+    }
+  }, []);
+
   /**
    * @brief Envia el email de confirmacion, y setea el estado de send y el loading
    */
   const sendEmail = async () => {
+    //TODO: ARREGLAR EL BUG DE CUANDO SUCEDE UN ERROR EN LA SOLICITUD SE QUEDA EN ROJO
     try {
       const response = await send_confirmation_email(
         formData.password,
         formData.email
       );
-      if (response) {
-        setEmailUndefined();
-      }
       setSend(response);
       setLoading(false);
       await sleep(1000);

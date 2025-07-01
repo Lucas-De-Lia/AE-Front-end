@@ -21,6 +21,7 @@ import { PublicResourcesProvider } from "./contexts/PublicResourcesContext.js";
 import { ServiceProvider } from "./contexts/ServiceContext.js";
 import ErrorPage from "./frames/ErrorPage.jsx";
 import Root from "./frames/Root.jsx";
+import { NewEmailVerify } from "./components/NewEmailVerify.jsx";
 
 const MemoizedErrorPage = React.memo(ErrorPage);
 const MemorizedRoot = React.memo(Root);
@@ -113,6 +114,10 @@ function App() {
               >
                 <Route path="change" element={<EmailChange />} />
                 <Route path="verify/:id/:hash" element={<EmailVerify />} />
+                <Route
+                  path="verify-new-email/:token"
+                  element={<NewEmailVerify />}
+                />
               </Route>
               <Route path="*" element={<MemoizedErrorPage />} />
             </Routes>
