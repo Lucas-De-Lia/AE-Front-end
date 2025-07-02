@@ -81,7 +81,8 @@ const PasswordReset = () => {
   /**
    * @brief Envia los datos para cambiar la contraseña
    */
-  const sendData = async () => {
+  const sendData = async (e) => {
+    e.preventDefault();
     if (
       passwordError ||
       cuilError ||
@@ -126,7 +127,7 @@ const PasswordReset = () => {
             alignItems: "center",
           }}
         >
-          <Card>
+          <Card component={"form"} onSubmit={sendData}>
             <CardHeader title={passwordforgot.title} />
             <CardContent sx={cardLoginStyle}>
               <Stack spacing={2}>
@@ -193,10 +194,10 @@ const PasswordReset = () => {
                 {commonbuttons.cancel}
               </Button>
               <Button
+                type="submit"
                 size="small"
                 sx={buttonTopStyle}
-                onClick={sendData}
-                disabled={send}
+                disabled={send === true}
               >
                 {commonbuttons.ok}
               </Button>

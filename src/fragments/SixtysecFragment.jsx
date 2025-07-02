@@ -38,7 +38,7 @@ const SixtysecFragment = (props) => {
       <>
         {props.label}
         {click ? (
-          <span style={{ marginLeft: "9px", color: "#d6dbdf " }}>
+          <span style={{ marginLeft: "9px", color: "#a0a2a3" }}>
             {timeLeft}s
           </span>
         ) : (
@@ -59,8 +59,8 @@ const SixtysecFragment = (props) => {
           style: click
             ? {
                 marginLeft: "9px",
-                color: "#d6dbdf ",
-                textDecorationColor: "#d6dbdf ",
+                color: "#a0a2a3",
+                textDecorationColor: "#a0a2a3",
               }
             : null,
         },

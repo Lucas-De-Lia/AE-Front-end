@@ -191,7 +191,7 @@ export const AECreate = () => {
         floor: stepData[1].floor,
         apartment: stepData[1].apartment,
         postalcode: stepData[1].postalCode,
-        city:`${stepData[1].substate.nombre} , ${stepData[1].city.nombre}`,
+        city: `${stepData[1].substate.nombre} , ${stepData[1].city.nombre}`,
         state: stepData[1].state.nombre,
         phone: stepData[2].phone,
         startdate: formatDate(new Date()),
@@ -211,7 +211,7 @@ export const AECreate = () => {
   const handleSend = async () => {
     setSendError(true);
     let elemento = refs.current;
-    let error = await elemento.handleErrors()
+    let error = await elemento.handleErrors();
     if (elemento !== null && !error) {
       await handleRegister();
     }

@@ -18,7 +18,7 @@ import {
   boxSMmenu,
   iconButtonTopStyle,
   logoTopStyle,
-  menuStyles
+  menuStyles,
 } from "../theme.jsx";
 
 /**
@@ -52,10 +52,14 @@ const RootTopBar = (props) => {
       {
         label: labels.titles[3],
         show: User !== null && User.ae === AE.FINISHABLE,
-        disabled: serverDates !== null ? today < serverDates.fifthMonth || today > serverDates.sixthMonth: true,
+        disabled:
+          serverDates !== null
+            ? today < serverDates.fifthMonth || today > serverDates.sixthMonth
+            : true,
         Popper:
           "Este botón está deshabilitado porque no estás en la fecha indicada o no es tu primera exclusión.",
       },
+      { label: "Encuesta AE", disabed: User !== null && true, show: true },
     ],
     [User, serverDates, labels, today, AE]
   );
@@ -76,6 +80,9 @@ const RootTopBar = (props) => {
         break;
       case 0:
         navigate("/");
+        break;
+      case 4:
+        navigate("/ae/survey");
         break;
       default:
         navigate("error");

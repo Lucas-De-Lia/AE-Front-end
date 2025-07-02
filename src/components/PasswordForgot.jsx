@@ -86,7 +86,7 @@ const PasswordForgot = () => {
   };
 
   /**
-   * @brief Se encarga de verificar el CUIL 
+   * @brief Se encarga de verificar el CUIL
    */
   const handleCUILChange = (event) => {
     const inputValue = event.target.value;

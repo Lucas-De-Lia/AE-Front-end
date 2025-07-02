@@ -311,7 +311,7 @@ const AuthRegister = () => {
           key="back-button"
           size="small"
           color="inherit"
-          disabled={itsFirstState(0) || !errors[4]}
+          disabled={itsFirstState(0)}
           onClick={handleBack}
           sx={{ mr: 1 }}
         >
