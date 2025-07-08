@@ -21,6 +21,8 @@ import { Checklist } from "@mui/icons-material";
 import { cardRegisterStyle } from "../theme";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "../hooks/useForm";
+import { useEffect } from "react";
+import { useService } from "../contexts/ServiceContext";
 
 const initialState = {
   frecuencia: "",
@@ -41,6 +43,8 @@ const initialState = {
 
 export const EncuentaAE = () => {
   const navigate = useNavigate();
+
+  const { User } = useService();
 
   const {
     onInputChange,
@@ -85,6 +89,7 @@ export const EncuentaAE = () => {
       "horas",
       "socioClubJugadores",
       "conocePlataformasOnline",
+      "utilizaPlataformasOnline",
       "problemasAutocontrol",
       "deseaRecibirInfo",
     ];
@@ -100,8 +105,17 @@ export const EncuentaAE = () => {
     changeFormState("horas", +horas);
 
     //TODO: ENVIAR AL BACKEND
-    //TODO: FIXEAR MENSAJE ERROR ASISTE AL CASINO
   };
+  useEffect(() => {
+    if (!conocePlataformasOnline) {
+      changeFormState("utilizaPlataformasOnline", "");
+    }
+  }, [conocePlataformasOnline]);
+  useEffect(() => {
+    if (!User) {
+      navigate("/");
+    }
+  }, []);
   return (
     <Card sx={cardRegisterStyle}>
       <CardHeader
@@ -182,7 +196,7 @@ export const EncuentaAE = () => {
               />
             </RadioGroup>
             {errors.asistencia && (
-              <FormHelperText>{errors.frecuencia}</FormHelperText>
+              <FormHelperText>{errors.asistencia}</FormHelperText>
             )}
           </FormControl>
         </Box>
@@ -361,7 +375,12 @@ export const EncuentaAE = () => {
             width: "80%",
           }}
         >
-          <FormControl error={Boolean(errors.utilizaPlataformasOnline)}>
+          <FormControl
+            error={
+              Boolean(errors.utilizaPlataformasOnline) &&
+              conocePlataformasOnline
+            }
+          >
             <FormLabel id="utiliza-plataformas-online">
               Si conoce las plataformas de Juego Online, ¿las utiliza?
             </FormLabel>
@@ -384,7 +403,7 @@ export const EncuentaAE = () => {
                 disabled={!conocePlataformasOnline}
               ></FormControlLabel>
             </RadioGroup>
-            {errors.utilizaPlataformasOnline && (
+            {errors.utilizaPlataformasOnline && conocePlataformasOnline && (
               <FormHelperText>{errors.utilizaPlataformasOnline}</FormHelperText>
             )}
           </FormControl>
