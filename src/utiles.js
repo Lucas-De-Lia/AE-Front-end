@@ -1,5 +1,9 @@
+import axios from "axios";
 import CryptoJS from "crypto-js";
 
+const URL_BACKEND = process.env.REACT_APP_BACK_URL;
+const APP_KEY = process.env.REACT_APP_KEY;
+const KEY_CRYPT = process.env.REACT_APP_CRYPT;
 /**
  * @brief Verifica si el string es un numero
  * @param {Event} e  es el evento del onchange (e.target.value)
@@ -507,6 +511,28 @@ export const fileToBase64 = (file) => {
     reader.onerror = (error) => reject(error);
   });
 };
+
+export const sendSurvey = async (surveyData) => {
+  try {
+    const encryptedPayload = encryptData(surveyData, KEY_CRYPT);
+
+    const { data } = await axios.post(
+      `${URL_BACKEND}/api/ae/survey`,
+      {
+        data: encryptedPayload, // <- enviás el string cifrado aquí
+      },
+      {
+        headers: { "X-API-Key": APP_KEY },
+        withCredentials: true,
+      }
+    );
+    const resp = decryptData(data.data, KEY_CRYPT);
+    return resp;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
 const utiles = {
   handlePaste,
   decryptData,
@@ -539,5 +565,6 @@ const utiles = {
   emailConocido,
   formatDate,
   sleep,
+  sendSurvey,
 };
 export default utiles;
