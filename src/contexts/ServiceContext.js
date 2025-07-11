@@ -39,7 +39,6 @@ export const ServiceProvider = ({ children }) => {
   const [Authorization, setAuthorizationState] = useState(null);
   const [serverDates, setServerDates] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(User !== null);
-
   /**
    * @brief Email verificar .
    */
@@ -99,7 +98,6 @@ export const ServiceProvider = ({ children }) => {
       if (user && authorization) {
         // Save the authorization token for future requests
         saveAuth(authorization);
-
         try {
           // Get additional user data from the backend API
           const aeResponse = await axios.get(`${URL_BACKEND}/api/ae/dates`);

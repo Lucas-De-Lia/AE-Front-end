@@ -32,7 +32,6 @@ const RootTopBar = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   // Servicios del backend
   const { User, serverDates, isAuthenticated, AE } = useService();
-
   const navigate = useNavigate();
 
   const today = useMemo(() => new Date(), []);
@@ -59,9 +58,15 @@ const RootTopBar = (props) => {
         Popper:
           "Este botón está deshabilitado porque no estás en la fecha indicada o no es tu primera exclusión.",
       },
-      { label: "Encuesta AE", disabed: User !== null && true, show: true },
+      {
+        label: "Encuesta AE",
+        disabled: User === null || User?.respondioEncuesta,
+        show: true,
+        Popper:
+          "Usted ya respondió la encuesta o no es posible responderla en este momento",
+      },
     ],
-    [User, serverDates, labels, today, AE]
+    [User, serverDates, labels, today, AE, User?.respondioEncuesta]
   );
 
   /**
