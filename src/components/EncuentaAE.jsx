@@ -27,6 +27,7 @@ import { useEffect, useState } from "react";
 import { useService } from "../contexts/ServiceContext";
 import utiles, { sleep } from "../utiles";
 import ProcessAlert from "../fragments/ProcessAlert";
+import { motion } from "framer-motion";
 
 const initialState = {
   frecuencia: "",
@@ -43,6 +44,19 @@ const initialState = {
   utilizaPlataformasOnline: "",
   problemasAutocontrol: "",
   deseaRecibirInfo: "",
+};
+const containerVariant = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15, // tiempo entre cada hijo
+    },
+  },
+};
+
+const itemVariant = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
 export const EncuentaAE = () => {
@@ -152,404 +166,424 @@ export const EncuentaAE = () => {
   return (
     <>
       {!open && (
-        <Stack
-          spacing={2}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            ...cardRegisterStyle,
-          }}
+        <motion.div
+          variants={containerVariant}
+          initial="hidden"
+          animate="visible"
+          style={{ width: "100%" }}
         >
-          <Alert severity="info">
-            La información suministrada en esta encuesta será utilizada
-            únicamente con fines estadísticos. Garantizamos que todos los datos
-            proporcionados serán tratados con estricta confidencialidad y no se
-            asociarán con su identidad personal bajo ninguna circunstancia.
-          </Alert>
-          <Card sx={cardRegisterStyle}>
-            <CardHeader
-              avatar={<Checklist />}
-              titleTypographyProps={{ variant: "h6" }}
-              title="Encuesta AutoExclusión"
-            ></CardHeader>
-            <Divider />
-            <CardContent
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 3,
-                width: "100%",
-                boxSizing: "border-box",
-                p: 0,
-                mt: 3,
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 5,
-                  flexWrap: "wrap",
-                  width: "80%",
-                }}
-              >
-                <FormControl error={Boolean(errors.frecuencia)}>
-                  <FormLabel id="frecuancia-casino-buttons">
-                    ¿Con que frecuencia asiste al Casino?
-                  </FormLabel>
-                  <RadioGroup
-                    aria-labelledby="frecuancia-casino-buttons"
-                    name="frecuencia"
-                    value={frecuencia}
-                    onChange={onInputChange}
-                  >
-                    <FormControlLabel
-                      value="Diaria"
-                      control={<Radio />}
-                      label="Diaria"
-                    />
-                    <FormControlLabel
-                      value="Semanal"
-                      control={<Radio />}
-                      label="Semanal"
-                    />
-                    <FormControlLabel
-                      value="Mensual"
-                      control={<Radio />}
-                      label="Mensual"
-                    />
-                  </RadioGroup>
-                  {errors.frecuencia && (
-                    <FormHelperText>{errors.frecuencia}</FormHelperText>
-                  )}
-                </FormControl>
-                <FormControl error={Boolean(errors.asistencia)}>
-                  <FormLabel id="asistencia-casino-buttons">
-                    ¿Cómo asiste al Casino?
-                  </FormLabel>
-                  <RadioGroup
-                    aria-labelledby="asistencia-casino-buttons"
-                    name="asistencia"
-                    value={asistencia}
-                    onChange={onInputChange}
-                  >
-                    <FormControlLabel
-                      value="Solo"
-                      label="Solo"
-                      control={<Radio />}
-                    />
-                    <FormControlLabel
-                      value="Acompaniado"
-                      label="Acompañado"
-                      control={<Radio />}
-                    />
-                  </RadioGroup>
-                  {errors.asistencia && (
-                    <FormHelperText>{errors.asistencia}</FormHelperText>
-                  )}
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl error={Boolean(errors.horas)}>
-                  <FormLabel>¿Cuánto tiempo permanece jugando?</FormLabel>
-                  <TextField
-                    type="number"
-                    name="horas"
-                    value={horas}
-                    onChange={(e) => {
-                      const valid = checkRange(e.target.value);
-                      if (!valid) return;
-                      onInputChange(e);
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">horas</InputAdornment>
-                      ),
-                    }}
-                  />
-                  {errors.horas && (
-                    <FormHelperText>{errors.horas}</FormHelperText>
-                  )}
-                </FormControl>
-              </Box>
-
-              <Divider sx={{ width: "100%", px: 0 }} />
-              <Typography component="h2" variant="h6">
-                ¿Qué tipo de Juego le atrae?
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 5,
-                  flexWrap: "wrap",
-                  width: "80%",
-                }}
-              >
-                <FormGroup>
-                  <FormLabel>Máquinas Tragamonedas</FormLabel>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name="maquinasTradicionales"
-                        checked={maquinasTradicionales}
-                        onChange={onInputChangeForCheck}
-                      />
-                    }
-                    label="Máquinas Tradicionales"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name="ruletaElectronica"
-                        checked={ruletaElectronica}
-                        onChange={onInputChangeForCheck}
-                      />
-                    }
-                    label="Ruleta Electrónica"
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <FormLabel>Mesas de Paño</FormLabel>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name="carteados"
-                        checked={carteados}
-                        onChange={onInputChangeForCheck}
-                      />
-                    }
-                    label="Carteados"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name="ruletaAmericana"
-                        checked={ruletaAmericana}
-                        onChange={onInputChangeForCheck}
-                      />
-                    }
-                    label="Ruleta Americana"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name="dados"
-                        checked={dados}
-                        onChange={onInputChangeForCheck}
-                      />
-                    }
-                    label="Dados"
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <FormLabel>Bingo</FormLabel>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name="bingo"
-                        checked={bingo}
-                        onChange={onInputChangeForCheck}
-                      />
-                    }
-                    label="Otro"
-                  />
-                </FormGroup>
-              </Box>
-              <Divider sx={{ width: "100%", px: 0 }} />
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 5,
-                  flexWrap: "wrap",
-                  width: "80%",
-                }}
-              >
-                <FormControl error={Boolean(errors.socioClubJugadores)}>
-                  <FormLabel id="socio-club-jugadores">
-                    ¿Es socio del Club de Jugadores?
-                  </FormLabel>
-                  <RadioGroup
-                    aria-labelledby="socio-club-jugador"
-                    name="socioClubJugadores"
-                    value={socioClubJugadores}
-                    onChange={onInputChangeForRadio}
-                  >
-                    <FormControlLabel
-                      label="Si"
-                      value="true"
-                      control={<Radio />}
-                    ></FormControlLabel>
-                    <FormControlLabel
-                      label="No"
-                      value="false"
-                      control={<Radio />}
-                    ></FormControlLabel>
-                  </RadioGroup>
-                  {errors.socioClubJugadores && (
-                    <FormHelperText>{errors.socioClubJugadores}</FormHelperText>
-                  )}
-                </FormControl>
-                <FormControl error={Boolean(errors.conocePlataformasOnline)}>
-                  <FormLabel id="conoce-plataformas-online">
-                    ¿Conoce las plataformas de Juego Online?{" "}
-                  </FormLabel>
-                  <RadioGroup
-                    aria-labelledby="conoce-plataformas-online"
-                    name="conocePlataformasOnline"
-                    value={conocePlataformasOnline}
-                    onChange={onInputChangeForRadio}
-                  >
-                    <FormControlLabel
-                      label="Si"
-                      value="true"
-                      control={<Radio />}
-                    ></FormControlLabel>
-                    <FormControlLabel
-                      label="No"
-                      value="false"
-                      control={<Radio />}
-                    ></FormControlLabel>
-                  </RadioGroup>
-                  {errors.conocePlataformasOnline && (
-                    <FormHelperText>
-                      {errors.conocePlataformasOnline}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 5,
-                  flexWrap: "wrap",
-                  width: "80%",
-                }}
-              >
-                <FormControl
-                  error={
-                    Boolean(errors.utilizaPlataformasOnline) &&
-                    conocePlataformasOnline
-                  }
+          <Stack
+            spacing={2}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              ...cardRegisterStyle,
+            }}
+          >
+            <motion.div variants={itemVariant}>
+              <Alert severity="info">
+                La información suministrada en esta encuesta será utilizada
+                únicamente con fines estadísticos. Garantizamos que todos los
+                datos proporcionados serán tratados con estricta
+                confidencialidad y no se asociarán con su identidad personal
+                bajo ninguna circunstancia.
+              </Alert>
+            </motion.div>
+            <motion.div variants={itemVariant}>
+              <Card sx={cardRegisterStyle}>
+                <CardHeader
+                  avatar={<Checklist />}
+                  titleTypographyProps={{ variant: "h6" }}
+                  title="Encuesta AutoExclusión"
+                ></CardHeader>
+                <Divider />
+                <CardContent
+                  component="form"
+                  onSubmit={handleSubmit}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 3,
+                    width: "100%",
+                    boxSizing: "border-box",
+                    p: 0,
+                    mt: 3,
+                  }}
                 >
-                  <FormLabel id="utiliza-plataformas-online">
-                    Si conoce las plataformas de Juego Online, ¿las utiliza?
-                  </FormLabel>
-                  <RadioGroup
-                    aria-labelledby="utiliza-plataformas-online"
-                    name="utilizaPlataformasOnline"
-                    value={utilizaPlataformasOnline}
-                    onChange={onInputChangeForRadio}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 5,
+                      flexWrap: "wrap",
+                      width: "80%",
+                    }}
                   >
-                    <FormControlLabel
-                      label="Si"
-                      value="true"
-                      control={<Radio />}
-                      disabled={!conocePlataformasOnline}
-                    ></FormControlLabel>
-                    <FormControlLabel
-                      label="No"
-                      value="false"
-                      control={<Radio />}
-                      disabled={!conocePlataformasOnline}
-                    ></FormControlLabel>
-                  </RadioGroup>
-                  {errors.utilizaPlataformasOnline &&
-                    conocePlataformasOnline && (
-                      <FormHelperText>
-                        {errors.utilizaPlataformasOnline}
-                      </FormHelperText>
-                    )}
-                </FormControl>
-                <FormControl error={Boolean(errors.problemasAutocontrol)}>
-                  <FormLabel id="problemas-autocontrol">
-                    ¿Considera que su decisión de autoexcluirse responde a
-                    problemas de Autocontrol sobre el juego?
-                  </FormLabel>
-                  <RadioGroup
-                    aria-labelledby="problemas-autocontrol"
-                    name="problemasAutocontrol"
-                    value={problemasAutocontrol}
-                    onChange={onInputChangeForRadio}
+                    <FormControl error={Boolean(errors.frecuencia)}>
+                      <FormLabel id="frecuancia-casino-buttons">
+                        ¿Con que frecuencia asiste al Casino?
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="frecuancia-casino-buttons"
+                        name="frecuencia"
+                        value={frecuencia}
+                        onChange={onInputChange}
+                      >
+                        <FormControlLabel
+                          value="Diaria"
+                          control={<Radio />}
+                          label="Diaria"
+                        />
+                        <FormControlLabel
+                          value="Semanal"
+                          control={<Radio />}
+                          label="Semanal"
+                        />
+                        <FormControlLabel
+                          value="Mensual"
+                          control={<Radio />}
+                          label="Mensual"
+                        />
+                      </RadioGroup>
+                      {errors.frecuencia && (
+                        <FormHelperText>{errors.frecuencia}</FormHelperText>
+                      )}
+                    </FormControl>
+                    <FormControl error={Boolean(errors.asistencia)}>
+                      <FormLabel id="asistencia-casino-buttons">
+                        ¿Cómo asiste al Casino?
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="asistencia-casino-buttons"
+                        name="asistencia"
+                        value={asistencia}
+                        onChange={onInputChange}
+                      >
+                        <FormControlLabel
+                          value="Solo"
+                          label="Solo"
+                          control={<Radio />}
+                        />
+                        <FormControlLabel
+                          value="Acompaniado"
+                          label="Acompañado"
+                          control={<Radio />}
+                        />
+                      </RadioGroup>
+                      {errors.asistencia && (
+                        <FormHelperText>{errors.asistencia}</FormHelperText>
+                      )}
+                    </FormControl>
+                  </Box>
+                  <Box>
+                    <FormControl error={Boolean(errors.horas)}>
+                      <FormLabel>¿Cuánto tiempo permanece jugando?</FormLabel>
+                      <TextField
+                        type="number"
+                        name="horas"
+                        value={horas}
+                        onChange={(e) => {
+                          const valid = checkRange(e.target.value);
+                          if (!valid) return;
+                          onInputChange(e);
+                        }}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              horas
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                      {errors.horas && (
+                        <FormHelperText>{errors.horas}</FormHelperText>
+                      )}
+                    </FormControl>
+                  </Box>
+
+                  <Divider sx={{ width: "100%", px: 0 }} />
+                  <Typography component="h2" variant="h6">
+                    ¿Qué tipo de Juego le atrae?
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 5,
+                      flexWrap: "wrap",
+                      width: "80%",
+                    }}
                   >
-                    <FormControlLabel
-                      label="Si"
-                      value="true"
-                      control={<Radio />}
-                    ></FormControlLabel>
-                    <FormControlLabel
-                      label="No"
-                      value="false"
-                      control={<Radio />}
-                    ></FormControlLabel>
-                  </RadioGroup>
-                  {errors.problemasAutocontrol && (
-                    <FormHelperText>
-                      {errors.problemasAutocontrol}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-                <FormControl error={Boolean(errors.deseaRecibirInfo)}>
-                  <FormLabel id="desea-recibir-info">
-                    ¿Desea recibir información sobre Juego Responsable?
-                  </FormLabel>
-                  <RadioGroup
-                    aria-labelledby="desea-recibir-info"
-                    name="deseaRecibirInfo"
-                    value={deseaRecibirInfo}
-                    onChange={onInputChangeForRadio}
+                    <FormGroup>
+                      <FormLabel>Máquinas Tragamonedas</FormLabel>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="maquinasTradicionales"
+                            checked={maquinasTradicionales}
+                            onChange={onInputChangeForCheck}
+                          />
+                        }
+                        label="Máquinas Tradicionales"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="ruletaElectronica"
+                            checked={ruletaElectronica}
+                            onChange={onInputChangeForCheck}
+                          />
+                        }
+                        label="Ruleta Electrónica"
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <FormLabel>Mesas de Paño</FormLabel>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="carteados"
+                            checked={carteados}
+                            onChange={onInputChangeForCheck}
+                          />
+                        }
+                        label="Carteados"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="ruletaAmericana"
+                            checked={ruletaAmericana}
+                            onChange={onInputChangeForCheck}
+                          />
+                        }
+                        label="Ruleta Americana"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="dados"
+                            checked={dados}
+                            onChange={onInputChangeForCheck}
+                          />
+                        }
+                        label="Dados"
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <FormLabel>Bingo</FormLabel>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="bingo"
+                            checked={bingo}
+                            onChange={onInputChangeForCheck}
+                          />
+                        }
+                        label="Otro"
+                      />
+                    </FormGroup>
+                  </Box>
+                  <Divider sx={{ width: "100%", px: 0 }} />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 5,
+                      flexWrap: "wrap",
+                      width: "80%",
+                    }}
                   >
-                    <FormControlLabel
-                      label="Si"
-                      value="true"
-                      control={<Radio />}
-                    ></FormControlLabel>
-                    <FormControlLabel
-                      label="No"
-                      value="false"
-                      control={<Radio />}
-                    ></FormControlLabel>
-                  </RadioGroup>
-                  {errors.deseaRecibirInfo && (
-                    <FormHelperText>{errors.deseaRecibirInfo}</FormHelperText>
-                  )}
-                </FormControl>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 5,
-                  flexWrap: "wrap",
-                  width: "80%",
-                }}
-              >
-                <Button variant="contained" onClick={handleBack}>
-                  Volver
-                </Button>
-                <Button variant="contained" type="submit">
-                  Enviar
-                </Button>
-              </Box>
-            </CardContent>
-          </Card>
-          {sendError && (
-            <Alert severity="error">
-              <strong>¡Algo salió mal!</strong>
-              <br></br>
-              No pudimos procesar tu respuesta. Puede que los datos sean
-              inválidos o haya ocurrido un error en nuestros servidores. Por
-              favor, intenta nuevamente más tarde.
-            </Alert>
-          )}
-        </Stack>
+                    <FormControl error={Boolean(errors.socioClubJugadores)}>
+                      <FormLabel id="socio-club-jugadores">
+                        ¿Es socio del Club de Jugadores?
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="socio-club-jugador"
+                        name="socioClubJugadores"
+                        value={socioClubJugadores}
+                        onChange={onInputChangeForRadio}
+                      >
+                        <FormControlLabel
+                          label="Si"
+                          value="true"
+                          control={<Radio />}
+                        ></FormControlLabel>
+                        <FormControlLabel
+                          label="No"
+                          value="false"
+                          control={<Radio />}
+                        ></FormControlLabel>
+                      </RadioGroup>
+                      {errors.socioClubJugadores && (
+                        <FormHelperText>
+                          {errors.socioClubJugadores}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                    <FormControl
+                      error={Boolean(errors.conocePlataformasOnline)}
+                    >
+                      <FormLabel id="conoce-plataformas-online">
+                        ¿Conoce las plataformas de Juego Online?{" "}
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="conoce-plataformas-online"
+                        name="conocePlataformasOnline"
+                        value={conocePlataformasOnline}
+                        onChange={onInputChangeForRadio}
+                      >
+                        <FormControlLabel
+                          label="Si"
+                          value="true"
+                          control={<Radio />}
+                        ></FormControlLabel>
+                        <FormControlLabel
+                          label="No"
+                          value="false"
+                          control={<Radio />}
+                        ></FormControlLabel>
+                      </RadioGroup>
+                      {errors.conocePlataformasOnline && (
+                        <FormHelperText>
+                          {errors.conocePlataformasOnline}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 5,
+                      flexWrap: "wrap",
+                      width: "80%",
+                    }}
+                  >
+                    <FormControl
+                      error={
+                        Boolean(errors.utilizaPlataformasOnline) &&
+                        conocePlataformasOnline
+                      }
+                    >
+                      <FormLabel id="utiliza-plataformas-online">
+                        Si conoce las plataformas de Juego Online, ¿las utiliza?
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="utiliza-plataformas-online"
+                        name="utilizaPlataformasOnline"
+                        value={utilizaPlataformasOnline}
+                        onChange={onInputChangeForRadio}
+                      >
+                        <FormControlLabel
+                          label="Si"
+                          value="true"
+                          control={<Radio />}
+                          disabled={!conocePlataformasOnline}
+                        ></FormControlLabel>
+                        <FormControlLabel
+                          label="No"
+                          value="false"
+                          control={<Radio />}
+                          disabled={!conocePlataformasOnline}
+                        ></FormControlLabel>
+                      </RadioGroup>
+                      {errors.utilizaPlataformasOnline &&
+                        conocePlataformasOnline && (
+                          <FormHelperText>
+                            {errors.utilizaPlataformasOnline}
+                          </FormHelperText>
+                        )}
+                    </FormControl>
+                    <FormControl error={Boolean(errors.problemasAutocontrol)}>
+                      <FormLabel id="problemas-autocontrol">
+                        ¿Considera que su decisión de autoexcluirse responde a
+                        problemas de Autocontrol sobre el juego?
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="problemas-autocontrol"
+                        name="problemasAutocontrol"
+                        value={problemasAutocontrol}
+                        onChange={onInputChangeForRadio}
+                      >
+                        <FormControlLabel
+                          label="Si"
+                          value="true"
+                          control={<Radio />}
+                        ></FormControlLabel>
+                        <FormControlLabel
+                          label="No"
+                          value="false"
+                          control={<Radio />}
+                        ></FormControlLabel>
+                      </RadioGroup>
+                      {errors.problemasAutocontrol && (
+                        <FormHelperText>
+                          {errors.problemasAutocontrol}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                    <FormControl error={Boolean(errors.deseaRecibirInfo)}>
+                      <FormLabel id="desea-recibir-info">
+                        ¿Desea recibir información sobre Juego Responsable?
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="desea-recibir-info"
+                        name="deseaRecibirInfo"
+                        value={deseaRecibirInfo}
+                        onChange={onInputChangeForRadio}
+                      >
+                        <FormControlLabel
+                          label="Si"
+                          value="true"
+                          control={<Radio />}
+                        ></FormControlLabel>
+                        <FormControlLabel
+                          label="No"
+                          value="false"
+                          control={<Radio />}
+                        ></FormControlLabel>
+                      </RadioGroup>
+                      {errors.deseaRecibirInfo && (
+                        <FormHelperText>
+                          {errors.deseaRecibirInfo}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 5,
+                      flexWrap: "wrap",
+                      width: "80%",
+                    }}
+                  >
+                    <Button variant="contained" onClick={handleBack}>
+                      Volver
+                    </Button>
+                    <Button variant="contained" type="submit">
+                      Enviar
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </motion.div>
+            {sendError && (
+              <Alert severity="error">
+                <strong>¡Algo salió mal!</strong>
+                <br></br>
+                No pudimos procesar tu respuesta. Puede que los datos sean
+                inválidos o haya ocurrido un error en nuestros servidores. Por
+                favor, intenta nuevamente más tarde.
+              </Alert>
+            )}
+          </Stack>
+        </motion.div>
       )}
       <ProcessAlert open={open} loading={loading} success={success} />
     </>
