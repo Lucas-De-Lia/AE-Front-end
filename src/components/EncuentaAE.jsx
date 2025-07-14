@@ -66,7 +66,7 @@ export const EncuentaAE = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(true);
 
-  const { User } = useService();
+  const { User, userRespondioEncuestaTrue } = useService();
   const { sendSurvey } = utiles;
 
   const {
@@ -141,6 +141,7 @@ export const EncuentaAE = () => {
       setSuccess(true);
       await sleep(2000);
       setOpen(false);
+      userRespondioEncuestaTrue();
       navigate("/");
     } catch (error) {
       setLoading(false);

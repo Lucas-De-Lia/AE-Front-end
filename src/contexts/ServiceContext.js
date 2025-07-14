@@ -46,6 +46,10 @@ export const ServiceProvider = ({ children }) => {
     setUser({ ...User, email_verified_at: null });
   };
 
+  const userRespondioEncuestaTrue = () => {
+    setUser({ ...User, respondioEncuesta: true });
+  };
+
   /**
    * @brief Almazena los datos de aothorization para axios
    * */
@@ -425,6 +429,7 @@ export const ServiceProvider = ({ children }) => {
         fetch_start_pdf,
         finalize_ae,
         verifyCaptcha,
+        userRespondioEncuestaTrue,
       }}
     >
       {children}
