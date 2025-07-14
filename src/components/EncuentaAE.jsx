@@ -157,7 +157,7 @@ export const EncuentaAE = () => {
     }
   }, [conocePlataformasOnline]);
   useEffect(() => {
-    if (!User) {
+    if (!User || User?.respondioEncuesta) {
       navigate("/");
     }
     setLoading(false);
