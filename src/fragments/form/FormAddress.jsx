@@ -134,12 +134,12 @@ const FormAddress = React.forwardRef((props, ref) => {
         fields = await get_substate_names(value);
         break;
       case "city":
-        fields = await get_citys_name(Fields["state"][1].nombre, value);
+        fields = await get_citys_name(Fields["state"][0].nombre, value);
         break;
       case "address":
         fields = await get_address_names(
-          Fields["state"][1].nombre,
-          Fields["substate"][1].nombre,
+          Fields["state"][0].nombre,
+          Fields["substate"][0].nombre,
           value
         );
         break;
@@ -224,7 +224,7 @@ const FormAddress = React.forwardRef((props, ref) => {
     } else {
       getSuggestions("state");
     }
-  }, [props, startup]);
+  }, []);
 
   useEffect(() => {
     const postal = Fields["postalCode"][0];
