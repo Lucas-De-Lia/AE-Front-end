@@ -18,6 +18,7 @@ import { stringAvatar } from "../../utiles.js";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useService } from "../../contexts/ServiceContext.js";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 // Opciones cuando esta logeado
 const settings = [{ label: "Cerrar sesión", icon: <ExitToAppIcon />, id: 5 }];
@@ -30,6 +31,8 @@ const settings_login = [
  * @brief Boton interactivo para ingresar y salir de la cuenta.
  */
 const IconUserMenu = (props) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // Servicios con el backend
   const { User, isAuthenticated, unauthenticate } = useService();
   // Variables de estado
@@ -106,6 +109,7 @@ const IconUserMenu = (props) => {
               hover || anchorElUser
                 ? "linear-gradient(white,white), linear-gradient(120deg,rgba(255, 203, 2, 0.631) 0%, rgba(255, 116, 2, 0.631) 33%, rgba(228, 33, 83, 0.631) 66%, rgba(60, 58, 229, 0.631) 100%)"
                 : "",
+            cursor: "pointer",
             borderRadius: "7px",
             borderImageSlice: "1",
             backgroundOrigin: "border-box",
@@ -122,7 +126,7 @@ const IconUserMenu = (props) => {
           >
             {!props.userAuth && (
               <Typography variant="body4" paddingLeft={1}>
-                {"Ingresar"}
+                {isMobile ? "Ingresar / Excluirse" : "Ingresar"}
               </Typography>
             )}
             <Tooltip title="Menu">
@@ -169,6 +173,7 @@ const IconUserMenu = (props) => {
               size="small"
               key={setting.label + "menu-icon"}
               onClick={(e) => onClickMenu(e, setting.id)}
+              sx={{ display: !isMobile && setting.id === 2 && "none" }}
             >
               {setting.icon}
               <Typography textAlign="center" paddingBlockStart={"5px"}>
