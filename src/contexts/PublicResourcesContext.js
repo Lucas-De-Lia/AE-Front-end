@@ -178,7 +178,7 @@ export const PublicResourcesProvider = ({ children }) => {
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
-      const pdf = decryptData(data.data, KEY_CRYPT);
+      const pdf = data;
       return pdf ? pdf : [];
     } catch (error) {
       console.error("Error fetching PDF viewer:", error);

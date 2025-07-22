@@ -53,13 +53,13 @@ const NewsView = () => {
         </Grid>
         <Grid item style={{ flex: 1 }}>
           {pdf.pdf ? (
-            <embed
+            <iframe
               title="PDF Viewer"
-              src={`${process.env.REACT_APP_BACK_URL}/${pdf.pdf}`}
+              src={`${pdf.pdf}`}
               width="100%"
               height="100%"
               style={{ border: "none" }}
-            />
+            ></iframe>
           ) : (
             <div
               style={{
