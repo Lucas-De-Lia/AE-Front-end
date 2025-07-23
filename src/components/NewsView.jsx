@@ -12,6 +12,8 @@ import { usePublicResources } from "../contexts/PublicResourcesContext";
  * @brief Se encarga de renderizar la vista de noticas, es la vista detallada de las noticas
  */
 const NewsView = () => {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   // Servicios del backend
   const { fetch_news_pdf } = usePublicResources();
   // Variables de estado
@@ -34,6 +36,11 @@ const NewsView = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+  useEffect(() => {
+    if (isMobile && pdf.pdf) {
+      window.open(pdf.pdf, "_blank");
+    }
+  }, [pdf.pdf]);
 
   return (
     <Paper
@@ -53,13 +60,37 @@ const NewsView = () => {
         </Grid>
         <Grid item style={{ flex: 1 }}>
           {pdf.pdf ? (
-            <iframe
-              title="PDF Viewer"
-              src={`${pdf.pdf}`}
-              width="100%"
-              height="100%"
-              style={{ border: "none" }}
-            ></iframe>
+            isMobile ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <a
+                  href={pdf.pdf}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: "1.2rem",
+                    color: "#1976d2",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Ver PDF
+                </a>
+              </div>
+            ) : (
+              <iframe
+                title="PDF Viewer"
+                src={pdf.pdf}
+                width="100%"
+                height="100%"
+                style={{ border: "none" }}
+              />
+            )
           ) : (
             <div
               style={{
