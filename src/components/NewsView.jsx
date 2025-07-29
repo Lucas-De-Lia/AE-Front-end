@@ -1,4 +1,6 @@
 import {
+  Box,
+  Button,
   CircularProgress,
   Divider,
   Grid,
@@ -6,27 +8,32 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { usePublicResources } from "../contexts/PublicResourcesContext";
 /**
  * @brief Se encarga de renderizar la vista de noticas, es la vista detallada de las noticas
  */
 const NewsView = () => {
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
   // Servicios del backend
   const { fetch_news_pdf } = usePublicResources();
   // Variables de estado
+  const [isLoading, setIsLoading] = useState(true);
   const [pdf, setPdf] = useState([]);
   const { id } = useParams();
+  const navigate = useNavigate();
   /**
    * @brief Se encarga de hacer el fetch de las noticas,y setear lavisualizacion del pdf
    */
+  const handleBack = () => {
+    navigate(-1);
+  };
   const fetchData = useCallback(async () => {
     try {
       const news_pdf = await fetch_news_pdf(id);
       if (news_pdf) {
         setPdf(news_pdf);
+        setIsLoading(false);
+        console.log(news_pdf);
       }
     } catch (error) {
       console.error(error);
@@ -36,75 +43,98 @@ const NewsView = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-  useEffect(() => {
-    if (isMobile && pdf.pdf) {
-      window.open(pdf.pdf, "_blank");
-    }
-  }, [pdf.pdf]);
 
+  //TODO ACA VOY A TENER QUE DECIDIR COMO SE VE LA VIEW ESTA
   return (
-    <Paper
+    <Box
       sx={{
-        width: "98vw",
-        height: "100vh",
+        minHeight: "100vh",
+        width: "100%",
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
       }}
     >
-      <Grid container direction="column" style={{ flex: 1 }} spacing={2}>
-        <Grid item>
-          <Typography paddingTop={2} paddingBottom={2} variant="h5">
-            {pdf.title}
-          </Typography>
-          <Divider />
-        </Grid>
-        <Grid item style={{ flex: 1 }}>
-          {pdf.pdf ? (
-            isMobile ? (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                }}
-              >
-                <a
-                  href={pdf.pdf}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontSize: "1.2rem",
-                    color: "#1976d2",
-                    textDecoration: "underline",
-                  }}
-                >
-                  Ver PDF
-                </a>
-              </div>
-            ) : (
-              <iframe
-                title="PDF Viewer"
-                src={pdf.pdf}
-                width="100%"
-                height="100%"
-                style={{ border: "none" }}
-              />
-            )
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                paddingTop: "20vh",
-              }}
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <Box
+          sx={{
+            width: { xs: "95%", sm: "90%", md: "80%" },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            backgroundColor: "#f5f5f5",
+            borderRadius: "8px",
+          }}
+        >
+          <Box sx={{ width: "100%", padding: "16px", overflowY: "auto" }}>
+            <Typography
+              variant="h4"
+              component="h4"
+              gutterBottom
+              sx={{ wordBreak: "break-word" }}
             >
-              <CircularProgress />
-            </div>
-          )}
-        </Grid>
-      </Grid>
-    </Paper>
+              {pdf.title}
+            </Typography>
+            <Divider sx={{ width: "100%" }} />
+          </Box>
+          <Box
+            component="img"
+            src={pdf.imagen}
+            alt={pdf.title}
+            sx={{
+              width: { xs: "95%", sm: "90%", md: "80%" },
+              height: "auto",
+              borderRadius: "8px",
+              objectFit: "cover",
+            }}
+          />
+          <Typography
+            variant="body1"
+            component="p"
+            sx={{
+              maxWidth: "80%",
+              padding: "16px",
+              mt: 2,
+              wordBreak: "break-word",
+            }}
+          >
+            {pdf.abstract}
+          </Typography>
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-around",
+              p: "24px",
+            }}
+          >
+            <Button variant="contained" color="primary" onClick={handleBack}>
+              Volver
+            </Button>
+            <a
+              href={pdf.pdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              disabled={!pdf.pdf}
+            >
+              <Button
+                variant="contained"
+                color="secondary"
+                target="_blank"
+                rel="noopener noreferrer"
+                disabled={!pdf.pdf}
+              >
+                Ver PDF
+              </Button>
+            </a>
+          </Box>
+        </Box>
+      )}
+    </Box>
   );
 };
 

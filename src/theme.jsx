@@ -354,7 +354,7 @@ export const gridNewsCardStyle = {
 
   // Ajusta la altura para tamaños de pantalla específicos
   "@media (max-width: 600px)": {
-    width: "100%", // Altura para tamaños pequeños de pantalla (xs)
+    width: "95%", // Altura para tamaños pequeños de pantalla (xs)
     height: "100%",
   },
 

@@ -36,9 +36,10 @@ const NewsCard = React.memo(({ anews }) => {
       whileHover={{ scale: 1.1 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
-      <Card sx={gridNewsCardStyle}>
+      <Card
+        sx={{ ...gridNewsCardStyle, display: "flex", flexDirection: "column" }}
+      >
         {!load && <Skeleton variant="rectangular" width={400} height={50} />}
-
         <LazyLoadImage
           src={`${process.env.REACT_APP_BACK_URL}/${url}`}
           alt={title}
@@ -52,11 +53,23 @@ const NewsCard = React.memo(({ anews }) => {
           }}
         />
         <Box sx={gridNewsCardBoxStyle}>
-          <CardContent>
+          <CardContent sx={{ p: 2, flexGrow: 1, overflow: "hidden" }}>
             <Typography gutterBottom variant="h5">
               {title}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 4, // Número de líneas que querés mostrar
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                lineHeight: "1.5rem", // Ajusta si usás otra
+                height: "6rem", // 4 líneas × lineHeight
+              }}
+            >
               {abstract}
             </Typography>
           </CardContent>

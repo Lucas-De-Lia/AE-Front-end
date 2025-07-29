@@ -38,10 +38,8 @@ import AlertFragment from "../AlertFragmet.jsx";
 import { blue } from "@mui/material/colors";
 import ClearIcon from "@mui/icons-material/Clear";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import Webcam from "react-webcam";
 import CameraIcon from "@mui/icons-material/Camera";
 import CameraswitchIcon from "@mui/icons-material/Cameraswitch";
-import WebcamCapture from "../WebCapture.jsx";
 
 const StyledSwitch = styled(Switch)(({ theme }) => ({
   padding: 8,
@@ -85,6 +83,8 @@ const FormExtra = React.forwardRef(
     // Variables de texto
     const formextralabels = useFormExtraString();
     const formfileattachlabels = useFormFileAttachString();
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const fileInputRef = useRef(null);
     //const commonbuttonlabels = useCommonsButtonString();
     // Variables de datos.
     const [userData, setUserData] = useState({
@@ -94,7 +94,6 @@ const FormExtra = React.forwardRef(
     });
 
     const [cameraOn, setCameraOn] = useState(false);
-    const webcamRef = useRef(null);
     const [imageSrc, setImageSrc] = useState("");
     // Estructura que guarda el formato que debe tener un campo
     const FieldFormatter = {
@@ -214,6 +213,20 @@ const FormExtra = React.forwardRef(
       setHighlight(false);
       handleFileChange(event.dataTransfer.files);
     };
+    const openCamera = (e) => {
+      const input = fileInputRef.current;
+      if (input) {
+        input.setAttribute("capture", "environment");
+        input.click();
+      }
+    };
+    const openGallery = (e) => {
+      const input = fileInputRef.current;
+      if (input) {
+        input.removeAttribute("capture");
+        input.click();
+      }
+    };
 
     return (
       <CardContent>
@@ -320,47 +333,59 @@ const FormExtra = React.forwardRef(
                   title={formfileattachlabels.title}
                   body={formfileattachlabels.body}
                 />
-                {!cameraOn ? (
-                  <>
-                    <Input
-                      type="file"
-                      inputProps={{ accept: "image/*" }}
-                      sx={{ display: "none" }}
-                      id="file-upload"
-                      onChange={(e) => {
-                        handleFileChange(e.target.files);
-                      }}
-                      error={errors.files_size || errors.files_type}
+                <>
+                  <Input
+                    inputRef={fileInputRef}
+                    type="file"
+                    inputProps={{ accept: "image/*" }}
+                    sx={{ display: "none" }}
+                    id="file-upload"
+                    onChange={(e) => {
+                      handleFileChange(e.target.files);
+                    }}
+                    error={errors.files_size || errors.files_type}
+                    disabled={isButtonDisabled}
+                  />
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button
+                      variant="contained"
+                      component="span"
                       disabled={isButtonDisabled}
-                    />
-                    <label htmlFor="file-upload">
+                      sx={{
+                        backgroundColor: "info.main",
+                        "&:hover": {
+                          backgroundColor: blue[800],
+                        },
+                        borderRadius: "8px",
+                        padding: "8px 8px",
+                        //fontFamily: "sans-serif",
+                      }}
+                      startIcon={<CloudUploadIcon />}
+                      onClick={openGallery}
+                    >
+                      Subir Imagen
+                    </Button>
+                    {isMobile && (
                       <Button
                         variant="contained"
                         component="span"
                         disabled={isButtonDisabled}
                         sx={{
-                          backgroundColor: "info.main",
+                          backgroundColor: "success.main",
                           "&:hover": {
-                            backgroundColor: blue[800],
+                            backgroundColor: "success.dark",
                           },
                           borderRadius: "8px",
                           padding: "8px 8px",
-                          //fontFamily: "sans-serif",
                         }}
-                        startIcon={<CloudUploadIcon />}
+                        startIcon={<CameraIcon />}
+                        onClick={openCamera}
                       >
-                        Subir Imagen
+                        Usar cámara
                       </Button>
-                    </label>
-                  </>
-                ) : (
-                  <WebcamCapture
-                    ref={webcamRef}
-                    imageSrc={imageSrc}
-                    setImageSrc={setImageSrc}
-                  />
-                )}
-
+                    )}
+                  </Box>
+                </>
                 {imageSrc.length > 0 && (
                   <Box sx={centeringStyles}>
                     <Box
