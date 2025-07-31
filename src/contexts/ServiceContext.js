@@ -46,6 +46,10 @@ export const ServiceProvider = ({ children }) => {
     setUser({ ...User, email_verified_at: null });
   };
 
+  const setEmailVerified = () => {
+    setUser({ ...User, email_verified_at: new Date() });
+  };
+
   const userRespondioEncuestaTrue = () => {
     setUser({ ...User, respondioEncuesta: true });
   };
@@ -91,7 +95,7 @@ export const ServiceProvider = ({ children }) => {
       const { data } = await axios.post(
         `${URL_BACKEND}/api/auth/login`,
         {
-          data: encryptData({ cuil: username, password: password }, KEY_CRYPT),
+          data: encryptData({ dni: username, password: password }, KEY_CRYPT),
         },
         {
           headers: { "X-API-Key": APP_KEY },
@@ -419,6 +423,7 @@ export const ServiceProvider = ({ children }) => {
         setServerDates,
         setAuthorization,
         setEmailUndefined,
+        setEmailVerified,
         Authorization,
         authenticate,
         unauthenticate,

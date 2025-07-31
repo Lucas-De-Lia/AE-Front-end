@@ -16,7 +16,12 @@ import {
   useFormInfoString,
 } from "../../contexts/TextProvider.jsx";
 import { centeringStyles } from "../../theme.jsx";
-import { datecontrol, doformatCUIL, testpassword } from "../../utiles.js";
+import {
+  datecontrol,
+  dniFormatted,
+  doformatCUIL,
+  testpassword,
+} from "../../utiles.js";
 
 const genders = [
   { label: "Ninguno", id: "-1" },
@@ -37,7 +42,7 @@ const FormInfo = React.forwardRef((props, ref) => {
   const [userData, setUserData] = useState({
     name: props.name,
     lastname: props.lastname,
-    cuil: props.cuil,
+    dni: props.dni,
     birthdate: props.birthdate,
     gender: props.gender,
     password: props.password,
@@ -47,7 +52,7 @@ const FormInfo = React.forwardRef((props, ref) => {
   const [errors, setErrors] = useState({
     name: false,
     lastname: false,
-    cuil: false,
+    dni: false,
     birthdate: false,
     gender: false,
     password: false,
@@ -58,7 +63,7 @@ const FormInfo = React.forwardRef((props, ref) => {
   const FieldsFormatters = {
     name: (value) => handleNothing(value),
     lastname: (value) => handleNothing(value),
-    cuil: (value) => doformatCUIL(value),
+    dni: (value) => dniFormatted(value),
     birthdate: (value) => handleNothing(value),
     gender: (value) => handleNothing(value),
     password: (value) => handleNothing(value),
@@ -68,7 +73,7 @@ const FormInfo = React.forwardRef((props, ref) => {
   const FieldsDetectedError = {
     name: (value) => handleEmptyness(value),
     lastname: (value) => handleEmptyness(value),
-    cuil: (value) => handleEmptyness(value) || value.length !== 13,
+    dni: (value) => handleEmptyness(value) || value.length !== 8,
     birthdate: (value) => handleDateControl(value) || handleEmptyness(value),
     gender: (value) => handleNonDefaultGender(value),
     password: (value) => handleEmptyness(value),
@@ -99,7 +104,7 @@ const FormInfo = React.forwardRef((props, ref) => {
     let e = [
       "name",
       "lastname",
-      "cuil",
+      "dni",
       "password",
       "passrep",
       "birthdate",
@@ -131,7 +136,7 @@ const FormInfo = React.forwardRef((props, ref) => {
       >
         <Grid item>
           <Grid container sx={centeringStyles} spacing={{ xs: 1, sm: 2 }}>
-            {["name", "lastname", "cuil"].map((field) => (
+            {["name", "lastname", "dni"].map((field) => (
               <Grid item key={field + "grid-item"}>
                 <TextField
                   required
@@ -144,7 +149,7 @@ const FormInfo = React.forwardRef((props, ref) => {
                   error={errors[field]}
                   helperText={forminfolabels.helper_text[field]}
                   onChange={(event) => {
-                    if (field === "cuil") {
+                    if (field === "dni") {
                       handleChange(field, event.target.value);
                       return;
                     }

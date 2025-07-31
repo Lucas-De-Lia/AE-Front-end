@@ -32,7 +32,7 @@ import { TextField } from "@mui/material";
 
 import { useService } from "../contexts/ServiceContext.js";
 import ProcessAlert from "../fragments/ProcessAlert.jsx";
-import { doformatCUIL, sleep, testpassword } from "../utiles.js";
+import { dniFormatted, sleep, testpassword } from "../utiles.js";
 
 /**
  * @brief Componente que muestra el formulario de login.
@@ -51,8 +51,7 @@ const AuthLogin = () => {
   //se encargarn de ontrolar los carteles de error
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [loginFail, setLoginFail] = useState(false);
-
-  const [cuil, setCuil] = useState("");
+  const [dni, setDni] = useState("");
   const [password, setPassword] = useState("");
 
   // controlan el backdrop y el loading
@@ -62,12 +61,11 @@ const AuthLogin = () => {
   const navigate = useNavigate();
 
   /**
-   * @brief Se encarga de guardar el cuil y setear el estado de open y los errores .
+   * @brief Se encarga de guardar el dni y setear el estado de open y los errores .
    */
+  //checkear esto -> creo que funcionaria bien
   const handleInputChange = (event) => {
-    setOpen(false);
-    setLoginFail(false);
-    setCuil(doformatCUIL(event.target.value));
+    setDni(dniFormatted(event.target.value));
   };
 
   /**
@@ -75,8 +73,6 @@ const AuthLogin = () => {
    */
   const handleOnChangePassword = (event) => {
     const password = event.target.value;
-    setOpen(false);
-    setLoginFail(false);
     setPassword(password);
   };
 
@@ -93,7 +89,7 @@ const AuthLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setOpen(true);
-    let result = await authenticate(cuil, password);
+    let result = await authenticate(dni, password); //! TENGO QUE CAMBIAR ESTO POR DNI DENTRO DE LA FUNCION authenticate
     setLoginSuccess(result);
     setLoginFail(!result);
     setLoading(false);
@@ -153,13 +149,13 @@ const AuthLogin = () => {
                   },
                 }}
                 size="small"
-                id="cuil"
-                label={commonfields.cuil}
+                id="dni"
+                label={commonfields.dni}
                 required
                 disabled={loginSuccess}
-                helperText={authloginlabels.helper_text.cuil}
+                helperText={authloginlabels.helper_text.dni}
                 error={loginFail}
-                value={cuil}
+                value={dni}
                 onChange={handleInputChange}
                 variant="standard"
               />
@@ -182,7 +178,7 @@ const AuthLogin = () => {
                 variant="standard"
               />
               {loginFail && (
-                <Alert severity="error">Cuil o contraseña incorrectos</Alert>
+                <Alert severity="error">DNI o Contraseña incorrectos</Alert>
               )}
               <Link
                 size="small"

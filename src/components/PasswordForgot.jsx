@@ -26,7 +26,7 @@ import {
   centerButtonsStyle,
   centeringStyles,
 } from "../theme.jsx";
-import { doformatCUIL } from "../utiles.js";
+import { dniFormatted } from "../utiles.js";
 /**
  * @brief Se encarga de renderizar el formulario de recuperación de contraseña.
  */
@@ -44,7 +44,7 @@ const PasswordForgot = () => {
   const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
   const [send, setSend] = useState(false);
-  const [formattedCUIL, setFormattedCUIL] = useState("");
+  const [dni, setDni] = useState("");
 
   const navigate = useNavigate();
 
@@ -57,15 +57,15 @@ const PasswordForgot = () => {
   };
 
   /**
-   * @brief Se encarga de enviar la peticion al backend sin antes verificar el CUIL
+   * @brief Se encarga de enviar la peticion al backend sin antes verificar el dni
    */
   const send_email = async () => {
-    if (!formattedCUIL.trim() || formattedCUIL.length !== 13) {
+    if (!dni.trim() || dni.length !== 8) {
       setError(true);
       return false;
     }
     try {
-      const success = await send_forgot_password_email(formattedCUIL);
+      const success = await send_forgot_password_email(dni);
       setSend(success);
       setError(!success);
       return success;
@@ -86,12 +86,10 @@ const PasswordForgot = () => {
   };
 
   /**
-   * @brief Se encarga de verificar el CUIL
+   * @brief Se encarga de verificar el dni
    */
-  const handleCUILChange = (event) => {
-    const inputValue = event.target.value;
-    let formatted = doformatCUIL(inputValue);
-    setFormattedCUIL(formatted);
+  const handleDniChange = (event) => {
+    setDni(dniFormatted(event.target.value));
   };
 
   return (
@@ -103,16 +101,16 @@ const PasswordForgot = () => {
           <Grid container spacing={3} sx={centeringStyles}>
             <Grid item>
               <TextField
-                id="cuil"
+                id="dni"
                 size="small"
-                label={commonfields.cuil}
+                label={commonfields.dni}
                 required
                 disabled={send ? "true" : undefined}
                 error={error}
-                value={formattedCUIL}
-                onChange={handleCUILChange}
+                value={dni}
+                onChange={handleDniChange}
                 variant="standard"
-                helperText={"Sin '-', se agregan solos"}
+                helperText={"Obligatorio, 8 digitos"}
               />
             </Grid>
             <Grid item>

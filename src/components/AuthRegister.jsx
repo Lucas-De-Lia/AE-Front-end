@@ -83,7 +83,7 @@ const AuthRegister = () => {
     {
       name: "",
       lastname: "",
-      cuil: "",
+      dni: "",
       birthdate: "",
       gender: -1,
       password: "",
@@ -118,7 +118,7 @@ const AuthRegister = () => {
     setLoading(true);
     try {
       let register_user = {
-        cuil: stepData[0].cuil,
+        dni: stepData[0].dni,
         email: stepData[2].email,
         password: stepData[0].password,
         firstname: stepData[0].name,
@@ -134,9 +134,9 @@ const AuthRegister = () => {
         address: stepData[1].address.nombre,
         phone: stepData[2].phone,
         startdate: formatDate(new Date()),
-        dni: stepData[2].files,
+        dniImg: stepData[2].files, //revisar step data
       };
-      let result = await registerRequest(register_user);
+      let result = await registerRequest(register_user); //revisar
       updateErrorAtIndex(4, !result);
     } catch (e) {
       console.error(e);
@@ -157,7 +157,7 @@ const AuthRegister = () => {
             name={stepData[0].name}
             registerState={true}
             lastname={stepData[0].lastname}
-            cuil={stepData[0].cuil}
+            dni={stepData[0].dni}
             birthdate={stepData[0].birthdate}
             gender={stepData[0].gender}
             password={stepData[0].password}

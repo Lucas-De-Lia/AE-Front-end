@@ -41,7 +41,7 @@
         "oldpassword": "Contraseña anterior",
         "password": "Contraseña",
         "repassword": "Reescriba contraseña",
-        "cuil": "CUIL",
+        "dni": "DNI",
         "suggest": "Sugeridos: ",
         "passwordError": "La contraseña debe contener al menos una letra, un numero y almenos 8 caracteres"
       },
@@ -95,7 +95,7 @@
             "faq": "Preguntas Frecuentes"
           },
           "helper_text": {
-            "cuil": "Obligatorio y sin '-' se agregan solos"
+            "dni": "Obligatorio, 8 dígitos"
           },
           "alert": {
             "success": {
@@ -161,7 +161,7 @@
             "info": {
               "name": "Nombre",
               "lastname": "Apellido",
-              "cuil": "CUIL",
+              "dni": "DNI",
               "birthdate": "Fecha de nacimiento",
               "password": "Contraseña",
               "passrep": "Contraseña",
@@ -169,7 +169,7 @@
               "helper_text": {
                 "name": "Obligatorio",
                 "lastname": "Obligatorio",
-                "cuil": "Obligatorio y sin '-' se agregan solos",
+                "dni": "Obligatorio, 8 dígitos",
                 "birthdate": "Obligatorio y debes ser mayor de edad",
                 "gender": "Obligatorio",
                 "password": "Obligatorio"

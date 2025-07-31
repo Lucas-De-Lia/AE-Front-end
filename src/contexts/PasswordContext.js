@@ -12,12 +12,12 @@ export const PasswordServiceProvider = ({ children }) => {
   /**
    * @brief Envia la solicitud para enviar los emails de reseteo de contraseña
    */
-  const send_forgot_password_email = async (cuil) => {
+  const send_forgot_password_email = async (dni) => {
     try {
       const { data } = await axios.post(
         `${URL_BACKEND}/api/password/forgot`,
         {
-          data: encryptData({ cuil: cuil }, KEY_CRYPT),
+          data: encryptData({ dni: dni }, KEY_CRYPT),
         },
         { headers: { "X-API-Key": APP_KEY } }
       );
@@ -37,7 +37,7 @@ export const PasswordServiceProvider = ({ children }) => {
    */
   const send_reset_password = async (
     token,
-    cuil,
+    dni,
     password,
     password_confirmation
   ) => {
@@ -48,7 +48,7 @@ export const PasswordServiceProvider = ({ children }) => {
           data: encryptData(
             {
               token: token,
-              cuil: cuil,
+              dni: dni,
               password: password,
               password_confirmation: password_confirmation,
             },

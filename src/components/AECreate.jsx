@@ -125,7 +125,7 @@ export const AECreate = () => {
       {
         name: info.name,
         lastname: info.lastname,
-        cuil: info.cuil,
+        dni: info.dni,
         birthdate: info.birthdate,
         gender: info.gender,
       },

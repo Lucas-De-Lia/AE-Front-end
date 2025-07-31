@@ -19,7 +19,7 @@ const EmailVerify = () => {
   const navigate = useNavigate();
 
   // Servicios del Backend
-  const { isAuthenticated } = useService();
+  const { isAuthenticated, setEmailVerified } = useService();
   const { send_confirmation_verify } = useEmailVerify();
 
   // Control de estado para mensajes de error y de carga
@@ -47,6 +47,7 @@ const EmailVerify = () => {
       );
       console.log(result);
       setSuccess(result);
+      setEmailVerified();
     } catch (error) {
       setSuccess(false);
     } finally {
@@ -69,7 +70,7 @@ const EmailVerify = () => {
     if (isAuthenticated) {
       verifyEmail();
     }
-  }, [isAuthenticated, verifyEmail]);
+  }, [isAuthenticated]);
 
   return (
     <Backdrop open={true}>

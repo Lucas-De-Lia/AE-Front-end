@@ -24,7 +24,7 @@ import {
   cardLoginStyle,
   centerButtonsStyle,
 } from "../theme.jsx";
-import { doformatCUIL, testCuil, testpassword } from "../utiles.js";
+import { dniFormatted, testDni, testpassword } from "../utiles.js";
 import { PasswordControl } from "./PasswordControl.jsx";
 /**
  * @brief Componente para cambiar la contraseña un vez entra al link de recuperar contraseña
@@ -49,18 +49,17 @@ const PasswordReset = () => {
 
   //Variables de estado
   const token = new URLSearchParams(window.location.search).get("token");
-  const [cuil, setCuil] = useState("");
-  const [cuilError, setCuilError] = useState(false);
+  const [dni, setDni] = useState("");
+  const [dniError, setDniError] = useState(false);
   const [password, setPassword] = useState("");
   const [password_confirmation, setPasswordConfirmation] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   /**
-   * @brief Maneja el cambio del CUIL
+   * @brief Maneja el cambio del DNI
    */
-  const handleCUILChange = (event) => {
-    let cuilf = doformatCUIL(event.target.value);
-    setCuil(cuilf);
-    setCuilError(testCuil(cuilf));
+  const handleDNIChange = (event) => {
+    setDni(dniFormatted(event.target.value));
+    setDniError(testDni(dniFormatted(event.target.value)));
   };
   /**
    * @brief Maneja el cambio de la contraseña
@@ -85,10 +84,10 @@ const PasswordReset = () => {
     e.preventDefault();
     if (
       passwordError ||
-      cuilError ||
+      dniError ||
       password.length === 0 ||
       password_confirmation.length === 0 ||
-      cuil.length === 0
+      dni.length === 0
     )
       return;
     setLoading(true);
@@ -96,7 +95,7 @@ const PasswordReset = () => {
     try {
       const result = await send_reset_password(
         token,
-        cuil,
+        dni,
         password,
         password_confirmation
       );
@@ -133,15 +132,15 @@ const PasswordReset = () => {
               <Stack spacing={2}>
                 <TextField
                   size="small"
-                  id="cuil"
-                  label={commonfields.cuil}
+                  id="dni"
+                  label={commonfields.dni}
                   required
                   disabled={null}
-                  error={cuilError}
-                  value={cuil}
-                  onChange={handleCUILChange}
+                  error={dniError}
+                  value={dni}
+                  onChange={handleDNIChange}
                   variant="standard"
-                  helperText={"Obligatorio y sin '-' se agregan solos"}
+                  helperText={"Obligatorio, 8 dígitos"}
                 />
                 <TextField
                   id="password"

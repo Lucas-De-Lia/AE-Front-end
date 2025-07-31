@@ -234,6 +234,12 @@ function obtenerIniciales(nombre) {
  * @param {*} inputValue
  * @returns
  */
+export const dniFormatted = (inputValue) => {
+  const sanitizedValue = inputValue.replace(/\D/g, "");
+  const truncatedValue = sanitizedValue.slice(0, 8);
+  return truncatedValue;
+};
+
 export const doformatCUIL = (inputValue) => {
   const sanitizedValue = inputValue.replace(/\D/g, "");
   const truncatedValue = sanitizedValue.slice(0, 11);
@@ -331,6 +337,11 @@ export const testpassword = (password1, password2) => {
 
 export const testCuil = (cuil) => {
   if (cuil !== "" && cuil.length === 13) return false;
+  return true;
+};
+
+export const testDni = (dni) => {
+  if (dni !== "" && dni.length === 8) return false;
   return true;
 };
 
@@ -550,9 +561,11 @@ const utiles = {
   isNum,
   testpassword,
   testCuil,
+  testDni,
   shortFileName,
   getDates,
   stringAvatar,
+  dniFormatted,
   doformatCUIL,
   datecontrol,
   doPostalCode,
