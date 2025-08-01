@@ -136,12 +136,13 @@ const ProfileInfo = () => {
             isActive={User.ae !== AE.NON_AE}
           />
           <Typography variant="body1" paddingRight={17} fontSize={10}>
-            {commonfields.cuil}
+            {commonfields.dni}
           </Typography>
-          <Typography variant="h5">{User.cuil}</Typography>
+          <Typography variant="h5">{User.dni}</Typography>
           <Typography variant="body1">{User.name}</Typography>
         </Stack>
         <Stack padding={2} spacing={1} sx={centeringStyles}>
+          {/* //TODO ARREGLAR LA DESCARGA DE PDFS */}
           {User.ae === AE.FINALIZED && false && (
             <SixtysecFragment
               id={1}

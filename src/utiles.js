@@ -375,7 +375,12 @@ export const dateBetween = (start, day, end) => {
 };
 
 export const monthGreater = (date1, date2) => {
-  return date1.getMonth() < date2.getMonth();
+  //? se supone que lo fixea con los condicionales
+  return (
+    (date1.getMonth() < date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()) ||
+    date1.getFullYear() < date2.getFullYear()
+  );
 };
 
 /**

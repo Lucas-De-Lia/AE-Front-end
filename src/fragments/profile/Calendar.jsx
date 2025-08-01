@@ -90,7 +90,6 @@ const Calendar = ({ intStart, intEnd }) => {
         color = blue[200];
       }
     } else {
-      // Es un rango de fechas
       range_start = isStartdate(day, intStart, cellIndex);
       range_end = isEnddate(day, intEnd, cellIndex);
       if (isSameMonth(intStart, intEnd)) {
