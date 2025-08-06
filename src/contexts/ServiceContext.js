@@ -274,17 +274,32 @@ export const ServiceProvider = ({ children }) => {
    */
   const fetch_start_pdf = async () => {
     try {
-      const { data } = await axios.get(
+      const response = await axios.get(
         `${URL_BACKEND}/api/ae/fetch-start-pdf`,
-        {},
-        { headers: { "X-API-Key": APP_KEY } }
+        {
+          headers: { "X-API-Key": APP_KEY },
+          responseType: "blob",
+        }
       );
-      const { content } = decryptData(data.data, KEY_CRYPT);
-      return content;
+      console.log(response.data);
+      return response.data;
     } catch (error) {
-      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      let msg = decryptData(error, KEY_CRYPT);
       console.error("Error al obtener el PDF:", msg);
       return null;
+    }
+  };
+  //! checkear el manejo de errores
+  const verifyAeTrust = async (token) => {
+    try {
+      const response = await axios.get(
+        `${URL_BACKEND}/api/ae/verify-trust/${token}`,
+        { headers: { "X-API-Key": APP_KEY } }
+      );
+      return decryptData(response.data.data, KEY_CRYPT);
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   };
 
@@ -435,6 +450,7 @@ export const ServiceProvider = ({ children }) => {
         finalize_ae,
         verifyCaptcha,
         userRespondioEncuestaTrue,
+        verifyAeTrust,
       }}
     >
       {children}

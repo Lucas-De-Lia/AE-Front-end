@@ -56,13 +56,7 @@ const ProfileInfo = () => {
 
     const blob = new Blob(byteArrays, { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "constancia_exclusion.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.open(url, "_blank");
   };
 
   /**
@@ -71,9 +65,12 @@ const ProfileInfo = () => {
   const handlePDF = async (fetch) => {
     let value = true;
     setOpenPDF(true);
+    setLoadingPDF(true);
     try {
-      const pdfUrl = await fetch();
-      await handleDownload(pdfUrl);
+      const pdfBlob = await fetch();
+      if (!pdfBlob) throw new Error("PDF no recibido");
+      const url = URL.createObjectURL(pdfBlob);
+      window.open(url, "_blank");
     } catch (error) {
       console.error("Error al descargar el PDF:", error);
       value = false;
@@ -143,7 +140,7 @@ const ProfileInfo = () => {
         </Stack>
         <Stack padding={2} spacing={1} sx={centeringStyles}>
           {/* //TODO ARREGLAR LA DESCARGA DE PDFS */}
-          {User.ae === AE.FINALIZED && false && (
+          {User.ae === AE.FINALIZED && true && (
             <SixtysecFragment
               id={1}
               action={() => handlePDF(fetch_end_pdf)}
@@ -152,7 +149,7 @@ const ProfileInfo = () => {
               <Link />
             </SixtysecFragment>
           )}
-          {User.ae !== AE.NON_AE && User.ae !== AE.FINALIZED && false && (
+          {User.ae !== AE.NON_AE && User.ae !== AE.FINALIZED && (
             <SixtysecFragment
               id={2}
               action={() => handlePDF(fetch_start_pdf)}

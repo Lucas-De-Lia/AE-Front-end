@@ -23,6 +23,7 @@ import ErrorPage from "./frames/ErrorPage.jsx";
 import Root from "./frames/Root.jsx";
 import { NewEmailVerify } from "./components/NewEmailVerify.jsx";
 import { EncuentaAE } from "./components/EncuentaAE.jsx";
+import { VerifyAE } from "./components/VerifyAE.jsx";
 
 const MemoizedErrorPage = React.memo(ErrorPage);
 const MemorizedRoot = React.memo(Root);
@@ -89,6 +90,7 @@ function App() {
                 />
                 <Route path="profile" element={<AEProfile />} />
                 <Route path="survey" element={<EncuentaAE />} />
+                <Route path="verificacion/:token" element={<VerifyAE />} />
               </Route>
 
               <Route
