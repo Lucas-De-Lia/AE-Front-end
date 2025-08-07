@@ -51,6 +51,7 @@ const IconUserMenu = (props) => {
    * @brief Funcioens encargadas de abrir y cerrar el menu
    */
   const handleOpenUserMenu = (event) => {
+    if (!isMobile) navigate(loginPath);
     setAnchorElUser(event.currentTarget);
   };
 
@@ -105,15 +106,15 @@ const IconUserMenu = (props) => {
             alignItems: "center",
             justifyContent: "center",
             border: "1px solid transparent",
-            backgroundImage:
-              hover || anchorElUser
-                ? "linear-gradient(white,white), linear-gradient(120deg,rgba(255, 203, 2, 0.631) 0%, rgba(255, 116, 2, 0.631) 33%, rgba(228, 33, 83, 0.631) 66%, rgba(60, 58, 229, 0.631) 100%)"
-                : "",
-            cursor: "pointer",
             borderRadius: "7px",
-            borderImageSlice: "1",
-            backgroundOrigin: "border-box",
-            backgroundClip: "content-box, border-box",
+            marginRight: "10px",
+            ...(hover && {
+              backgroundImage:
+                "linear-gradient(white,white), linear-gradient(120deg,rgba(255, 203, 2, 0.631) 0%, rgba(255, 116, 2, 0.631) 33%, rgba(228, 33, 83, 0.631) 66%, rgba(60, 58, 229, 0.631) 100%)",
+              borderImageSlice: "1",
+              backgroundOrigin: "border-box",
+              backgroundClip: "content-box, border-box",
+            }),
           }}
         >
           <div
@@ -125,7 +126,7 @@ const IconUserMenu = (props) => {
             }}
           >
             {!props.userAuth && (
-              <Typography variant="body4" paddingLeft={1}>
+              <Typography variant="body4" sx={{ width: { xs: "max-content" } }}>
                 {isMobile ? "Ingresar / Excluirse" : "Ingresar"}
               </Typography>
             )}
@@ -149,39 +150,41 @@ const IconUserMenu = (props) => {
             </Tooltip>
           </div>
         </motion.div>
-        <Menu
-          edge="end"
-          sx={{ mt: "45px" }}
-          id="menu-appbar"
-          anchorEl={anchorElUser}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          keepMounted
-          size="small"
-          overflow="hidden"
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(anchorElUser)}
-          onClose={handleCloseUserMenu}
-        >
-          {(props.userAuth ? settings : settings_login).map((setting) => (
-            <MenuItem
-              size="small"
-              key={setting.label + "menu-icon"}
-              onClick={(e) => onClickMenu(e, setting.id)}
-              sx={{ display: !isMobile && setting.id === 2 && "none" }}
-            >
-              {setting.icon}
-              <Typography textAlign="center" paddingBlockStart={"5px"}>
-                {setting.label}
-              </Typography>
-            </MenuItem>
-          ))}
-        </Menu>
+        {isMobile && (
+          <Menu
+            edge="end"
+            sx={{ mt: "45px" }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            size="small"
+            overflow="hidden"
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {(props.userAuth ? settings : settings_login).map((setting) => (
+              <MenuItem
+                size="small"
+                key={setting.label + "menu-icon"}
+                onClick={(e) => onClickMenu(e, setting.id)}
+                sx={{ display: !isMobile && setting.id === 2 && "none" }}
+              >
+                {setting.icon}
+                <Typography textAlign="center" paddingBlockStart={"5px"}>
+                  {setting.label}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+        )}
       </>
     </Box>
   );

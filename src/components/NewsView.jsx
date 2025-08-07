@@ -33,7 +33,6 @@ const NewsView = () => {
       if (news_pdf) {
         setPdf(news_pdf);
         setIsLoading(false);
-        console.log(news_pdf);
       }
     } catch (error) {
       console.error(error);
