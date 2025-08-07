@@ -37,7 +37,12 @@ const NewsCard = React.memo(({ anews }) => {
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
       <Card
-        sx={{ ...gridNewsCardStyle, display: "flex", flexDirection: "column" }}
+        sx={{
+          ...gridNewsCardStyle,
+          display: "flex",
+          flexDirection: "column",
+          maxWidth: "98vw",
+        }}
       >
         {!load && <Skeleton variant="rectangular" width={400} height={50} />}
         <LazyLoadImage

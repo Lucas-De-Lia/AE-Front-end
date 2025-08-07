@@ -39,6 +39,7 @@ export default function Root() {
           flexDirection: "column",
           justifyContent: "space-between",
           minHeight: "100vh",
+          maxWidth: "98vw",
           ...centeringStyles,
         }}
       >
