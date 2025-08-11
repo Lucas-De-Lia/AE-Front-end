@@ -253,17 +253,16 @@ export const ServiceProvider = ({ children }) => {
   /**
    * @brief Obtiene el ceritificado de fin de autoexclusion. en formato base64
    */
+  //TODO TERMINAR ESTA FUNCION
   const fetch_end_pdf = async () => {
     try {
-      const { data } = await axios.get(
-        `${URL_BACKEND}/api/ae/fetch-end-pdf`,
-        {},
-        { headers: { "X-API-Key": APP_KEY } }
-      );
-      const { content } = decryptData(data.data, KEY_CRYPT);
-      return content;
+      const response = await axios.get(`${URL_BACKEND}/api/ae/fetch-end-pdf`, {
+        headers: { "X-API-Key": APP_KEY },
+        responseType: "blob",
+      });
+      return response.data;
     } catch (error) {
-      let msg = decryptData(error.response.data.data, KEY_CRYPT);
+      let msg = decryptData(error, KEY_CRYPT);
       console.error("Error al obtener el PDF:", msg);
       return null;
     }
@@ -281,7 +280,6 @@ export const ServiceProvider = ({ children }) => {
           responseType: "blob",
         }
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       let msg = decryptData(error, KEY_CRYPT);
@@ -289,6 +287,7 @@ export const ServiceProvider = ({ children }) => {
       return null;
     }
   };
+
   //! checkear el manejo de errores
   const verifyAeTrust = async (token) => {
     try {

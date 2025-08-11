@@ -138,6 +138,7 @@ const RootTopBar = (props) => {
                 >
                   {pages.map(
                     (page, index) =>
+                      page.show &&
                       !page.disabled && (
                         <MenuItem
                           key={page.label + "-menu-appbar"}

@@ -139,8 +139,8 @@ const ProfileInfo = () => {
           <Typography variant="body1">{User.name}</Typography>
         </Stack>
         <Stack padding={2} spacing={1} sx={centeringStyles}>
-          {/* //TODO ARREGLAR LA DESCARGA DE PDFS */}
-          {User.ae === AE.FINALIZED && true && (
+          {/* //TODO ARREGLAR LA DESCARGA DE PDFS  User.ae === AE.FINALIZED && */}
+          {true && (
             <SixtysecFragment
               id={1}
               action={() => handlePDF(fetch_end_pdf)}

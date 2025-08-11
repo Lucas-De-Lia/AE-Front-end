@@ -50,20 +50,19 @@ const IconUserMenu = (props) => {
   /**
    * @brief Funcioens encargadas de abrir y cerrar el menu
    */
-  const handleOpenUserMenu = (event) => {
-    if (!isMobile) navigate(loginPath);
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
   const logout = async () => {
     await unauthenticate()
       .then(() => navigate("/", { replace: true }))
       .catch((e) => console.error("Error during logout: ", e))
       .finally(() => setAnchorElUser(null));
+  };
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
   };
 
   const reloadOrRedirect = (path) => {
@@ -123,6 +122,8 @@ const IconUserMenu = (props) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              paddingRight: 10,
+              paddingLeft: 10,
             }}
           >
             {!props.userAuth && (
@@ -150,41 +151,39 @@ const IconUserMenu = (props) => {
             </Tooltip>
           </div>
         </motion.div>
-        {isMobile && (
-          <Menu
-            edge="end"
-            sx={{ mt: "45px" }}
-            id="menu-appbar"
-            anchorEl={anchorElUser}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            keepMounted
-            size="small"
-            overflow="hidden"
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={Boolean(anchorElUser)}
-            onClose={handleCloseUserMenu}
-          >
-            {(props.userAuth ? settings : settings_login).map((setting) => (
-              <MenuItem
-                size="small"
-                key={setting.label + "menu-icon"}
-                onClick={(e) => onClickMenu(e, setting.id)}
-                sx={{ display: !isMobile && setting.id === 2 && "none" }}
-              >
-                {setting.icon}
-                <Typography textAlign="center" paddingBlockStart={"5px"}>
-                  {setting.label}
-                </Typography>
-              </MenuItem>
-            ))}
-          </Menu>
-        )}
+        <Menu
+          edge="end"
+          sx={{ mt: "45px" }}
+          id="menu-appbar"
+          anchorEl={anchorElUser}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          keepMounted
+          size="small"
+          overflow="hidden"
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={Boolean(anchorElUser)}
+          onClose={handleCloseUserMenu}
+        >
+          {(props.userAuth ? settings : settings_login).map((setting) => (
+            <MenuItem
+              size="small"
+              key={setting.label + "menu-icon"}
+              onClick={(e) => onClickMenu(e, setting.id)}
+              sx={{ display: !isMobile && setting.id === 2 && "none" }}
+            >
+              {setting.icon}
+              <Typography textAlign="center" paddingBlockStart={"5px"}>
+                {setting.label}
+              </Typography>
+            </MenuItem>
+          ))}
+        </Menu>
       </>
     </Box>
   );
