@@ -64,7 +64,7 @@ const FormInfo = React.forwardRef((props, ref) => {
     name: (value) => handleNothing(value),
     lastname: (value) => handleNothing(value),
     dni: (value) => dniFormatted(value),
-    birthdate: (value) => handleNothing(value),
+    birthdate: (value) => handleDates(value),
     gender: (value) => handleNothing(value),
     password: (value) => handleNothing(value),
     passrep: (value) => handleNothing(value),
@@ -87,6 +87,14 @@ const FormInfo = React.forwardRef((props, ref) => {
   const handleDateControl = (value) => !datecontrol(new Date(value));
   const handleNonDefaultGender = (value) => value === -1;
   const handleRepPassword = (value) => !testpassword(value, userData.password);
+  const handleDates = (value) => {
+    const parts = value.split("-");
+    if (parts.length !== 3) return value;
+    // Limitar el año a 4 dígitos
+    const year = parts[0].slice(0, 4);
+    // Devolver el valor reformateado
+    return `${year}-${parts[1]}-${parts[2]}`;
+  };
 
   /**
    * @brief Funcion que gestiona los textfields.
@@ -98,7 +106,7 @@ const FormInfo = React.forwardRef((props, ref) => {
     }));
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [field]: FieldsDetectedError[field](value),
+      [field]: FieldsDetectedError[field](FieldsFormatters[field](value)),
     }));
   };
 

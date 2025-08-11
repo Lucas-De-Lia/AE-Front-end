@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // Material-UI Components
 import {
   Box,
@@ -58,7 +58,7 @@ const AuthRegister = () => {
 
   const navigate = useNavigate();
   // Servicios de backend
-  const { registerRequest } = useService();
+  const { registerRequest, User } = useService();
 
   // Referencia al formulario mostrado
   const dataRef = useRef(null);
@@ -274,6 +274,10 @@ const AuthRegister = () => {
     activeStep === authregisterlabels.step_title.length - n;
 
   const itsFirstState = (i) => activeStep === i;
+
+  useEffect(() => {
+    if (User) navigate("/");
+  }, [User]);
 
   return (
     <Card sx={cardRegisterStyle}>

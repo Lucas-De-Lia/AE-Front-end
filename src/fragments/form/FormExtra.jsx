@@ -267,7 +267,9 @@ const FormExtra = React.forwardRef(
                   error={errors["email"]}
                   size="small"
                   value={emailCopy}
-                  onChange={(event) => setEmailCopy(event.target.value)}
+                  onChange={(event) =>
+                    setEmailCopy(doEmail(event.target.value))
+                  }
                   variant="standard"
                 />
               </Grid>
