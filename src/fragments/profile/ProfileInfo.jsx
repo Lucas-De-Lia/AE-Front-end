@@ -139,14 +139,13 @@ const ProfileInfo = () => {
           <Typography variant="body1">{User.name}</Typography>
         </Stack>
         <Stack padding={2} spacing={1} sx={centeringStyles}>
-          {/* //TODO ARREGLAR LA DESCARGA DE PDFS  User.ae === AE.FINALIZED && */}
-          {true && (
+          {User.ae === AE.FINALIZED && (
             <SixtysecFragment
               id={1}
               action={() => handlePDF(fetch_end_pdf)}
               label={aeprofilestring.link_label.end_of_ae_certificate}
             >
-              <Link />
+              <Link sx={{ cursor: "pointer" }} />
             </SixtysecFragment>
           )}
           {User.ae !== AE.NON_AE && User.ae !== AE.FINALIZED && (
@@ -155,14 +154,22 @@ const ProfileInfo = () => {
               action={() => handlePDF(fetch_start_pdf)}
               label={aeprofilestring.link_label.start_of_ae_certificate}
             >
-              <Link />
+              <Link sx={{ cursor: "pointer" }} />
             </SixtysecFragment>
           )}
-          <Link size="small" onClick={(e) => handleGoTo("/password/change")}>
+          <Link
+            size="small"
+            onClick={(e) => handleGoTo("/password/change")}
+            sx={{ cursor: "pointer" }}
+          >
             {aeprofilestring.link_label.password_change}
           </Link>
           {User.email_verified_at ? (
-            <Link size="small" onClick={(e) => handleGoTo("/email/change")}>
+            <Link
+              size="small"
+              onClick={(e) => handleGoTo("/email/change")}
+              sx={{ cursor: "pointer" }}
+            >
               {aeprofilestring.link_label.email_change}
             </Link>
           ) : (
@@ -171,7 +178,7 @@ const ProfileInfo = () => {
               action={sendEmail}
               label={aeprofilestring.link_label.email_verify}
             >
-              <Link />
+              <Link sx={{ cursor: "pointer" }} />
             </SixtysecFragment>
           )}
         </Stack>
