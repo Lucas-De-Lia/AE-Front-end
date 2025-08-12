@@ -71,7 +71,11 @@ const AEProfile = () => {
               )}
             </Grid>
 
-            <Grid item id="calendar-item">
+            <Grid
+              item
+              id="calendar-item"
+              sx={{ width: { xs: "95%", sm: "90%", md: "auto" } }}
+            >
               {User.ae !== AE.NON_AE && (
                 <Paper sm={6} sx={{ border: "1px solid black" }}>
                   <Grid
@@ -189,7 +193,7 @@ const AEProfile = () => {
               )}
             </Grid>
 
-            <Grid item>
+            <Grid item sx={{ width: { xs: "95%", sm: "90%", md: "auto" } }}>
               <Historial text={labels.historial} />
             </Grid>
           </Grid>

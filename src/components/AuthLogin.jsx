@@ -184,7 +184,7 @@ const AuthLogin = () => {
                 size="small"
                 component="a"
                 disabled={loginSuccess}
-                sx={{ ...centeringStyles, padding: 1 }}
+                sx={{ ...centeringStyles, padding: 1, cursor: "pointer" }}
                 underline="hover"
                 onClick={() => {
                   navigate("/password/forgot");

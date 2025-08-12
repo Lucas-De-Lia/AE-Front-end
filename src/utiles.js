@@ -294,11 +294,10 @@ export const doApartment = (value) => {
  * @returns
  */
 export const doEmail = (email) => {
-  const trimmedEmail = email.trim();
+  const trimmedEmail = email.trim().toLowerCase();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (emailRegex.test(trimmedEmail)) {
-    const formattedEmail = trimmedEmail.toLowerCase();
-    return formattedEmail;
+    return trimmedEmail;
   } else {
     return trimmedEmail;
   }
