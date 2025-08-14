@@ -3,6 +3,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePublicResources } from "../contexts/PublicResourcesContext";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import Carousel from "react-material-ui-carousel";
 /**
  * @brief Se encarga de renderizar la vista de noticas, es la vista detallada de las noticas
  */
@@ -15,7 +17,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 //TODO:                         -> REVEER EL DISEÑO
 //? SE PODRIA AGREGAR UNA "PÁGINA" MAS PARA QUE CONTENGA SOLO TEXTO, Y ESA SERIA OPCIONAL
 //? POSIBLES TEXTOS OPCIONALES: ENCABEZADOS Y EL TEXTO DEL FINAL DE LA PAGINA
-const NewsView = () => {
+const images = [
+  "https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg",
+  "https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg",
+  "https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg",
+];
+const NewsView = ({ open, close }) => {
   // Servicios del backend
   const { fetch_news_pdf } = usePublicResources();
   // Variables de estado
@@ -26,11 +33,6 @@ const NewsView = () => {
   /**
    * @brief Se encarga de hacer el fetch de las noticas,y setear lavisualizacion del pdf
    */
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-  const handleClose = () => {};
 
   const fetchData = useCallback(async () => {
     try {
@@ -50,13 +52,13 @@ const NewsView = () => {
 
   return (
     <Dialog
-      open={true}
-      onClose={handleClose}
+      open={open}
+      onClose={close}
       scroll="paper"
       PaperProps={{
         sx: {
-          width: "80vw",
-          maxWidth: "80vw",
+          width: { xs: "95vw", sm: "90vw", md: "80vw" },
+          maxWidth: { xs: "95vw", sm: "90vw", md: "80vw" },
           height: "99vh", // crece con el contenido
           maxHeight: "99vh",
           margin: 0,
@@ -74,51 +76,97 @@ const NewsView = () => {
             background: "white",
             p: 1,
             opacity: 0.7,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          <IconButton onClick={handleBack}>
+          <IconButton onClick={close}>
             <ArrowBackIcon />
+          </IconButton>
+          <IconButton onClick={close}>
+            <PictureAsPdfIcon />
           </IconButton>
         </Box>
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "center", // centra horizontalmente
-            justifyContent: "flex-start", // alinea arriba
+            alignItems: "center",
+            justifyContent: "flex-start",
             height: "auto",
           }}
         >
-          <Typography
-            variant="h2"
-            color="#3b785f"
-            sx={{
-              fontSize: "5.5rem",
-              fontWeight: "bold",
-              mb: 3,
-              width: "80%",
-              textAlign: "center",
-            }}
-          >
-            NOTICIAS DEL DÍA
-          </Typography>
-          <Divider color="#3b785f" width="80%" sx={{ borderBottomWidth: 3 }} />
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-around",
-              width: "100%",
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: { xs: "center", md: "space-between" },
+              alignItems: { xs: "center", md: "center" },
+              flexWrap: { xs: "wrap", md: "nowrap" },
+              width: "80%",
+            }}
+          >
+            <Box
+              component="img"
+              src="/images/logo.webp"
+              alt="Logo Lotería de Santa Fe"
+              sx={{ width: "200px", height: "auto", mb: 1 }}
+            ></Box>
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: { xs: "1.5rem", md: "3.5rem" },
+                color: "#4c4468 ",
+              }}
+            >
+              JUEGO RESPONSABLE
+            </Typography>
+          </Box>
+          <Divider
+            sx={{
+              width: "80%",
+              height: "3px", // grosor de la línea
+              backgroundImage: `linear-gradient(
+      120deg,
+      rgba(255, 203, 2, 0.631) 0%,
+      rgba(255, 116, 2, 0.631) 33%,
+      rgba(228, 33, 83, 0.631) 66%,
+      rgba(60, 58, 229, 0.631) 100%
+    )`,
+              border: "none", // sin borde por defecto
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: { xs: "center", md: "space-around" },
+              alignItems: { xs: "center", md: "center" },
+              flexWrap: { xs: "wrap", md: "nowrap" },
               mt: 2,
               mb: 2,
               width: "80%",
             }}
           >
-            <Typography>https://www.loteriasantafe.gov.ar/</Typography>
-            <Typography>
-              Primera Junta 2724, Ciudad de Santa Fe (CP3000)
-            </Typography>
+            <Typography>14 de agosto de 2025</Typography>
+            <Typography>Tiempo estimado de lectura: 3 min.</Typography>
           </Box>
-          <Divider color="#3b785f" width="80%" sx={{ borderBottomWidth: 3 }} />
+          <Divider
+            sx={{
+              width: "80%",
+              height: "3px", // grosor de la línea
+              backgroundImage: `linear-gradient(
+      120deg,
+      rgba(255, 203, 2, 0.631) 0%,
+      rgba(255, 116, 2, 0.631) 33%,
+      rgba(228, 33, 83, 0.631) 66%,
+      rgba(60, 58, 229, 0.631) 100%
+    )`,
+              border: "none", // sin borde por defecto
+            }}
+          />
+
           <Typography
             variant="h2"
             sx={{
@@ -139,24 +187,37 @@ const NewsView = () => {
               mb: 3,
             }}
           >
-            <Box
-              component="img"
-              src="https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg"
-              alt="Mona Lisa"
+            <Carousel
+              autoPlay
+              animation="fade"
+              indicators={true}
+              navButtonsAlwaysVisible={false}
               sx={{
-                objectFit: "cover",
-                objectPosition: "top",
                 width: "65%",
-                height: "70vh",
               }}
-            ></Box>
+            >
+              {images.map((src, index) => (
+                <Box
+                  key={index}
+                  component="img"
+                  src={src}
+                  alt={`Slide ${index + 1}`}
+                  sx={{
+                    width: "100%",
+                    height: "400px",
+                    objectPosition: "top",
+                    objectFit: "cover",
+                    borderRadius: 2,
+                  }}
+                />
+              ))}
+            </Carousel>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 1,
                 width: "35%",
-                maxHeight: "60%",
               }}
             >
               <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>
@@ -172,19 +233,21 @@ const NewsView = () => {
               </Typography>
             </Box>
           </Box>
-          <Divider color="#3b785f" width="80%" sx={{ borderBottomWidth: 3 }} />
-          <Typography
+          <Divider
             sx={{
-              fontWeight: "bold",
               width: "80%",
-              fontSize: "1.5rem",
-              mt: 2,
-              mb: 3,
+              height: "3px", // grosor de la línea
+              backgroundImage: `linear-gradient(
+      120deg,
+      rgba(255, 203, 2, 0.631) 0%,
+      rgba(255, 116, 2, 0.631) 33%,
+      rgba(228, 33, 83, 0.631) 66%,
+      rgba(60, 58, 229, 0.631) 100%
+    )`,
+              border: "none", // sin borde por defecto
+              mb: 2,
             }}
-          >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </Typography>
+          />
           <Box sx={{ display: "flex", gap: 2, width: "80%" }}>
             <Box
               sx={{
@@ -192,14 +255,18 @@ const NewsView = () => {
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                width: "65%",
+                width: "100%",
               }}
             >
               <Typography
                 sx={{
-                  columnCount: 2,
                   columnGap: "40px",
                   textAlign: "justify",
+                  columnCount: {
+                    xs: 1,
+                    sm: 2,
+                    md: 3,
+                  },
                 }}
               >
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -221,36 +288,52 @@ const NewsView = () => {
                 adipiscing elit, sed do eiusmod tempor incididunt ut labore et
                 dolore magna aliqua. Lorem ipsums
               </Typography>
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  width: "100%",
-                  fontSize: "1.5rem",
-                  mt: 2,
-                  mb: 3,
-                }}
-              >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </Typography>
             </Box>
-            <Box
-              component="img"
-              src="https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg"
-              alt="Mona Lisa"
-              sx={{
-                width: "35%",
-                height: "auto",
-                objectFit: "cover",
-                objectPosition: "top",
-                mt: 1,
-              }}
-            ></Box>
           </Box>
           <Divider
-            color="#3b785f"
-            width="80%"
-            sx={{ borderBottomWidth: 3, mb: 3, mt: 3 }}
+            sx={{
+              width: "80%",
+              height: "3px", // grosor de la línea
+              backgroundImage: `linear-gradient(
+      120deg,
+      rgba(255, 203, 2, 0.631) 0%,
+      rgba(255, 116, 2, 0.631) 33%,
+      rgba(228, 33, 83, 0.631) 66%,
+      rgba(60, 58, 229, 0.631) 100%
+    )`,
+              border: "none", // sin borde por defecto
+              mt: 3,
+              mb: 3,
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              width: "100%",
+              mb: 2,
+              width: "80%",
+            }}
+          >
+            <Typography>https://www.loteriasantafe.gov.ar/</Typography>
+            <Typography>
+              Primera Junta 2724, Ciudad de Santa Fe (CP3000)
+            </Typography>
+          </Box>
+          <Divider
+            sx={{
+              width: "80%",
+              height: "3px", // grosor de la línea
+              backgroundImage: `linear-gradient(
+      120deg,
+      rgba(255, 203, 2, 0.631) 0%,
+      rgba(255, 116, 2, 0.631) 33%,
+      rgba(228, 33, 83, 0.631) 66%,
+      rgba(60, 58, 229, 0.631) 100%
+    )`,
+              border: "none", // sin borde por defecto
+              mb: 2,
+            }}
           />
         </Box>
       </Box>
