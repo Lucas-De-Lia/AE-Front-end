@@ -9,14 +9,9 @@ import Carousel from "react-material-ui-carousel";
  * @brief Se encarga de renderizar la vista de noticas, es la vista detallada de las noticas
  */
 
-//TODO: Crear pantalla mobile.
-//TODO: MANEJAR CON EL BOTON DE VER MAS LA APARICION Y DESAPARICION DEL DIALOG
 //TODO: ANALIZAR SI QUEDA ASI -> SI
 //TODO:                         -> MODIFICAR BDD Y SISTEMON
-//TODO:                       -> NO
-//TODO:                         -> REVEER EL DISEÑO
-//? SE PODRIA AGREGAR UNA "PÁGINA" MAS PARA QUE CONTENGA SOLO TEXTO, Y ESA SERIA OPCIONAL
-//? POSIBLES TEXTOS OPCIONALES: ENCABEZADOS Y EL TEXTO DEL FINAL DE LA PAGINA
+
 const images = [
   "https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg",
   "https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg",
