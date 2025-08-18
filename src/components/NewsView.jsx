@@ -149,8 +149,12 @@ const NewsView = ({ open, close }) => {
               width: "80%",
             }}
           >
-            <Typography>14 de agosto de 2025</Typography>
-            <Typography>Tiempo estimado de lectura: 3 min.</Typography>
+            <Typography sx={{ textAlign: "center" }}>
+              14 de agosto de 2025
+            </Typography>
+            <Typography sx={{ textAlign: "center" }}>
+              Tiempo estimado de lectura: 3 min
+            </Typography>
           </Box>
           <Divider
             sx={{
@@ -174,6 +178,7 @@ const NewsView = ({ open, close }) => {
               width: "80%",
               mt: 2,
               mb: 2,
+              fontSize: { xs: "1.5rem", md: "3.5rem" },
             }}
           >
             Últimos acontecimientos de nuestro Entorno
@@ -181,6 +186,7 @@ const NewsView = ({ open, close }) => {
           <Box
             sx={{
               display: "flex",
+              flexDirection: "column",
               width: "80%",
               gap: 2,
               justifyContent: "center",
@@ -193,7 +199,7 @@ const NewsView = ({ open, close }) => {
               indicators={true}
               navButtonsAlwaysVisible={false}
               sx={{
-                width: "65%",
+                width: "100%",
               }}
             >
               {images.map((src, index) => (
@@ -204,7 +210,7 @@ const NewsView = ({ open, close }) => {
                   alt={`Slide ${index + 1}`}
                   sx={{
                     width: "100%",
-                    height: "400px",
+                    height: "500px",
                     objectPosition: "top",
                     objectFit: "cover",
                     borderRadius: 2,
@@ -217,19 +223,42 @@ const NewsView = ({ open, close }) => {
                 display: "flex",
                 flexDirection: "column",
                 gap: 1,
-                width: "35%",
+                width: "100%",
               }}
             >
-              <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </Typography>
-              <Typography sx={{ fontWeight: "light", fontSize: "1rem" }}>
+              <Typography
+                sx={{
+                  fontWeight: "light",
+                  fontSize: "1rem",
+                  textAlign: "justify",
+                  columnCount: {
+                    xs: 1,
+                    sm: 2,
+                    md: 3,
+                  },
+                  columnGap: "40px",
+                }}
+              >
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
                 nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit
                 amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua.
+                incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor
+                sit amet, consectetur adipisicing elit. Placeat consequatur
+                animi tempora odio, provident, sunt vitae eligendi officiis
+                aperiam quisquam voluptates pariatur eos sequi numquam
+                repudiandae. Vel consequatur unde quia! Lorem ipsum dolor sit
+                amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet,
+                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                labore et dolore magna aliqua. Lorem ipsum dolor sit amet,
+                consectetur adipisicing elit. Placeat consequatur animi tempora
+                odio, provident, sunt vitae eligendi officiis aperiam quisquam
+                voluptates pariatur eos sequi numquam repudiandae. Vel
+                consequatur unde quia!
               </Typography>
             </Box>
           </Box>
@@ -254,10 +283,19 @@ const NewsView = ({ open, close }) => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                alignItems: "center",
+                alignItems: "flex-start",
                 width: "100%",
               }}
             >
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                  mb: 2,
+                }}
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              </Typography>
               <Typography
                 sx={{
                   columnGap: "40px",
@@ -286,7 +324,11 @@ const NewsView = ({ open, close }) => {
                 nostrud exercitation ullamco laboris nisi ut aliquip ex ea
                 commodo consequat. Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Lorem ipsums
+                dolore magna aliqua. Lorem ipsums Lorem ipsum dolor sit amet
+                consectetur adipisicing elit. Quibusdam, deserunt. Beatae aut
+                dolore cumque quis. Consequuntur corporis explicabo id rerum,
+                necessitatibus dolor delectus iste ut quasi velit, quis soluta.
+                Placeat.
               </Typography>
             </Box>
           </Box>
@@ -310,9 +352,10 @@ const NewsView = ({ open, close }) => {
             sx={{
               display: "flex",
               justifyContent: "space-around",
-              width: "100%",
+              flexWrap: { xs: "wrap", md: "nowrap" },
               mb: 2,
               width: "80%",
+              textAlign: "center",
             }}
           >
             <Typography>https://www.loteriasantafe.gov.ar/</Typography>
