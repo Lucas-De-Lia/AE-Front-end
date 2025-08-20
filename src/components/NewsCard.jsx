@@ -21,8 +21,8 @@ const NewsCard = React.memo(({ anews }) => {
   const [open, setOpen] = useState(false);
 
   // desestructura la noticia
-  const { id, url, title, abstract } = anews;
-
+  const { titulo_principal, texto_principal, images } = anews;
+  const urls = images.split(",");
   // Redirige a una vista mas detallada
   const handleReadMoreClick = () => {
     setOpen(true);
@@ -53,9 +53,9 @@ const NewsCard = React.memo(({ anews }) => {
         >
           {!load && <Skeleton variant="rectangular" width={400} height={50} />}
           <LazyLoadImage
-            src={`${process.env.REACT_APP_BACK_URL}/${url}`}
-            alt={title}
-            title={title}
+            src={`${process.env.REACT_APP_BACK_URL}/${urls[0]}`}
+            alt={titulo_principal}
+            title={titulo_principal}
             beforeLoad={endLoading}
             style={{
               scale: "1",
@@ -67,7 +67,7 @@ const NewsCard = React.memo(({ anews }) => {
           <Box sx={gridNewsCardBoxStyle}>
             <CardContent sx={{ p: 2, flexGrow: 1, overflow: "hidden" }}>
               <Typography gutterBottom variant="h5">
-                {title}
+                {titulo_principal}
               </Typography>
               <Typography
                 variant="body2"
@@ -82,7 +82,7 @@ const NewsCard = React.memo(({ anews }) => {
                   height: "6rem", // 4 líneas × lineHeight
                 }}
               >
-                {abstract}
+                {texto_principal}
               </Typography>
             </CardContent>
           </Box>
@@ -93,7 +93,7 @@ const NewsCard = React.memo(({ anews }) => {
           </CardActions>
         </Card>
       </motion.div>
-      <NewsView open={open} close={handleClose} />
+      <NewsView open={open} close={handleClose} news={anews} />
     </>
   );
 });

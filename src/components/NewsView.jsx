@@ -1,7 +1,11 @@
-import { Box, Dialog, Divider, IconButton, Typography } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { usePublicResources } from "../contexts/PublicResourcesContext";
+import {
+  Box,
+  Dialog,
+  Divider,
+  IconButton,
+  Link,
+  Typography,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import Carousel from "react-material-ui-carousel";
@@ -9,41 +13,49 @@ import Carousel from "react-material-ui-carousel";
  * @brief Se encarga de renderizar la vista de noticas, es la vista detallada de las noticas
  */
 
-//TODO: ANALIZAR SI QUEDA ASI -> SI
-//TODO:                         -> MODIFICAR BDD Y SISTEMON
+const NewsView = ({ open, close, news }) => {
+  function formatearFecha(fechaString) {
+    // Crear objeto Date a partir del string
+    const fecha = new Date(fechaString.replace(" ", "T"));
+    // → "2025-08-19T12:05:03"
 
-const images = [
-  "https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg",
-  "https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg",
-  "https://www.pixartprinting.it/blog/wp-content/uploads/2021/06/1_Mona_Lisa_300ppi.jpg",
-];
-const NewsView = ({ open, close }) => {
-  // Servicios del backend
-  const { fetch_news_pdf } = usePublicResources();
-  // Variables de estado
-  const [isLoading, setIsLoading] = useState(true);
-  const [noticia, setNoticia] = useState([]);
-  const { id } = useParams();
-  const navigate = useNavigate();
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
+
+    const dia = fecha.getDate();
+    const mes = meses[fecha.getMonth()]; // 0 = enero
+    const anio = fecha.getFullYear();
+
+    return `${dia} de ${mes} de ${anio}`;
+  }
+  const {
+    id,
+    titulo_principal,
+    texto_principal,
+    titulo_secundario,
+    texto_secundario,
+    tiempo_lectura,
+    file_path,
+    created_at,
+    images,
+  } = news;
+  const urls = images.split(",");
+  const fecha = formatearFecha(created_at);
   /**
    * @brief Se encarga de hacer el fetch de las noticas,y setear lavisualizacion del pdf
    */
-
-  const fetchData = useCallback(async () => {
-    try {
-      const news = await fetch_news_pdf(id);
-      if (news) {
-        setNoticia(news);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, [id, fetch_news_pdf, setNoticia]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
     <Dialog
@@ -79,9 +91,16 @@ const NewsView = ({ open, close }) => {
           <IconButton onClick={close}>
             <ArrowBackIcon />
           </IconButton>
-          <IconButton onClick={close}>
-            <PictureAsPdfIcon />
-          </IconButton>
+          {file_path !== null && (
+            <Link
+              href={`${process.env.REACT_APP_BACK_URL}/${file_path}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Ver PDF"
+            >
+              <PictureAsPdfIcon />
+            </Link>
+          )}
         </Box>
         <Box
           sx={{
@@ -144,11 +163,9 @@ const NewsView = ({ open, close }) => {
               width: "80%",
             }}
           >
+            <Typography sx={{ textAlign: "center" }}>{fecha}</Typography>
             <Typography sx={{ textAlign: "center" }}>
-              14 de agosto de 2025
-            </Typography>
-            <Typography sx={{ textAlign: "center" }}>
-              Tiempo estimado de lectura: 3 min
+              Tiempo estimado de lectura: {tiempo_lectura || "5"} min
             </Typography>
           </Box>
           <Divider
@@ -176,7 +193,7 @@ const NewsView = ({ open, close }) => {
               fontSize: { xs: "1.5rem", md: "3.5rem" },
             }}
           >
-            Últimos acontecimientos de nuestro Entorno
+            {titulo_principal}
           </Typography>
           <Box
             sx={{
@@ -197,16 +214,15 @@ const NewsView = ({ open, close }) => {
                 width: "100%",
               }}
             >
-              {images.map((src, index) => (
+              {urls.map((src, index) => (
                 <Box
                   key={index}
                   component="img"
-                  src={src}
+                  src={`${process.env.REACT_APP_BACK_URL}/${src}`}
                   alt={`Slide ${index + 1}`}
                   sx={{
                     width: "100%",
                     height: "500px",
-                    objectPosition: "top",
                     objectFit: "cover",
                     borderRadius: 2,
                   }}
@@ -234,26 +250,7 @@ const NewsView = ({ open, close }) => {
                   columnGap: "40px",
                 }}
               >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit
-                amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor
-                sit amet, consectetur adipisicing elit. Placeat consequatur
-                animi tempora odio, provident, sunt vitae eligendi officiis
-                aperiam quisquam voluptates pariatur eos sequi numquam
-                repudiandae. Vel consequatur unde quia! Lorem ipsum dolor sit
-                amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut
-                aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Placeat consequatur animi tempora
-                odio, provident, sunt vitae eligendi officiis aperiam quisquam
-                voluptates pariatur eos sequi numquam repudiandae. Vel
-                consequatur unde quia!
+                {texto_principal}
               </Typography>
             </Box>
           </Box>
@@ -289,7 +286,7 @@ const NewsView = ({ open, close }) => {
                   mb: 2,
                 }}
               >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                {titulo_secundario}
               </Typography>
               <Typography
                 sx={{
@@ -302,28 +299,7 @@ const NewsView = ({ open, close }) => {
                   },
                 }}
               >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit
-                amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor
-                sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut
-                aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Lorem ipsums Lorem ipsum dolor sit amet
-                consectetur adipisicing elit. Quibusdam, deserunt. Beatae aut
-                dolore cumque quis. Consequuntur corporis explicabo id rerum,
-                necessitatibus dolor delectus iste ut quasi velit, quis soluta.
-                Placeat.
+                {texto_secundario}
               </Typography>
             </Box>
           </Box>
