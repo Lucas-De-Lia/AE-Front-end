@@ -66,7 +66,19 @@ const NewsCard = React.memo(({ anews }) => {
           />
           <Box sx={gridNewsCardBoxStyle}>
             <CardContent sx={{ p: 2, flexGrow: 1, overflow: "hidden" }}>
-              <Typography gutterBottom variant="h5">
+              <Typography
+                gutterBottom
+                variant="h5"
+                sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  lineHeight: "1.5rem",
+                  height: "3rem",
+                }}
+              >
                 {titulo_principal}
               </Typography>
               <Typography
@@ -74,12 +86,12 @@ const NewsCard = React.memo(({ anews }) => {
                 color="text.secondary"
                 sx={{
                   display: "-webkit-box",
-                  WebkitLineClamp: 4, // Número de líneas que querés mostrar
+                  WebkitLineClamp: 3,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
-                  lineHeight: "1.5rem", // Ajusta si usás otra
-                  height: "6rem", // 4 líneas × lineHeight
+                  lineHeight: "1.5rem",
+                  height: "4.1rem",
                 }}
               >
                 {texto_principal}

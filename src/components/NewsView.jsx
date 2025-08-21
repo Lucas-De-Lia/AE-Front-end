@@ -222,9 +222,10 @@ const NewsView = ({ open, close, news }) => {
                   alt={`Slide ${index + 1}`}
                   sx={{
                     width: "100%",
-                    height: "500px",
+                    height: "auto",
                     objectFit: "cover",
                     borderRadius: 2,
+                    aspectRatio: "auto 1920 / 1080",
                   }}
                 />
               ))}
